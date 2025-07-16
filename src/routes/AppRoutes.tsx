@@ -5,6 +5,7 @@ import ProtectedRoute from './ProtectedRoute';
 import LoginPage from '../pages/LoginPage';
 import DashboardPage from '../pages/DashboardPage';
 import NotFoundPage from '../pages/NotFoundPage'; 
+import DraftPage from '../pages/DraftPage';
 
 export const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ export const router = createBrowserRouter([
       {
         path: '/',
         element: <DashboardPage />,
+      },
+      {
+        path: '/draft/:draftId',
+        element: <DraftPage />,
       },
     ],
   },

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../providers/AuthProvider";
 import { createMealDraft } from "../features/meals/api/mealService";
 import { useDraftStore } from "../store/draftStore";
+import { MealDraftsList } from "../features/meals/components/MealDraftsList";
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -69,6 +70,11 @@ const DashboardPage = () => {
             <p style={{ color: "red", marginTop: "0.5rem" }}>Error: {error}</p>
           )}
         </form>
+      </section>
+      
+      <section>
+        <h2 style={{marginTop: '2rem'}}>Recent Generations</h2>
+        <MealDraftsList />
       </section>
     </div>
   );

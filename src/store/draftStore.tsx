@@ -25,6 +25,7 @@ export const useDraftStore = create<DraftStoreState>((set) => ({
             originalInput,
             status: 'pending',
             mealData: null,
+            createdAt: Date.now(),
           },
         },
       })),

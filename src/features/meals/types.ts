@@ -50,5 +50,6 @@ export interface Draft {
   originalInput: string;
   status: MealDraftStatus;
   mealData: Meal | null;
+  createdAt: number;
   error?: string;
 }
