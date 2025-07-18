@@ -1,5 +1,5 @@
 import apiClient from '../../../lib/apiClient';
-import type { MealDraftResponse } from '../types';
+import type { MealDraftResponse, MealListResponse } from '../types';
 
 /**
  * Creates a meal draft. User must be authenticated.
@@ -21,4 +21,25 @@ export const createMealDraft = (
  */
 export const checkDraftStatus = (draftId: string): Promise<MealDraftResponse> => {
   return apiClient(`/api/v1/meal_drafts/${draftId}`);
+};
+
+/**
+ * Fetches a paginated list of the latest saved meals.
+ * @param limit The number of meals to fetch.
+ * @param next The cursor for the next page of results.
+ * @returns A list of meals and the next page cursor.
+ */
+export const getLatestMeals = (
+  { limit, next }: { limit: number; next?: string | null }
+): Promise<MealListResponse> => {
+  const params = new URLSearchParams({
+    sort: 'latest',
+    limit: String(limit),
+  });
+
+  if (next) {
+    params.append('next', next);
+  }
+
+  return apiClient(`/api/v1/meals?${params.toString()}`);
 };

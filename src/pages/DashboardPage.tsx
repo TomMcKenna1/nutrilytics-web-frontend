@@ -3,6 +3,7 @@ import { useAuth } from "../providers/AuthProvider";
 import { createMealDraft } from "../features/meals/api/mealService";
 import { useDraftStore } from "../store/draftStore";
 import { MealDraftsList } from "../features/meals/components/MealDraftsList";
+import { HistoricalMealsList } from "../features/meals/components/HistoricalMealList";
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -75,6 +76,11 @@ const DashboardPage = () => {
       <section>
         <h2 style={{marginTop: '2rem'}}>Recent Generations</h2>
         <MealDraftsList />
+      </section>
+
+      <section>
+        <h2>Meal History</h2>
+        <HistoricalMealsList />
       </section>
     </div>
   );

@@ -39,6 +39,12 @@ export interface Meal {
   components: MealComponent[];
 }
 
+export interface MealResponse extends Meal {
+  id: string;
+  uid: string;
+  createdAt: string;
+}
+
 export interface MealDraftResponse {
   status: MealDraftStatus;
   uid: string;
@@ -52,4 +58,9 @@ export interface Draft {
   mealData: Meal | null;
   createdAt: number;
   error?: string;
+}
+
+export interface MealListResponse {
+  meals: MealResponse[];
+  next: string | null;
 }
