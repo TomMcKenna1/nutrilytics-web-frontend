@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { getLatestMeals } from "../features/meals/api/mealService";
 import type { MealResponse } from "../features/meals/types";
 
-const MEALS_PER_PAGE = 1;
+const MEALS_PER_PAGE = 5;
 
 export const useInfiniteMeals = () => {
   const [meals, setMeals] = useState<MealResponse[]>([]);

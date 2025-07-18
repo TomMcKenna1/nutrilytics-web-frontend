@@ -1,17 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { checkDraftStatus } from "../features/meals/api/mealService";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { checkDraftStatus, saveDraftAsMeal } from "../features/meals/api/mealService";
 import { useDraftStore } from "../store/draftStore";
 import type {
   MealDraftResponse,
   NutrientProfile,
 } from "../features/meals/types";
 import { MealComponentsList } from "../features/meals/components/MealComponentList";
-import { TotalNutritionCard } from "../features/meals/components/TotalNutrititionCard";
+import { TotalNutritionCard } from "../features/meals/components/TotalNutritionCard";
 
 export const DraftPage = () => {
   const { draftId } = useParams<{ draftId: string }>();
-  const { updateDraft } = useDraftStore((state) => state.actions);
+  const { updateDraft, removeDraft } = useDraftStore((state) => state.actions);
+  const navigate = useNavigate();
 
   // Get meal from local cache first
   const cachedDraft = useDraftStore((s) =>
@@ -28,6 +29,7 @@ export const DraftPage = () => {
   });
 
   const [isLoading, setIsLoading] = useState(!cachedDraft);
+  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const totalNutrients = useMemo((): NutrientProfile | null => {
@@ -76,7 +78,6 @@ export const DraftPage = () => {
       return;
     }
 
-    // Fetch the latest data from backend in the background.
     checkDraftStatus(draftId)
       .then((freshData) => {
         setLiveDraft(freshData);
@@ -96,6 +97,23 @@ export const DraftPage = () => {
         }
       });
   }, [draftId, updateDraft, isLoading]);
+
+  const handleSaveMeal = async () => {
+    if (!draftId) return;
+
+    setIsSaving(true);
+    setError(null);
+
+    try {
+      const newMeal = await saveDraftAsMeal(draftId);
+      removeDraft(draftId);
+      navigate(`/meal/${newMeal.id}`);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const renderContent = () => {
     if (isLoading) {
@@ -145,6 +163,22 @@ export const DraftPage = () => {
             >
               <MealComponentsList components={liveDraft.meal.components} />
               {totalNutrients && <TotalNutritionCard totals={totalNutrients} />}
+            </div>
+            <div style={{ marginTop: "2rem", display: "flex", gap: "1rem" }}>
+              <button
+                onClick={handleSaveMeal}
+                disabled={isSaving}
+                style={{
+                  padding: "0.75rem 1.5rem",
+                  cursor: "pointer",
+                  background: "green",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                }}
+              >
+                {isSaving ? "Saving..." : "Save Meal"}
+              </button>
             </div>
           </div>
         );

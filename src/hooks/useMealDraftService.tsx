@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useDraftStore } from '../store/draftStore';
 import { checkDraftStatus } from '../features/meals/api/mealService';
 
-const POLLING_INTERVAL = 2000;
+const POLLING_INTERVAL = 500;
 
 export const useMealDraftsPolling = () => {
   const { updateDraft } = useDraftStore((state) => state.actions);

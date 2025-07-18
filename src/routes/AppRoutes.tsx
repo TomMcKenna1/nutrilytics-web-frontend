@@ -6,6 +6,7 @@ import LoginPage from '../pages/LoginPage';
 import DashboardPage from '../pages/DashboardPage';
 import NotFoundPage from '../pages/NotFoundPage'; 
 import DraftPage from '../pages/DraftPage';
+import MealPage from '../pages/MealPage';
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ export const router = createBrowserRouter([
       {
         path: '/draft/:draftId',
         element: <DraftPage />,
+      },
+      {
+        path: '/meal/:mealId',
+        element: <MealPage />,
       },
     ],
   },

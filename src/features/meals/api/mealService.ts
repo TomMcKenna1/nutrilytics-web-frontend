@@ -1,5 +1,5 @@
 import apiClient from '../../../lib/apiClient';
-import type { MealDraftResponse, MealListResponse } from '../types';
+import type { MealDraftResponse, MealListResponse, MealResponse } from '../types';
 
 /**
  * Creates a meal draft. User must be authenticated.
@@ -42,4 +42,26 @@ export const getLatestMeals = (
   }
 
   return apiClient(`/api/v1/meals?${params.toString()}`);
+};
+
+/**
+ * Saves a completed draft as a permanent meal.
+ * @param draftId The ID of the draft to save.
+ * @returns The newly created Meal object from the backend.
+ */
+export const saveDraftAsMeal = (draftId: string): Promise<MealResponse> => {
+  return apiClient('/api/v1/meals', {
+    method: 'POST',
+    body: { draftId: draftId },
+  });
+};
+
+/**
+ * Fetches a single, saved meal by its ID from the backend API.
+ * This function is now used instead of talking directly to Firestore.
+ * @param mealId The ID of the meal document to fetch.
+ * @returns The full Meal object.
+ */
+export const getMeal = (mealId: string): Promise<MealResponse> => {
+  return apiClient(`/api/v1/meals/${mealId}`);
 };
