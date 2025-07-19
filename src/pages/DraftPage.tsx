@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   checkDraftStatus,
   saveDraftAsMeal,
+  discardMealDraft,
 } from "../features/meals/api/mealService";
 import { useDraftStore } from "../store/draftStore";
 import type {
@@ -34,6 +35,7 @@ export const DraftPage = () => {
 
   const [isLoading, setIsLoading] = useState(!cachedDraft);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDiscarding, setIsDiscarding] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const totalNutrients = useMemo((): NutrientProfile | null => {
@@ -119,6 +121,23 @@ export const DraftPage = () => {
     }
   };
 
+  const handleDiscardMeal = async () => {
+    if (!draftId) return;
+
+    setIsDiscarding(true);
+    setError(null);
+
+    try {
+      await discardMealDraft(draftId);
+      removeDraft(draftId);
+      navigate("/");
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setIsDiscarding(false);
+    }
+  };
+
   const renderContent = () => {
     if (isLoading) {
       return <p>Loading draft...</p>;
@@ -148,6 +167,22 @@ export const DraftPage = () => {
           <div>
             <h2>Generation Failed ❌</h2>
             <p>Unfortunately, we couldn't analyze this meal draft.</p>
+            <div style={{ marginTop: "2rem" }}>
+              <button
+                onClick={handleDiscardMeal}
+                disabled={isDiscarding}
+                style={{
+                  padding: "0.75rem 1.5rem",
+                  cursor: "pointer",
+                  background: "#ef4444",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                }}
+              >
+                {isDiscarding ? "Discarding..." : "Discard Draft"}
+              </button>
+            </div>
           </div>
         );
       case "complete":
@@ -173,17 +208,31 @@ export const DraftPage = () => {
             <div style={{ marginTop: "2rem", display: "flex", gap: "1rem" }}>
               <button
                 onClick={handleSaveMeal}
-                disabled={isSaving}
+                disabled={isSaving || isDiscarding}
                 style={{
                   padding: "0.75rem 1.5rem",
                   cursor: "pointer",
-                  background: "green",
+                  background: "#22c55e",
                   color: "white",
                   border: "none",
                   borderRadius: "8px",
                 }}
               >
                 {isSaving ? "Saving..." : "Save Meal"}
+              </button>
+              <button
+                onClick={handleDiscardMeal}
+                disabled={isSaving || isDiscarding}
+                style={{
+                  padding: "0.75rem 1.5rem",
+                  cursor: "pointer",
+                  background: "#ef4444",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                }}
+              >
+                {isDiscarding ? "Discarding..." : "Discard Draft"}
               </button>
             </div>
           </div>

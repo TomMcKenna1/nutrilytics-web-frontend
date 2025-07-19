@@ -65,3 +65,14 @@ export const saveDraftAsMeal = (draftId: string): Promise<MealResponse> => {
 export const getMeal = (mealId: string): Promise<MealResponse> => {
   return apiClient(`/api/v1/meals/${mealId}`);
 };
+
+/**
+ * Discards a meal draft. User must be authenticated.
+ * @param draftId The ID of the draft to discard.
+ * @returns An empty promise on success.
+ */
+export const discardMealDraft = (draftId: string): Promise<void> => {
+  return apiClient(`/api/v1/meal_drafts/${draftId}`, {
+    method: 'DELETE',
+  });
+};
