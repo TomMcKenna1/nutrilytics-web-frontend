@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useDraftStore } from '../store/draftStore';
 import { checkDraftStatus } from '../features/meals/api/mealService';
 
-const POLLING_INTERVAL = 500;
+const POLLING_INTERVAL = 1000;
 
 export const useMealDraftsPolling = () => {
   const { updateDraft } = useDraftStore((state) => state.actions);
@@ -25,7 +25,7 @@ export const useMealDraftsPolling = () => {
             console.log(`Draft ${draft.id} is now ${result.status}.`);
             updateDraft(draft.id, {
               status: result.status,
-              mealData: result.meal,
+              mealDraft: result.mealDraft,
             });
           }
         } catch (error) {

@@ -31,7 +31,7 @@ const MealDraftItem = ({ draft }: { draft: Draft }) => {
     }
   };
 
-  if (draft.status === 'complete' && draft.mealData) {
+  if (draft.status === 'complete' && draft.mealDraft) {
     return (
       <Link to={`/draft/${draft.id}`} style={styles.link}>
         <div style={styles.item}>

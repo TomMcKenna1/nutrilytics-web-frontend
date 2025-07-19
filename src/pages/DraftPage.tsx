@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { checkDraftStatus, saveDraftAsMeal } from "../features/meals/api/mealService";
+import {
+  checkDraftStatus,
+  saveDraftAsMeal,
+} from "../features/meals/api/mealService";
 import { useDraftStore } from "../store/draftStore";
 import type {
   MealDraftResponse,
@@ -22,8 +25,9 @@ export const DraftPage = () => {
   const [liveDraft, setLiveDraft] = useState<MealDraftResponse | null>(() => {
     if (!cachedDraft) return null;
     return {
+      id: cachedDraft.id,
       status: cachedDraft.status,
-      meal: cachedDraft.mealData,
+      mealDraft: cachedDraft.mealDraft,
       uid: "",
     };
   });
@@ -33,7 +37,7 @@ export const DraftPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   const totalNutrients = useMemo((): NutrientProfile | null => {
-    if (liveDraft?.status !== "complete" || !liveDraft.meal?.components) {
+    if (liveDraft?.status !== "complete" || !liveDraft.mealDraft?.components) {
       return null;
     }
     const initialTotals: NutrientProfile = {
@@ -61,7 +65,7 @@ export const DraftPage = () => {
       isUltraProcessed: false,
     };
 
-    return liveDraft.meal.components.reduce((totals, component) => {
+    return liveDraft.mealDraft.components.reduce((totals, component) => {
       totals.energy += component.nutrientProfile.energy;
       totals.fats += component.nutrientProfile.fats;
       totals.protein += component.nutrientProfile.protein;
@@ -84,7 +88,7 @@ export const DraftPage = () => {
         if (freshData.status !== "pending") {
           updateDraft(draftId, {
             status: freshData.status,
-            mealData: freshData.meal,
+            mealDraft: freshData.mealDraft,
           });
         }
       })
@@ -147,11 +151,13 @@ export const DraftPage = () => {
           </div>
         );
       case "complete":
-        if (!liveDraft.meal) return <p>Meal data is missing.</p>;
+        if (!liveDraft.mealDraft) return <p>Meal data is missing.</p>;
         return (
           <div>
-            <h2>{liveDraft.meal.name}</h2>
-            <p style={{ color: "#4a5568" }}>{liveDraft.meal.description}</p>
+            <h2>{liveDraft.mealDraft.name}</h2>
+            <p style={{ color: "#4a5568" }}>
+              {liveDraft.mealDraft.description}
+            </p>
 
             <div
               style={{
@@ -161,7 +167,7 @@ export const DraftPage = () => {
                 marginTop: "2rem",
               }}
             >
-              <MealComponentsList components={liveDraft.meal.components} />
+              <MealComponentsList components={liveDraft.mealDraft.components} />
               {totalNutrients && <TotalNutritionCard totals={totalNutrients} />}
             </div>
             <div style={{ marginTop: "2rem", display: "flex", gap: "1rem" }}>

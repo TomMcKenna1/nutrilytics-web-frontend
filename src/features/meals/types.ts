@@ -26,6 +26,7 @@ export interface NutrientProfile {
 }
 
 export interface MealComponent {
+  id: string;
   name: string;
   brand: string | null;
   quantity: string;
@@ -36,6 +37,7 @@ export interface MealComponent {
 export interface Meal {
   name: string;
   description: string;
+  nutrientProfile: NutrientProfile;
   components: MealComponent[];
 }
 
@@ -46,16 +48,17 @@ export interface MealResponse extends Meal {
 }
 
 export interface MealDraftResponse {
-  status: MealDraftStatus;
+  id: string;
   uid: string;
-  meal: Meal | null;
+  status: MealDraftStatus;
+  mealDraft: Meal | null;
 }
 
 export interface Draft {
   id: string;
   originalInput: string;
   status: MealDraftStatus;
-  mealData: Meal | null;
+  mealDraft: Meal | null;
   createdAt: number;
   error?: string;
 }
