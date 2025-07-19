@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
+import MainLayout from '../components/layout/MainLayout';
 
 // Page Imports
 import LoginPage from '../pages/LoginPage';
@@ -14,20 +15,24 @@ export const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    // Protected routes
     element: <ProtectedRoute />,
     children: [
       {
-        path: '/',
-        element: <DashboardPage />,
-      },
-      {
-        path: '/draft/:draftId',
-        element: <DraftPage />,
-      },
-      {
-        path: '/meal/:mealId',
-        element: <MealPage />,
+        element: <MainLayout />,
+        children: [
+          {
+            path: '/',
+            element: <DashboardPage />,
+          },
+          {
+            path: '/draft/:draftId',
+            element: <DraftPage />,
+          },
+          {
+            path: '/meal/:mealId',
+            element: <MealPage />,
+          },
+        ],
       },
     ],
   },
