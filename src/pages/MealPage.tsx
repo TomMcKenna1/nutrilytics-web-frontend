@@ -1,8 +1,8 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../providers/AuthProvider";
 import { getMeal } from "../features/meals/api/mealService";
-import type { MealResponse, NutrientProfile } from "../features/meals/types";
+import type { MealResponse } from "../features/meals/types";
 
 import { MealComponentsList } from "../features/meals/components/MealComponentList";
 import { TotalNutritionCard } from "../features/meals/components/TotalNutritionCard";
@@ -34,43 +34,7 @@ export const MealPage = () => {
       .finally(() => setIsLoading(false));
   }, [mealId, user]);
 
-  // 2. Reuse the exact same calculation logic for total nutrition
-  const totalNutrients = useMemo((): NutrientProfile | null => {
-    if (!meal?.components) return null;
-
-    const initialTotals: NutrientProfile = {
-      energy: 0,
-      fats: 0,
-      saturatedFats: 0,
-      carbohydrates: 0,
-      sugars: 0,
-      fibre: 0,
-      protein: 0,
-      salt: 0,
-      containsDairy: false,
-      containsHighDairy: false,
-      containsGluten: false,
-      containsHighGluten: false,
-      containsHistamines: false,
-      containsHighHistamines: false,
-      containsSulphites: false,
-      containsHighSulphites: false,
-      containsSalicylates: false,
-      containsHighSalicylates: false,
-      containsCapsaicin: false,
-      containsHighCapsaicin: false,
-      isProcessed: false,
-      isUltraProcessed: false,
-    };
-
-    return meal.components.reduce((totals, component) => {
-      totals.energy += component.nutrientProfile.energy;
-      totals.fats += component.nutrientProfile.fats;
-      totals.protein += component.nutrientProfile.protein;
-      totals.carbohydrates += component.nutrientProfile.carbohydrates;
-      return totals;
-    }, initialTotals);
-  }, [meal?.components]);
+  const totalNutrients = !meal?.components?null:meal.nutrientProfile;
 
   if (isLoading) return <p>Loading meal...</p>;
   if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
@@ -86,13 +50,10 @@ export const MealPage = () => {
         }}
       >
         <h1>{meal.name}</h1>
-        {/* This link sets up our next step: editing a saved meal */}
         <Link to={`/meal/${meal.id}/edit`}>Edit Meal</Link>
       </div>
 
       <p style={{ color: "#4a5568" }}>{meal.description}</p>
-
-      {/* 3. Reuse our components to build a consistent UI */}
       <div
         style={{
           display: "grid",

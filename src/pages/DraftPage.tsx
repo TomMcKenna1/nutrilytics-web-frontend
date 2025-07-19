@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   checkDraftStatus,
@@ -7,8 +7,7 @@ import {
 } from "../features/meals/api/mealService";
 import { useDraftStore } from "../store/draftStore";
 import type {
-  MealDraftResponse,
-  NutrientProfile,
+  MealDraftResponse
 } from "../features/meals/types";
 import { MealComponentsList } from "../features/meals/components/MealComponentList";
 import { TotalNutritionCard } from "../features/meals/components/TotalNutritionCard";
@@ -38,44 +37,10 @@ export const DraftPage = () => {
   const [isDiscarding, setIsDiscarding] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const totalNutrients = useMemo((): NutrientProfile | null => {
-    if (liveDraft?.status !== "complete" || !liveDraft.mealDraft?.components) {
-      return null;
-    }
-    const initialTotals: NutrientProfile = {
-      energy: 0,
-      fats: 0,
-      saturatedFats: 0,
-      carbohydrates: 0,
-      sugars: 0,
-      fibre: 0,
-      protein: 0,
-      salt: 0,
-      containsDairy: false,
-      containsHighDairy: false,
-      containsGluten: false,
-      containsHighGluten: false,
-      containsHistamines: false,
-      containsHighHistamines: false,
-      containsSulphites: false,
-      containsHighSulphites: false,
-      containsSalicylates: false,
-      containsHighSalicylates: false,
-      containsCapsaicin: false,
-      containsHighCapsaicin: false,
-      isProcessed: false,
-      isUltraProcessed: false,
-    };
-
-    return liveDraft.mealDraft.components.reduce((totals, component) => {
-      totals.energy += component.nutrientProfile.energy;
-      totals.fats += component.nutrientProfile.fats;
-      totals.protein += component.nutrientProfile.protein;
-      totals.carbohydrates += component.nutrientProfile.carbohydrates;
-      //  Add more later
-      return totals;
-    }, initialTotals);
-  }, [liveDraft]);
+  const totalNutrients =
+    liveDraft?.status !== "complete" || !liveDraft.mealDraft?.nutrientProfile
+      ? null
+      : liveDraft.mealDraft.nutrientProfile;
 
   useEffect(() => {
     if (!draftId) {
