@@ -1,17 +1,17 @@
-import { createBrowserRouter } from 'react-router-dom';
-import ProtectedRoute from './ProtectedRoute';
-import MainLayout from '../components/layout/MainLayout';
+import { createBrowserRouter } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute";
+import MainLayout from "../components/layout/MainLayout";
 
-// Page Imports
-import LoginPage from '../pages/LoginPage';
-import DashboardPage from '../pages/DashboardPage';
-import NotFoundPage from '../pages/NotFoundPage'; 
-import DraftPage from '../pages/DraftPage';
-import MealPage from '../pages/MealPage';
+import LoginPage from "../pages/LoginPage";
+import DashboardPage from "../pages/DashboardPage";
+import NotFoundPage from "../pages/NotFoundPage";
+import DraftPage from "../pages/DraftPage";
+import MealPage from "../pages/MealPage";
+import AccountPage from "../pages/AccountPage";
 
 export const router = createBrowserRouter([
   {
-    path: '/login',
+    path: "/login",
     element: <LoginPage />,
   },
   {
@@ -21,16 +21,20 @@ export const router = createBrowserRouter([
         element: <MainLayout />,
         children: [
           {
-            path: '/',
+            path: "/",
             element: <DashboardPage />,
           },
           {
-            path: '/draft/:draftId',
+            path: "/draft/:draftId",
             element: <DraftPage />,
           },
           {
-            path: '/meal/:mealId',
+            path: "/meal/:mealId",
             element: <MealPage />,
+          },
+          {
+            path: "/account",
+            element: <AccountPage />,
           },
         ],
       },
@@ -38,7 +42,7 @@ export const router = createBrowserRouter([
   },
   {
     // Catch-all
-    path: '*',
+    path: "*",
     element: <NotFoundPage />,
   },
 ]);
