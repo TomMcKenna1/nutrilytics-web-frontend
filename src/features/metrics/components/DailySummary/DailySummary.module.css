@@ -1,0 +1,80 @@
+.summaryContainer {
+  --color-energy: #1a73e8;
+  --color-protein: #8e44ad;
+  --color-carbs: #f39c12;
+  --color-sugars: #e91e63;
+  --color-fats: #16a085;
+  --color-fibre: #27ae60;
+}
+
+.summaryContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-5);
+  font-family: var(--font-primary);
+}
+
+.mealsLoggedContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-right: var(--spacing-4);
+  border-right: 1px solid var(--color-border-light);
+}
+
+.mealsCount {
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--color-primary-blue);
+  line-height: 1;
+}
+
+.mealsLabel {
+  font-size: 1rem;
+  color: var(--color-text-medium);
+  margin-top: var(--spacing-2);
+}
+
+.nutrientsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: var(--spacing-4);
+  width: 100%;
+}
+
+.nutrientCircleContainer {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.nutrientSvg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+
+.nutrientValue {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  transition: color 0.4s ease;
+  z-index: 1;
+}
+
+.nutrientLabel {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  text-transform: capitalize;
+  z-index: 1;
+}

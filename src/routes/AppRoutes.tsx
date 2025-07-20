@@ -1,9 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
-import MainLayout from "../components/layout/MainLayout";
-
-import LoginPage from "../pages/LoginPage";
-import DashboardPage from "../pages/DashboardPage";
+import MainLayout from "../components/layout/MainLayout/MainLayout";
+import LoginPage from "../pages/LoginPage/LoginPage";
+import DashboardPage from "../pages/DashboardPage/DashboardPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import DraftPage from "../pages/DraftPage";
 import MealPage from "../pages/MealPage";
@@ -11,14 +10,14 @@ import AccountPage from "../pages/AccountPage";
 
 export const router = createBrowserRouter([
   {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
-    element: <ProtectedRoute />,
+    element: <MainLayout />,
     children: [
       {
-        element: <MainLayout />,
+        path: "/login",
+        element: <LoginPage />,
+      },
+      {
+        element: <ProtectedRoute />,
         children: [
           {
             path: "/",
@@ -38,11 +37,11 @@ export const router = createBrowserRouter([
           },
         ],
       },
+      {
+        // Catch-all
+        path: "*",
+        element: <NotFoundPage />,
+      },
     ],
-  },
-  {
-    // Catch-all
-    path: "*",
-    element: <NotFoundPage />,
   },
 ]);

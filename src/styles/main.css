@@ -15,7 +15,7 @@ body,
 }
 
 body {
-  line-height: 1.5; 
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -52,18 +52,20 @@ h6 {
 
 :root {
   /* Font Families */
-  --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
-  --font-mono: 'Menlo', 'Consolas', 'Monaco', 'liberation mono',
-    'Lucida Console', monospace;
+  --font-primary: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --font-mono: 'Menlo', 'Consolas', 'Monaco', 'liberation mono', 'Lucida Console', monospace;
 
   /* Colors */
-  --color-text: #2d3748;
-  --color-background: #f7fafc; 
-  --color-primary: #5a67d8; 
-  --color-secondary: #9f7aea;
-  --color-accent: #ed64a6; 
-  --color-border: #e2e8f0;
+  --color-primary-blue: #1a73e8; /* Blue */
+  --color-primary-blue-dark: #1760c4; /* Darker Blue for hover */
+  --color-text-dark: #202124; /* Dark gray for main text */
+  --color-text-medium: #5f6368; /* Medium gray for secondary text */
+  --color-text-light: #70757a; /* Light gray for subtle text */
+  --color-background-light: #ffffff; /* Pure white for main backgrounds */
+  --color-background-soft: #f8f9fa; /* Off-white for subtle backgrounds */
+  --color-border-light: #dadce0; /* Light gray for subtle borders */
+  --color-error: #d93025; /* Standard red for errors */
+  --color-accent-google: #4285F4; /* Primary Blue for Google (re-emphasized) */
 
   /* Spacing Units */
   --spacing-1: 0.25rem; /* 4px */
@@ -71,10 +73,21 @@ h6 {
   --spacing-3: 1rem; /* 16px */
   --spacing-4: 2rem; /* 32px */
   --spacing-5: 4rem; /* 64px */
+
+  /* Border Radius */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 16px;
+
+  /* Box Shadows */
+  --box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --box-shadow-google: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15); /* Common Google card shadow */
 }
 
 body {
   font-family: var(--font-primary);
-  background-color: var(--color-background);
-  color: var(--color-text);
+  background-color: var(--color-background-soft);
+  color: var(--color-text-dark);
 }
