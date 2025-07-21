@@ -1,6 +1,6 @@
-import { auth } from './firebase';
+import { auth } from "./firebase";
 
-interface ApiClientOptions extends Omit<RequestInit, 'body'> {
+interface ApiClientOptions extends Omit<RequestInit, "body"> {
   body?: Record<string, unknown>;
   requiresAuth?: boolean;
   customHeaders?: HeadersInit;
@@ -13,26 +13,31 @@ interface ApiClientOptions extends Omit<RequestInit, 'body'> {
  */
 const apiClient = async <T>(
   endpoint: string,
-  options: ApiClientOptions = {}
+  options: ApiClientOptions = {},
 ): Promise<T> => {
-  const { body, requiresAuth = true, customHeaders = {}, ...customConfig } = options;
+  const {
+    body,
+    requiresAuth = true,
+    customHeaders = {},
+    ...customConfig
+  } = options;
 
   const headers = new Headers({
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     ...customHeaders,
   });
 
   if (requiresAuth) {
     const currentUser = auth.currentUser;
     if (!currentUser) {
-      throw new Error('Authentication required, but no user is logged in.');
+      throw new Error("Authentication required, but no user is logged in.");
     }
     const idToken = await currentUser.getIdToken();
-    headers.set('Authorization', `Bearer ${idToken}`);
+    headers.set("Authorization", `Bearer ${idToken}`);
   }
 
   const config: RequestInit = {
-    method: body ? 'POST' : 'GET',
+    method: body ? "POST" : "GET",
     ...customConfig,
     headers,
   };
@@ -46,7 +51,8 @@ const apiClient = async <T>(
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     const errorMessage =
-      errorData.message || `API Error: ${response.status} ${response.statusText}`;
+      errorData.message ||
+      `API Error: ${response.status} ${response.statusText}`;
     throw new Error(errorMessage);
   }
 

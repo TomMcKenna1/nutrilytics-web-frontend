@@ -9,7 +9,8 @@ import styles from "./DraftPage.module.css";
 export const DraftPage = () => {
   const { draftId } = useParams<{ draftId: string }>();
   const navigate = useNavigate();
-  const { draft, isLoading, error, save, isSaving, discard, isDiscarding } = useMealDraft(draftId);
+  const { draft, isLoading, error, save, isSaving, discard, isDiscarding } =
+    useMealDraft(draftId);
 
   useEffect(() => {
     if (error) {
@@ -35,12 +36,13 @@ export const DraftPage = () => {
 
   const renderContent = () => {
     // Show loading state while fetching or polling
-    if (isLoading || (draft?.status === 'pending' && !draft.mealDraft)) {
+    if (isLoading || (draft?.status === "pending" && !draft.mealDraft)) {
       return (
         <div className={styles.loadingContainer}>
           <h2 className={styles.statusHeader}>Loading Draft...</h2>
           <p className={styles.description}>
-            Just a moment while we analyse your meal details. Feel free to leave this page.
+            Just a moment while we analyse your meal details. Feel free to leave
+            this page.
           </p>
           <div className={styles.loader}></div>
         </div>
@@ -61,7 +63,11 @@ export const DraftPage = () => {
               {draft.error && <strong> Reason: {draft.error}</strong>}
             </p>
             <div className={styles.actionsContainer}>
-              <button onClick={handleDiscardMeal} disabled={isDiscarding} className={`${styles.button} ${styles.discardButton}`}>
+              <button
+                onClick={handleDiscardMeal}
+                disabled={isDiscarding}
+                className={`${styles.button} ${styles.discardButton}`}
+              >
                 {isDiscarding ? "Discarding..." : "Discard Draft"}
               </button>
             </div>
@@ -69,8 +75,12 @@ export const DraftPage = () => {
         );
       case "complete":
         if (!draft.mealDraft) return <p>Meal data is missing.</p>;
-        const totalNutrients: NutrientProfile | null = draft.mealDraft.nutrientProfile;
-        const totalWeight = draft.mealDraft.components.reduce((t, c) => t + c.totalWeight, 0);
+        const totalNutrients: NutrientProfile | null =
+          draft.mealDraft.nutrientProfile;
+        const totalWeight = draft.mealDraft.components.reduce(
+          (t, c) => t + c.totalWeight,
+          0,
+        );
 
         return (
           <>
@@ -78,13 +88,26 @@ export const DraftPage = () => {
             <p className={styles.description}>{draft.mealDraft.description}</p>
             <div className={styles.contentGrid}>
               <MealComponentsList components={draft.mealDraft.components} />
-              {totalNutrients && <TotalNutritionCard totals={totalNutrients} mealWeight={totalWeight} />}
+              {totalNutrients && (
+                <TotalNutritionCard
+                  totals={totalNutrients}
+                  mealWeight={totalWeight}
+                />
+              )}
             </div>
             <div className={styles.actionsContainer}>
-              <button onClick={handleSaveMeal} disabled={isSaving || isDiscarding} className={`${styles.button} ${styles.saveButton}`}>
+              <button
+                onClick={handleSaveMeal}
+                disabled={isSaving || isDiscarding}
+                className={`${styles.button} ${styles.saveButton}`}
+              >
                 {isSaving ? "Saving..." : "Save Meal"}
               </button>
-              <button onClick={handleDiscardMeal} disabled={isSaving || isDiscarding} className={`${styles.button} ${styles.discardButton}`}>
+              <button
+                onClick={handleDiscardMeal}
+                disabled={isSaving || isDiscarding}
+                className={`${styles.button} ${styles.discardButton}`}
+              >
                 {isDiscarding ? "Discarding..." : "Discard Draft"}
               </button>
             </div>
@@ -100,7 +123,9 @@ export const DraftPage = () => {
       <div className={styles.draftCard}>
         <h1 className={styles.title}>Draft Review</h1>
         {renderContent()}
-        <Link to="/" className={styles.backLink}>&larr; Back to Dashboard</Link>
+        <Link to="/" className={styles.backLink}>
+          &larr; Back to Dashboard
+        </Link>
       </div>
     </div>
   );

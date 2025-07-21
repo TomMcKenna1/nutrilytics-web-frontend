@@ -1,4 +1,4 @@
-import styles from './MealItemPlaceholder.module.css';
+import styles from "./MealItemPlaceholder.module.css";
 
 const MealItemPlaceholder = () => {
   return (

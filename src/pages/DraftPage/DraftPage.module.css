@@ -125,7 +125,9 @@
   border-radius: var(--border-radius-md);
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  transition:
+    background-color 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
   text-align: center;
 }
 

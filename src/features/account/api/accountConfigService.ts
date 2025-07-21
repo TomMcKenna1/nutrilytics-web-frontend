@@ -1,5 +1,5 @@
 import apiClient from "../../../lib/apiClient";
-import type {NutritionTarget, UpdateNutritionTarget} from "../types"
+import type { NutritionTarget, UpdateNutritionTarget } from "../types";
 
 /**
  * Sends an authenticated request to update the user's daily nutrition targets.
@@ -7,7 +7,7 @@ import type {NutritionTarget, UpdateNutritionTarget} from "../types"
  * @returns A promise that resolves when the targets are successfully updated.
  */
 export const updateNutritionTargets = (
-  targets: UpdateNutritionTarget
+  targets: UpdateNutritionTarget,
 ): Promise<NutritionTarget> => {
   return apiClient("/api/v1/user/targets", {
     method: "PUT",

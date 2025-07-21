@@ -39,7 +39,9 @@
   background-color: var(--color-background-soft);
   border-top: 5px solid;
   text-align: center;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
   min-height: 140px;
 }
 

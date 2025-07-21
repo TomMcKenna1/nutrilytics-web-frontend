@@ -41,31 +41,31 @@ const LoginPage: React.FC = () => {
           break;
         case "auth/weak-password":
           setError(
-            "Password is too weak. It should be at least 6 characters long."
+            "Password is too weak. It should be at least 6 characters long.",
           );
           break;
 
         // --- LOGIN ERRORS ---
         case "auth/invalid-credential":
           setError(
-            "Invalid credentials. Please check your email and password."
+            "Invalid credentials. Please check your email and password.",
           );
           break;
 
         // --- COMMON ERRORS ---
         case "auth/invalid-email":
           setError(
-            "The email address is not valid. Please enter a valid email."
+            "The email address is not valid. Please enter a valid email.",
           );
           break;
         case "auth/too-many-requests":
           setError(
-            "Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later."
+            "Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.",
           );
           break;
         case "auth/network-request-failed":
           setError(
-            "Network error. Please check your internet connection and try again."
+            "Network error. Please check your internet connection and try again.",
           );
           break;
 

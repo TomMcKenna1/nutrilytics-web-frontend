@@ -5,19 +5,19 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signOut as firebaseSignOut,
-} from 'firebase/auth';
-import { auth as firebaseAuth } from '../../../lib/firebase';
+} from "firebase/auth";
+import { auth as firebaseAuth } from "../../../lib/firebase";
 
 export const signUpWithEmail = async (
   email: string,
   password: string,
-  auth: Auth = firebaseAuth
+  auth: Auth = firebaseAuth,
 ) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
-      password
+      password,
     );
     return { user: userCredential.user, error: null };
   } catch (error) {
@@ -28,13 +28,13 @@ export const signUpWithEmail = async (
 export const signInWithEmail = async (
   email: string,
   password: string,
-  auth: Auth = firebaseAuth
+  auth: Auth = firebaseAuth,
 ) => {
   try {
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
-      password
+      password,
     );
     return { user: userCredential.user, error: null };
   } catch (error) {

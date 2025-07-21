@@ -7,7 +7,7 @@ import type { Draft, MealListResponse, MealResponse } from "../types";
  * @returns The draftId for the created meal draft.
  */
 export const createMealDraft = (
-  mealDescription: string
+  mealDescription: string,
 ): Promise<{ draftId: string }> => {
   return apiClient("/api/v1/meal_drafts", {
     body: { description: mealDescription },

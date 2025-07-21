@@ -34,10 +34,10 @@ export const MealPage = () => {
       .finally(() => setIsLoading(false));
   }, [mealId, user]);
 
-  const totalNutrients = !meal?.components?null:meal.nutrientProfile;
-  const totalWeight = (meal?.components??[]).reduce(
+  const totalNutrients = !meal?.components ? null : meal.nutrientProfile;
+  const totalWeight = (meal?.components ?? []).reduce(
     (total, component) => total + component.totalWeight,
-    0
+    0,
   );
 
   if (isLoading) return <p>Loading meal...</p>;
@@ -67,7 +67,12 @@ export const MealPage = () => {
         }}
       >
         <MealComponentsList components={meal.components} />
-        {totalNutrients && <TotalNutritionCard totals={totalNutrients} mealWeight={totalWeight} />}
+        {totalNutrients && (
+          <TotalNutritionCard
+            totals={totalNutrients}
+            mealWeight={totalWeight}
+          />
+        )}
       </div>
 
       <Link to="/" style={{ display: "inline-block", marginTop: "2rem" }}>

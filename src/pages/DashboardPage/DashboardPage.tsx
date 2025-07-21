@@ -1,7 +1,7 @@
-import { MealDraftsList } from '../../features/meals/components/MealDraftsList';
-import { HistoricalMealList } from '../../features/meals/components/HistoricalMealList/HistoricalMealList';
-import { DailySummary } from '../../features/metrics/components/DailySummary/DailySummary';
-import styles from './DashboardPage.module.css';
+import { MealDraftsList } from "../../features/meals/components/MealDraftsList";
+import { HistoricalMealList } from "../../features/meals/components/HistoricalMealList/HistoricalMealList";
+import { DailySummary } from "../../features/metrics/components/DailySummary/DailySummary";
+import styles from "./DashboardPage.module.css";
 
 const DashboardPage = () => {
   return (

@@ -29,7 +29,7 @@ export const DraftsPollingManager = () => {
         .filter((r) => r.isSuccess && r.data?.status !== "pending")
         .map((r) => r.data!.id)
         .join(","),
-    [pollResults]
+    [pollResults],
   );
 
   useEffect(() => {

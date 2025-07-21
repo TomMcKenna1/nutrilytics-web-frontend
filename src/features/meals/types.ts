@@ -1,4 +1,4 @@
-export type MealDraftStatus = 'pending' | 'complete' | 'error';
+export type MealDraftStatus = "pending" | "complete" | "error";
 
 export interface NutrientProfile {
   energy: number;

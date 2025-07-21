@@ -13,7 +13,9 @@
   border: 1px solid var(--color-border-light);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--box-shadow-sm);
-  transition: box-shadow 0.2s, border-color 0.2s;
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s;
 }
 
 .mealInput:focus {
@@ -23,8 +25,8 @@
 }
 
 .mealInput:disabled {
-    background-color: #f0f0f0;
-    cursor: not-allowed;
+  background-color: #f0f0f0;
+  cursor: not-allowed;
 }
 
 .mealButton {
@@ -56,10 +58,10 @@
 }
 
 .errorMessage {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    color: var(--color-error);
-    font-size: 0.875rem;
-    margin-top: var(--spacing-1);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin-top: var(--spacing-1);
 }

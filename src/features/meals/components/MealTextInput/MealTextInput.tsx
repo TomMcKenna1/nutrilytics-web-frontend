@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
-import { useCreateMealDraft } from '../../../../hooks/useCreateMealDraft';
-import styles from './MealTextInput.module.css';
+import React, { useState } from "react";
+import { useCreateMealDraft } from "../../../../hooks/useCreateMealDraft";
+import styles from "./MealTextInput.module.css";
 
 const MealTextInput = () => {
-  const [mealInput, setMealInput] = useState('');
-  const { mutate: createDraft, isPending: isSubmitting, error } = useCreateMealDraft();
+  const [mealInput, setMealInput] = useState("");
+  const {
+    mutate: createDraft,
+    isPending: isSubmitting,
+    error,
+  } = useCreateMealDraft();
 
   const handleMealSubmit = async () => {
     if (!mealInput.trim()) return;
@@ -12,13 +16,13 @@ const MealTextInput = () => {
     createDraft(mealInput, {
       onSuccess: () => {
         // Clear the input field after successful submission
-        setMealInput('');
+        setMealInput("");
       },
     });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleMealSubmit();
     }
@@ -38,8 +42,12 @@ const MealTextInput = () => {
         className={styles.mealInput}
         disabled={isSubmitting}
       />
-      <button onClick={handleMealSubmit} disabled={isSubmitting} className={styles.mealButton}>
-        {isSubmitting ? '...' : 'Log'}
+      <button
+        onClick={handleMealSubmit}
+        disabled={isSubmitting}
+        className={styles.mealButton}
+      >
+        {isSubmitting ? "..." : "Log"}
       </button>
       {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
     </div>
