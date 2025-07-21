@@ -5,7 +5,7 @@ import { getMeal } from "../features/meals/api/mealService";
 import type { MealResponse } from "../features/meals/types";
 
 import { MealComponentsList } from "../features/meals/components/MealComponentList";
-import { TotalNutritionCard } from "../features/meals/components/TotalNutritionCard";
+import { TotalNutritionCard } from "../features/meals/components/TotalNutritionCard/TotalNutritionCard";
 
 export const MealPage = () => {
   const { mealId } = useParams<{ mealId: string }>();
@@ -35,6 +35,10 @@ export const MealPage = () => {
   }, [mealId, user]);
 
   const totalNutrients = !meal?.components?null:meal.nutrientProfile;
+  const totalWeight = (meal?.components??[]).reduce(
+    (total, component) => total + component.totalWeight,
+    0
+  );
 
   if (isLoading) return <p>Loading meal...</p>;
   if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
@@ -63,7 +67,7 @@ export const MealPage = () => {
         }}
       >
         <MealComponentsList components={meal.components} />
-        {totalNutrients && <TotalNutritionCard totals={totalNutrients} />}
+        {totalNutrients && <TotalNutritionCard totals={totalNutrients} mealWeight={totalWeight} />}
       </div>
 
       <Link to="/" style={{ display: "inline-block", marginTop: "2rem" }}>

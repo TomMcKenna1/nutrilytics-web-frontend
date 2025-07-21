@@ -1,0 +1,119 @@
+.card {
+  background-color: var(--color-background-light);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-4);
+  box-shadow: var(--box-shadow-google);
+  max-width: 500px;
+}
+
+.title {
+  font-family: var(--font-primary);
+  color: var(--color-text-dark);
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-3);
+  font-weight: 500;
+  text-align: center;
+}
+
+.mealWeightInfo {
+  font-size: 0.875rem;
+  color: var(--color-text-medium);
+  text-align: center;
+  margin-top: calc(-1 * var(--spacing-2));
+  margin-bottom: var(--spacing-3);
+}
+
+.nutrientsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: var(--spacing-3);
+}
+
+.nutrientTile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-2);
+  border-radius: var(--border-radius-md);
+  background-color: var(--color-background-soft);
+  border-top: 5px solid;
+  text-align: center;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  min-height: 140px;
+}
+
+.nutrientTile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--box-shadow-md);
+}
+
+.nutrientName {
+  font-size: 0.875rem;
+  color: var(--color-text-medium);
+  font-weight: 500;
+}
+
+.valuesContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: var(--spacing-1) 0;
+}
+
+.nutrientValue {
+  font-family: var(--font-primary);
+  font-size: 1.75rem;
+  color: var(--color-text-dark);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.unit {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  margin-left: var(--spacing-1);
+}
+
+.per100gValue {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  margin-top: 2px;
+}
+
+.trafficLightLabel {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  min-height: 1rem;
+}
+
+.low {
+  border-color: #34a853;
+}
+.low .trafficLightLabel {
+  color: #34a853;
+}
+
+.medium {
+  border-color: #fbbc05;
+}
+.medium .trafficLightLabel {
+  color: #fbbc05;
+}
+
+.high {
+  border-color: var(--color-error);
+}
+.high .trafficLightLabel {
+  color: var(--color-error);
+}
+
+.neutral {
+  border-color: var(--color-primary-blue);
+}
+
+.neutral .trafficLightLabel {
+  color: var(--color-primary-blue);
+}

@@ -4,7 +4,7 @@ import MainLayout from "../components/layout/MainLayout/MainLayout";
 import LoginPage from "../pages/LoginPage/LoginPage";
 import DashboardPage from "../pages/DashboardPage/DashboardPage";
 import NotFoundPage from "../pages/NotFoundPage";
-import DraftPage from "../pages/DraftPage";
+import DraftPage from "../pages/DraftPage/DraftPage";
 import MealPage from "../pages/MealPage";
 import AccountPage from "../pages/AccountPage";
 

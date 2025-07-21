@@ -1,0 +1,36 @@
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-bottom: 1px solid var(--color-border-light);
+  background-color: var(--color-background-light);
+}
+
+.placeholder {
+  background-color: #e0e0e0;
+  border-radius: var(--border-radius-sm);
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+.mealName {
+  height: 20px;
+  width: 65%;
+}
+
+.mealDate {
+  height: 20px;
+  width: 20%;
+}
