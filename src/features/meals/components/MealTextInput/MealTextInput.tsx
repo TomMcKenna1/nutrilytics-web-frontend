@@ -22,7 +22,7 @@ const MealTextInput = () => {
 
     try {
       const { draftId } = await createMealDraft(mealInput);
-      addDraft(draftId, mealInput);
+      addDraft(draftId, mealInput, user.uid);
       setMealInput('');
       navigate(`/draft/${draftId}`);
     } catch (err) {

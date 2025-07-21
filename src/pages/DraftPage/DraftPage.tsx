@@ -43,12 +43,8 @@ export const DraftPage = () => {
       setIsFetching(true);
       checkDraftStatus(draftId)
         .then((freshData) => {
-          updateDraft(draftId, {
-            status: freshData.status,
-            mealDraft: freshData.mealDraft,
-            // Should probable return an error here
-            error: undefined,
-          });
+          const { id, ...update } = freshData;
+          updateDraft(id, update);
         })
         .catch((err: unknown) => {
           navigate("/404", { replace: true });

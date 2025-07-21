@@ -44,18 +44,13 @@ export interface Meal {
 export interface MealResponse extends Meal {
   id: string;
   uid: string;
+  submittedAt: string;
   createdAt: string;
-}
-
-export interface MealDraftResponse {
-  id: string;
-  uid: string;
-  status: MealDraftStatus;
-  mealDraft: Meal | null;
 }
 
 export interface Draft {
   id: string;
+  uid: string;
   originalInput: string;
   status: MealDraftStatus;
   mealDraft: Meal | null;

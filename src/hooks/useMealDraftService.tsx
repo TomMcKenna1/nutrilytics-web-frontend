@@ -23,14 +23,16 @@ export const useMealDraftsPolling = () => {
           const result = await checkDraftStatus(draft.id);
           if (result.status !== 'pending') {
             console.log(`Draft ${draft.id} is now ${result.status}.`);
-            updateDraft(draft.id, {
-              status: result.status,
-              mealDraft: result.mealDraft,
-            });
+            const { id, ...update } = result;
+            updateDraft(id, update);
           }
         } catch (error) {
           console.error(`Failed to poll draft ${draft.id}:`, error);
-          updateDraft(draft.id, { status: 'error', error: (error as Error).message });
+          updateDraft(draft.id, {
+            status: 'error',
+            error: (error as Error).message,
+            mealDraft: null,
+          });
         }
       });
     };
