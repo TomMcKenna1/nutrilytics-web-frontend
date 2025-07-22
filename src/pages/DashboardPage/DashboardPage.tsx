@@ -1,4 +1,4 @@
-import { MealDraftsList } from "../../features/meals/components/MealDraftsList";
+import { MealDraftsList } from "../../features/meals/components/MealDraftsList/MealDraftsList";
 import { HistoricalMealList } from "../../features/meals/components/HistoricalMealList/HistoricalMealList";
 import { DailySummary } from "../../features/metrics/components/DailySummary/DailySummary";
 import styles from "./DashboardPage.module.css";

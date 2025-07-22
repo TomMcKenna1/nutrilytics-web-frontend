@@ -1,0 +1,88 @@
+.page {
+  padding: var(--spacing-4);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.title {
+  font-family: var(--font-primary);
+  font-size: 2.5rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  line-height: 1.2;
+}
+
+.description {
+  color: var(--color-text-medium);
+  margin-top: var(--spacing-2);
+  max-width: 60ch;
+}
+
+.editButton {
+  background-color: var(--color-primary-blue);
+  color: white;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--border-radius-md);
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.editButton:hover {
+  background-color: var(--color-primary-blue-dark);
+}
+
+/* Updated mainContent to a column layout */
+.mainContent {
+  display: flex; /* Use flexbox */
+  flex-direction: column; /* Stack items vertically */
+  gap: var(--spacing-4); /* Space between sections */
+}
+
+.nutritionSummary {
+  /* You can add specific styles for the wrapper around TotalNutritionCard here if needed */
+  margin-bottom: var(--spacing-4); /* Add some space below the nutrition card */
+}
+
+.componentsSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  margin-bottom: var(--spacing-3);
+}
+
+.backLink {
+  display: inline-block;
+  margin-top: var(--spacing-4);
+  color: var(--color-primary-blue);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.centered {
+  text-align: center;
+  margin-top: var(--spacing-5);
+  color: var(--color-text-medium);
+}
+
+.error {
+  color: var(--color-error);
+}

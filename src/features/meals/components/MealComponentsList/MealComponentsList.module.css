@@ -1,0 +1,115 @@
+.container {
+  background-color: var(--color-background-light);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden; /* Ensures rounded corners are respected */
+  box-shadow: var(--box-shadow-sm);
+}
+
+.itemWrapper {
+  border-bottom: 1px solid var(--color-border-light); /* Separator for each component block */
+}
+
+.itemWrapper:last-child {
+  border-bottom: none; /* No border for the last item */
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-3);
+  cursor: pointer; /* Indicate clickable */
+  background-color: var(--color-background-light);
+  transition: background-color 0.2s ease-in-out;
+}
+
+.item:hover {
+  background-color: var(--color-background-hover); /* Subtle hover effect */
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-weight: 500;
+  color: var(--color-text-dark);
+}
+
+.quantity {
+  color: var(--color-text-medium);
+  font-size: 0.875rem;
+  margin-top: var(--spacing-0); /* Smaller margin for quantity */
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.weight {
+  font-weight: 500;
+  color: var(--color-text-medium);
+}
+
+.dropdownArrow {
+  font-size: 0.8rem;
+  color: var(--color-primary-blue);
+  transition: transform 0.3s ease-in-out;
+  transform: rotate(0deg); /* Initial state: pointing down */
+}
+
+.arrowOpen {
+  transform: rotate(180deg); /* Rotates up when open */
+}
+
+.detailsPanel {
+  max-height: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.4s ease-out,
+    padding 0.4s ease-out,
+    opacity 0.4s ease-out;
+  opacity: 0;
+  background-color: var(
+    --color-background-details
+  ); /* Slightly darker background for details */
+  padding: 0 var(--spacing-3); /* No vertical padding when closed */
+}
+
+.detailsOpen {
+  max-height: 500px; /* Large enough to accommodate content, adjust if needed */
+  padding: var(--spacing-3); /* Apply padding when open */
+  opacity: 1;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-1) 0;
+  font-size: 0.9rem;
+  border-bottom: 1px dashed var(--color-border-light); /* Subtle separator */
+}
+
+.detailRow:last-child {
+  border-bottom: none;
+}
+
+.detailLabel {
+  color: var(--color-text-medium);
+  font-weight: 400;
+}
+
+.detailValue {
+  color: var(--color-text-dark);
+  font-weight: 500;
+}
+
+.emptyState {
+  padding: var(--spacing-4);
+  text-align: center;
+  color: var(--color-text-light);
+}

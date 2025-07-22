@@ -1,121 +1,96 @@
 .card {
-  background-color: var(--color-background-light);
+  background-color: var(--color-background-card);
   border-radius: var(--border-radius-lg);
+  box-shadow: var(--box-shadow-md);
   padding: var(--spacing-4);
-  box-shadow: var(--box-shadow-google);
-  max-width: 500px;
+  color: var(--color-text-dark);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .title {
   font-family: var(--font-primary);
-  color: var(--color-text-dark);
-  font-size: 1.5rem;
-  margin-bottom: var(--spacing-3);
-  font-weight: 500;
-  text-align: center;
-}
-
-.mealWeightInfo {
-  font-size: 0.875rem;
-  color: var(--color-text-medium);
-  text-align: center;
-  margin-top: calc(-1 * var(--spacing-2));
-  margin-bottom: var(--spacing-3);
-}
-
-.nutrientsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: var(--spacing-3);
-}
-
-.nutrientTile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--spacing-2);
-  border-radius: var(--border-radius-md);
-  background-color: var(--color-background-soft);
-  border-top: 5px solid;
-  text-align: center;
-  transition:
-    transform 0.2s ease-in-out,
-    box-shadow 0.2s ease-in-out;
-  min-height: 140px;
-}
-
-.nutrientTile:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--box-shadow-md);
-}
-
-.nutrientName {
-  font-size: 0.875rem;
-  color: var(--color-text-medium);
-  font-weight: 500;
-}
-
-.valuesContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: var(--spacing-1) 0;
-}
-
-.nutrientValue {
-  font-family: var(--font-primary);
   font-size: 1.75rem;
-  color: var(--color-text-dark);
-  font-weight: 500;
-  line-height: 1.2;
-}
-
-.unit {
-  font-size: 0.875rem;
-  color: var(--color-text-light);
-  margin-left: var(--spacing-1);
-}
-
-.per100gValue {
-  font-size: 0.8rem;
-  color: var(--color-text-light);
-  margin-top: 2px;
-}
-
-.trafficLightLabel {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  min-height: 1rem;
-}
-
-.low {
-  border-color: #34a853;
-}
-.low .trafficLightLabel {
-  color: #34a853;
-}
-
-.medium {
-  border-color: #fbbc05;
-}
-.medium .trafficLightLabel {
-  color: #fbbc05;
-}
-
-.high {
-  border-color: var(--color-error);
-}
-.high .trafficLightLabel {
-  color: var(--color-error);
-}
-
-.neutral {
-  border-color: var(--color-primary-blue);
-}
-
-.neutral .trafficLightLabel {
+  font-weight: 600;
   color: var(--color-primary-blue);
+  margin-bottom: var(--spacing-4);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border-light);
+  padding-bottom: var(--spacing-3);
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.summaryItem {
+  background-color: var(--color-primary-blue-light);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-3);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: var(--color-text-dark);
+}
+
+.summaryLabel {
+  font-size: 0.9rem;
+  color: var(--color-text-medium);
+  margin-bottom: var(--spacing-1);
+}
+
+.summaryValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary-blue-dark);
+}
+
+.nutrientDetails {
+  margin-top: var(--spacing-4);
+}
+
+.detailsTitle {
+  font-family: var(--font-primary);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  margin-bottom: var(--spacing-3);
+  text-align: left;
+}
+
+.detailsGrid {
+  display: grid;
+  /* Adjust minmax to accommodate fewer items if necessary, but current value is flexible */
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--spacing-2) var(--spacing-4);
+}
+
+.detailItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-1) 0;
+  border-bottom: 1px dashed var(--color-border-light);
+  font-size: 0.95rem;
+  color: var(--color-text-medium);
+}
+
+.detailItem:last-child {
+  border-bottom: none;
+}
+
+/* These styles are no longer actively used by the component but are left here */
+.flagTrue {
+  font-weight: 600;
+  color: var(--color-success);
+}
+
+.flagFalse {
+  font-weight: 600;
+  color: var(--color-error);
 }

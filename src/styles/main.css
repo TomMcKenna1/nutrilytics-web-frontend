@@ -70,6 +70,9 @@ h6 {
   --color-border-light: #dadce0; /* Light gray for subtle borders */
   --color-error: #d93025; /* Standard red for errors */
   --color-accent-google: #4285f4; /* Primary Blue for Google (re-emphasized) */
+  --color-traffic-red: #d93025; /* Similar to Google's error/danger red */
+  --color-traffic-amber: #f9ab00; /* Google's warning yellow/orange */
+  --color-traffic-green: #1e8e3e; /* Google's success green */
 
   /* Spacing Units */
   --spacing-1: 0.25rem; /* 4px */

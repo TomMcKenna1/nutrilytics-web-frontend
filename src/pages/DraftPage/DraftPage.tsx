@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useMealDraft } from "../../hooks/useMealDraft";
-import { MealComponentsList } from "../../features/meals/components/MealComponentList";
+import { MealComponentsList } from "../../features/meals/components/MealComponentsList/MealComponentsList";
 import { TotalNutritionCard } from "../../features/meals/components/TotalNutritionCard/TotalNutritionCard";
 import type { NutrientProfile } from "../../features/meals/types";
 import styles from "./DraftPage.module.css";

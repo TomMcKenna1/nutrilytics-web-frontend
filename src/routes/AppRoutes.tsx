@@ -5,7 +5,7 @@ import LoginPage from "../pages/LoginPage/LoginPage";
 import DashboardPage from "../pages/DashboardPage/DashboardPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import DraftPage from "../pages/DraftPage/DraftPage";
-import MealPage from "../pages/MealPage";
+import MealPage from "../pages/MealPage/MealPage";
 import AccountPage from "../pages/AccountPage/AccountPage";
 
 export const router = createBrowserRouter([
