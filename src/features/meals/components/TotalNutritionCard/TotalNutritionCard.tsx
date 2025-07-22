@@ -13,8 +13,6 @@ export const TotalNutritionCard: React.FC<TotalNutritionCardProps> = ({
 }) => {
   return (
     <div className={styles.card}>
-      <h3 className={styles.title}>Total Meal Nutrition</h3>
-
       <div className={styles.totalWeightRow}>
         <span className={styles.summaryLabel}>Total Weight of Meal</span>
         <span className={styles.totalWeightValue}>
@@ -22,46 +20,52 @@ export const TotalNutritionCard: React.FC<TotalNutritionCardProps> = ({
         </span>
       </div>
 
-      <div className={styles.summaryGrid}>
+      <div className={styles.nutrientGrid}>
         <div className={styles.summaryItem}>
           <span className={styles.summaryLabel}>Energy</span>
-          <span className={styles.summaryValue}>
+          <span className={`${styles.summaryValue} ${styles.energy}`}>
             {totals.energy.toFixed(0)}kcal
           </span>
         </div>
         <div className={styles.summaryItem}>
           <span className={styles.summaryLabel}>Protein</span>
-          <span className={styles.summaryValue}>
+          <span className={`${styles.summaryValue} ${styles.protein}`}>
             {totals.protein.toFixed(1)}g
           </span>
         </div>
         <div className={styles.summaryItem}>
           <span className={styles.summaryLabel}>Carbohydrates</span>
-          <span className={styles.summaryValue}>
+          <span className={`${styles.summaryValue} ${styles.carbs}`}>
             {totals.carbohydrates.toFixed(1)}g
           </span>
         </div>
         <div className={styles.summaryItem}>
           <span className={styles.summaryLabel}>Fats</span>
-          <span className={styles.summaryValue}>{totals.fats.toFixed(1)}g</span>
+          <span className={`${styles.summaryValue} ${styles.fats}`}>
+            {totals.fats.toFixed(1)}g
+          </span>
         </div>
-      </div>
-      <div className={styles.nutrientDetails}>
-        <h4 className={styles.detailsTitle}>Detailed Nutrients</h4>
-        <div className={styles.detailsGrid}>
-          <div className={styles.detailItem}>
-            <span>Saturated Fats:</span>{" "}
-            <span>{totals.saturatedFats.toFixed(1)}g</span>
-          </div>
-          <div className={styles.detailItem}>
-            <span>Sugars:</span> <span>{totals.sugars.toFixed(1)}g</span>
-          </div>
-          <div className={styles.detailItem}>
-            <span>Fibre:</span> <span>{totals.fibre.toFixed(1)}g</span>
-          </div>
-          <div className={styles.detailItem}>
-            <span>Salt:</span> <span>{totals.salt.toFixed(2)}g</span>
-          </div>
+        <div className={styles.summaryItem}>
+          <span className={styles.summaryLabel}>Saturated Fats</span>
+          <span className={`${styles.summaryValue} ${styles.saturatedFats}`}>
+            {totals.saturatedFats.toFixed(1)}g
+          </span>
+        </div>
+        <div className={styles.summaryItem}>
+          <span className={styles.summaryLabel}>Sugars</span>
+          <span className={`${styles.summaryValue} ${styles.sugars}`}>
+            {totals.sugars.toFixed(1)}g
+          </span>
+        </div>
+        <div className={styles.summaryItem}>
+          <span className={styles.summaryLabel}>Fibre</span>
+          <span className={`${styles.summaryValue} ${styles.fibre}`}>
+            {totals.fibre.toFixed(1)}g
+          </span>
+        </div>
+        <div className={styles.summaryItem}>
+          <span className={styles.summaryLabel}>Salt</span>
+          <span className={styles.summaryValue}>{totals.salt.toFixed(2)}g</span>
         </div>
       </div>
     </div>

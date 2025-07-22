@@ -169,7 +169,7 @@ export const TrafficLightNutrientBox: React.FC<
   };
 
   const getTargetLabel = (percentage: string) => {
-    return percentage === "N/A" ? "Target" : "Custom Target";
+    return percentage === "N/A" ? "Target" : "Daily Target";
   };
 
   const trafficLightColor =

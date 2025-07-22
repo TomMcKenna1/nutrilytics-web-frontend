@@ -1,0 +1,128 @@
+.page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-4);
+}
+
+.header {
+  margin-bottom: var(--spacing-4);
+}
+
+.backLink {
+  color: var(--color-text-medium);
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-block;
+  margin-bottom: var(--spacing-3);
+}
+
+.backLink:hover {
+  text-decoration: underline;
+  color: var(--color-text-dark);
+}
+
+.headerMain {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin-bottom: var(--spacing-1);
+}
+
+.description {
+  color: var(--color-text-medium);
+  max-width: 75ch;
+}
+
+.actionsContainer {
+  display: flex;
+  gap: var(--spacing-2);
+  flex-shrink: 0;
+  margin-top: var(--spacing-2);
+}
+
+.impactSection {
+  background-color: var(--color-background-light);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-4);
+  box-shadow: var(--box-shadow-google);
+  border: 1px solid var(--color-border-light);
+  margin-bottom: var(--spacing-5);
+}
+
+/* This is the new rule to add more space */
+.impactSection .sectionTitle {
+  margin-bottom: var(--spacing-4);
+}
+
+.mainContent {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-5);
+  align-items: start;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.rightColumn {
+  position: sticky;
+  top: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+}
+
+/* Add styles for buttons if they are not globally defined */
+.button {
+  padding: var(--spacing-2) var(--spacing-3);
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  text-align: center;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.primary {
+  background-color: var(--color-primary-blue);
+  color: var(--color-background-light);
+}
+
+.primary:not(:disabled):hover {
+  background-color: var(--color-primary-blue-dark);
+  box-shadow: var(--box-shadow-md);
+}
+
+.secondary {
+  background-color: transparent;
+  color: var(--color-error);
+  border: 1px solid var(--color-border-light);
+}
+
+.secondary:not(:disabled):hover {
+  background-color: #fef7f7;
+}

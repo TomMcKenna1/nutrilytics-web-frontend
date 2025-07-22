@@ -53,7 +53,7 @@ const AccountPage = () => {
       ...prev,
       [name]: Number(value),
     }));
-    if (isUpdated) setIsUpdated(false); // Reset success message on new input
+    if (isUpdated) setIsUpdated(false);
   };
 
   const handleSignOut = async () => {
@@ -68,20 +68,13 @@ const AccountPage = () => {
   const handleUpdateTargets = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Set success message to false before attempting an update
     if (isUpdated) setIsUpdated(false);
 
     try {
-      // Await the promise from mutateAsync. It will resolve on success.
       await updateTargets(nutritionForm);
-
-      // If it resolves, the update was successful.
       setIsUpdated(true);
-      setTimeout(() => setIsUpdated(false), 3000); // Hide message after 3 seconds
+      setTimeout(() => setIsUpdated(false), 3000);
     } catch (err) {
-      // If it rejects, the catch block will run.
-      // The error is already managed by the hook's state (updateError),
-      // but you can add specific component logic here if needed.
       console.error("Update failed:", err);
     }
   };
@@ -102,10 +95,6 @@ const AccountPage = () => {
           <span className={styles.detailLabel}>Email</span>
           <span className={styles.detailValue}>{user.email}</span>
         </div>
-        <div className={styles.detail}>
-          <span className={styles.detailLabel}>User ID</span>
-          <span className={styles.detailValue}>{user.uid}</span>
-        </div>
         <button onClick={handleSignOut} className={styles.signOutButton}>
           Sign Out
         </button>
@@ -123,7 +112,6 @@ const AccountPage = () => {
         <form onSubmit={handleUpdateTargets} className={styles.form}>
           <div className={styles.formGrid}>
             {Object.keys(nutritionForm).map((key) => {
-              // Format label from camelCase to Title Case
               const label =
                 key.charAt(0).toUpperCase() +
                 key.slice(1).replace(/([A-Z])/g, " $1");

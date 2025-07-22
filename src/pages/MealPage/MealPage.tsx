@@ -3,10 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../../providers/AuthProvider";
 import { getMeal } from "../../features/meals/api/mealService";
 import type { MealResponse } from "../../features/meals/types";
-
-import { MealComponentsList } from "../../features/meals/components/MealComponentsList/MealComponentsList";
-import { TotalNutritionCard } from "../../features/meals/components/TotalNutritionCard/TotalNutritionCard";
-import styles from "./MealPage.module.css";
+import MealLayout from "../../components/layout/MealLayout/MealLayout";
+import layoutStyles from "../../components/layout/MealLayout/MealLayout.module.css";
 
 export const MealPage = () => {
   const { mealId } = useParams<{ mealId: string }>();
@@ -35,53 +33,42 @@ export const MealPage = () => {
       .finally(() => setIsLoading(false));
   }, [mealId, user]);
 
-  const totalNutrients = !meal?.components ? null : meal.nutrientProfile;
-  const totalWeight = (meal?.components ?? []).reduce(
-    (total, component) => total + component.totalWeight,
-    0,
+  if (isLoading) {
+    return <p className={layoutStyles.centered}>Loading meal...</p>;
+  }
+
+  if (error) {
+    return (
+      <p className={`${layoutStyles.centered} ${layoutStyles.error}`}>
+        Error: {error}
+      </p>
+    );
+  }
+
+  if (!meal) {
+    return <p className={layoutStyles.centered}>Meal not found.</p>;
+  }
+
+  // The "Edit" button is defined as an action to be passed to the layout.
+  const mealActions = (
+    <Link
+      to={`/meal/${meal.id}/edit`}
+      className={`${layoutStyles.button} ${layoutStyles.primary}`}
+    >
+      Edit Meal
+    </Link>
   );
 
-  if (isLoading) return <p className={styles.centered}>Loading meal...</p>;
-  if (error)
-    return (
-      <p className={`${styles.centered} ${styles.error}`}>Error: {error}</p>
-    );
-  if (!meal) return <p className={styles.centered}>Meal not found.</p>;
-
+  // This call to MealLayout remains unchanged.
+  // It will not show the impact section by default.
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div>
-          <h1 className={styles.title}>{meal.name}</h1>
-          <p className={styles.description}>{meal.description}</p>
-        </div>
-        <Link to={`/meal/${meal.id}/edit`} className={styles.editButton}>
-          Edit Meal
-        </Link>
-      </header>
-
-      <main className={styles.mainContent}>
-        <div className={styles.componentsSection}>
-          <h2 className={styles.sectionTitle}>
-            Components ({meal.components.length})
-          </h2>
-          <MealComponentsList components={meal.components} />
-        </div>
-
-        {totalNutrients && (
-          <aside className={styles.nutritionSummary}>
-            <TotalNutritionCard
-              totals={totalNutrients}
-              mealWeight={totalWeight}
-            />
-          </aside>
-        )}
-      </main>
-
-      <Link to="/" className={styles.backLink}>
-        &larr; Back to Dashboard
-      </Link>
-    </div>
+    <MealLayout
+      title={meal.name}
+      description={meal.description}
+      actions={mealActions}
+      components={meal.components}
+      nutrientProfile={meal.nutrientProfile}
+    />
   );
 };
 

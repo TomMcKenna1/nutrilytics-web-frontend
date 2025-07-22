@@ -1,5 +1,5 @@
 .card {
-  background-color: var(--color-background-card);
+  background-color: var(--color-background-light);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--box-shadow-md);
   padding: var(--spacing-4);
@@ -23,7 +23,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--color-primary-blue-light);
+  background-color: var(--color-background-soft);
   border-radius: var(--border-radius-md);
   padding: var(--spacing-3);
   margin-bottom: var(--spacing-4);
@@ -36,12 +36,10 @@
   color: var(--color-primary-blue-dark);
 }
 
-.summaryGrid {
+.nutrientGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--spacing-3);
-  padding-bottom: var(--spacing-3);
-  border-bottom: 1px solid var(--color-border-light);
 }
 
 .summaryItem {
@@ -64,38 +62,28 @@
 .summaryValue {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-primary-blue-dark);
+  color: var(--color-text-dark); /* Default color for items like Salt */
 }
 
-.nutrientDetails {
-  margin-top: var(--spacing-4);
+/* Nutrient Color Classes */
+.energy {
+  color: var(--color-energy);
 }
-
-.detailsTitle {
-  font-family: var(--font-primary);
-  font-size: 1.25rem;
-  font-weight: 500;
-  color: var(--color-text-dark);
-  margin-bottom: var(--spacing-3);
-  text-align: left;
+.protein {
+  color: var(--color-protein);
 }
-
-.detailsGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-2) var(--spacing-4);
+.carbs {
+  color: var(--color-carbs);
 }
-
-.detailItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-1) 0;
-  border-bottom: 1px dashed var(--color-border-light);
-  font-size: 0.95rem;
-  color: var(--color-text-medium);
+.fats {
+  color: var(--color-fats);
 }
-
-.detailItem:last-child {
-  border-bottom: none;
+.saturatedFats {
+  color: var(--color-saturated-fats);
+}
+.sugars {
+  color: var(--color-sugars);
+}
+.fibre {
+  color: var(--color-fibre);
 }

@@ -60,26 +60,36 @@ h6 {
     monospace;
 
   /* Colors */
-  --color-primary-blue: #1a73e8; /* Blue */
-  --color-primary-blue-dark: #1760c4; /* Darker Blue for hover */
-  --color-text-dark: #202124; /* Dark gray for main text */
-  --color-text-medium: #5f6368; /* Medium gray for secondary text */
-  --color-text-light: #70757a; /* Light gray for subtle text */
-  --color-background-light: #ffffff; /* Pure white for main backgrounds */
-  --color-background-soft: #f8f9fa; /* Off-white for subtle backgrounds */
-  --color-border-light: #dadce0; /* Light gray for subtle borders */
-  --color-error: #d93025; /* Standard red for errors */
-  --color-accent-google: #4285f4; /* Primary Blue for Google (re-emphasized) */
-  --color-traffic-red: #d93025; /* Similar to Google's error/danger red */
-  --color-traffic-amber: #f9ab00; /* Google's warning yellow/orange */
-  --color-traffic-green: #1e8e3e; /* Google's success green */
+  --color-primary-blue: #1a73e8;
+  --color-primary-blue-dark: #1760c4;
+  --color-text-dark: #202124;
+  --color-text-medium: #5f6368;
+  --color-text-light: #70757a;
+  --color-background-light: #ffffff;
+  --color-background-soft: #f8f9fa;
+  --color-border-light: #dadce0;
+  --color-error: #d93025;
+  --color-accent-google: #4285f4;
+  --color-traffic-red: #d93025;
+  --color-traffic-amber: #f9ab00;
+  --color-traffic-green: #1e8e3e;
+
+  /* New Nutrient Color Palette */
+  --color-energy: #4169E1; /* Royal Blue */
+  --color-protein: #FFEA00; /* Bright Yellow */
+  --color-carbs: #A64DFF; /* Medium Orchid (Vibrant Purple) */
+  --color-sugars: #00BCD4; /* Cyan/Turquoise */
+  --color-fats: #FFA500; /* Orange */
+  --color-fibre: #DDA0DD; /* Plum (Softer, but Distinct Pink-Purple) */
+
+  --color-nutrient-impact: #2ecc71; /* Friendly Green */
 
   /* Spacing Units */
-  --spacing-1: 0.25rem; /* 4px */
-  --spacing-2: 0.5rem; /* 8px */
-  --spacing-3: 1rem; /* 16px */
-  --spacing-4: 2rem; /* 32px */
-  --spacing-5: 4rem; /* 64px */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 1rem;
+  --spacing-4: 2rem;
+  --spacing-5: 4rem;
 
   /* Border Radius */
   --border-radius-sm: 4px;
@@ -93,7 +103,7 @@ h6 {
   --box-shadow-lg:
     0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --box-shadow-google:
-    0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15); /* Common Google card shadow */
+    0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
 }
 
 body {

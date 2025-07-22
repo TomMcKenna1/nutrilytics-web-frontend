@@ -1,11 +1,14 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { FiCheck, FiX, FiLoader } from "react-icons/fi";
+import { FiCheck, FiX, FiLoader, FiTrash2 } from "react-icons/fi";
 import { useMealDrafts } from "../../../../hooks/useMealDrafts";
+import { useMealDraft } from "../../../../hooks/useMealDraft";
 import type { Draft } from "../../types";
 import styles from "./MealDraftsList.module.css";
 
 const MealDraftItem = ({ draft }: { draft: Draft }) => {
+  const { discard, isDiscarding } = useMealDraft(draft.id);
+
   const renderStatus = () => {
     switch (draft.status) {
       case "pending":
@@ -34,29 +37,47 @@ const MealDraftItem = ({ draft }: { draft: Draft }) => {
     }
   };
 
-  const displayText = draft.mealDraft?.name || draft.originalInput;
+  const handleDiscard = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isDiscarding) {
+      discard();
+    }
+  };
 
+  const displayText = draft.mealDraft?.name || draft.originalInput;
   const itemClasses = `${styles.item} ${draft.status === "pending" ? styles.pendingItem : ""}`;
 
   const content = (
     <div className={itemClasses}>
       {renderStatus()}
       <span className={styles.text}>{displayText}</span>
+      <button
+        className={styles.discardButton}
+        onClick={handleDiscard}
+        disabled={isDiscarding}
+        title="Discard Draft"
+      >
+        {isDiscarding ? (
+          <FiLoader className={styles.pendingIcon} />
+        ) : (
+          <FiTrash2 />
+        )}
+      </button>
     </div>
   );
-
-  if (draft.mealDraft) {
+  if (draft.mealDraft && draft.status === "complete") {
     return (
       <Link to={`/draft/${draft.id}`} className={styles.itemLink}>
         {content}
       </Link>
     );
   }
-
   return content;
 };
 
 export const MealDraftsList = () => {
+  // The useMealDrafts hook is now only used to fetch the list.
   const { data: drafts, isLoading, error } = useMealDrafts();
 
   const sortedDrafts = useMemo(() => {

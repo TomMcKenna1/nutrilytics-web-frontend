@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { getDailySummary } from "../../api/summaryService";
-import { type DailySummary as IDailySummary } from "../../types";
+import type { DailySummary as IDailySummary } from "../../../metrics/types";
+import type { NutrientProfile } from "../../../meals/types";
 import { useNutritionTargets } from "../../../../hooks/useNutritionTargets";
-import styles from "./DailySummary.module.css";
+import styles from "./DailyTargetImpact.module.css";
 
 // In ms
 const ANIMATION_DURATION = 1200;
@@ -14,7 +14,10 @@ const useCountUp = (
 ): number => {
   const [count, setCount] = useState(0);
   useEffect(() => {
-    if (!isAnimating) return;
+    if (!isAnimating) {
+      setCount(target);
+      return;
+    }
     let animationFrameId: number;
     let start = 0;
     const animate = (timestamp: number): void => {
@@ -41,68 +44,58 @@ const useAnimationOnLoad = (): boolean => {
   return startAnimation;
 };
 
-type SequentialProgress = {
-  mainProgress: number;
+interface ProgressResult {
+  currentProgress: number;
+  totalProgress: number;
   overflowProgress: number;
-};
+}
 
-const useSequentialProgress = (
+const useAnimatedProgress = (
   isAnimating: boolean,
-  finalPercentage: number,
-  totalDuration: number = ANIMATION_DURATION,
-): SequentialProgress => {
-  const [mainProgress, setMainProgress] = useState(0);
-  const [overflowProgress, setOverflowProgress] = useState(0);
+  currentValue: number,
+  newValue: number,
+  target: number,
+  duration: number = ANIMATION_DURATION,
+): ProgressResult => {
+  const [animatedAddition, setAnimatedAddition] = useState(0);
 
   useEffect(() => {
-    if (!isAnimating || finalPercentage === 0) return;
+    if (!isAnimating) {
+      setAnimatedAddition(newValue);
+      return;
+    }
     let animationFrameId: number;
-
-    const targetMain = Math.min(finalPercentage, 1);
-    const targetOverflow = finalPercentage > 1 ? finalPercentage - 1 : 0;
-
-    const mainDuration = totalDuration * (targetMain / finalPercentage);
-    const overflowDuration = totalDuration * (targetOverflow / finalPercentage);
-
     let start: number | null = null;
-    const animate = (timestamp: number): void => {
+    const animate = (timestamp: number) => {
       if (!start) start = timestamp;
       const elapsed = timestamp - start;
+      const progress = Math.min(elapsed / duration, 1);
+      setAnimatedAddition(progress * newValue);
 
-      if (elapsed <= mainDuration) {
-        const progress = elapsed / mainDuration;
-        setMainProgress(progress * targetMain);
-      } else {
-        setMainProgress(targetMain);
-      }
-
-      if (
-        targetOverflow > 0 &&
-        elapsed > mainDuration &&
-        elapsed <= totalDuration
-      ) {
-        const overflowElapsed = elapsed - mainDuration;
-        const progress = overflowElapsed / overflowDuration;
-        setOverflowProgress(progress * targetOverflow);
-      } else if (targetOverflow > 0 && elapsed > totalDuration) {
-        setOverflowProgress(targetOverflow);
-      }
-
-      if (elapsed < totalDuration) {
+      if (progress < 1) {
         animationFrameId = requestAnimationFrame(animate);
       }
     };
-
     animationFrameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [isAnimating, finalPercentage, totalDuration]);
+  }, [isAnimating, newValue, duration]);
 
-  return { mainProgress, overflowProgress };
+  const animatedTotalValue = currentValue + animatedAddition;
+  const animatedTotalPercentage =
+    target > 0 ? animatedTotalValue / target : 0;
+  const currentPercentage = target > 0 ? currentValue / target : 0;
+
+  return {
+    currentProgress: Math.min(currentPercentage, 1),
+    totalProgress: Math.min(animatedTotalPercentage, 1),
+    overflowProgress: Math.max(0, animatedTotalPercentage - 1),
+  };
 };
 
 interface NutrientCircleProps {
   label: string;
   value: number;
+  newValue: number;
   target: number;
   unit: string;
   color: string;
@@ -112,58 +105,79 @@ interface NutrientCircleProps {
 const NutrientCircle: React.FC<NutrientCircleProps> = ({
   label,
   value,
+  newValue,
   target,
   unit,
   color,
   isAnimating,
 }) => {
-  const animatedValue = useCountUp(value, isAnimating);
+  const animatedNewValue = useCountUp(newValue, isAnimating);
+  const finalTotalValue = value + newValue;
 
   const chart = {
-    radius: 52,
+    radius: 60,
     strokeWidth: 12,
     get circumference() {
       return 2 * Math.PI * this.radius;
     },
   };
 
-  const finalPercentage = target > 0 ? value / target : 0;
-  const { mainProgress, overflowProgress } = useSequentialProgress(
-    isAnimating,
-    finalPercentage,
-  );
+  const { currentProgress, totalProgress, overflowProgress } =
+    useAnimatedProgress(isAnimating, value, newValue, target);
 
-  const mainOffset = chart.circumference * (1 - mainProgress);
+  const currentOffset = chart.circumference * (1 - currentProgress);
+  const totalOffset = chart.circumference * (1 - totalProgress);
   const overflowOffset = chart.circumference * (1 - overflowProgress);
+
+  const isOverflowing = finalTotalValue > target;
+  const impactColorVar = isOverflowing
+    ? "--color-error"
+    : "--color-nutrient-impact";
+  const overflowAmount = finalTotalValue - target;
 
   return (
     <div className={styles.nutrientCircleContainer}>
-      <svg className={styles.nutrientSvg} viewBox="0 0 120 120">
+      <svg className={styles.nutrientSvg} viewBox="0 0 140 140">
+        {/* Background track */}
         <circle
-          cx="60"
-          cy="60"
+          cx="70"
+          cy="70"
           r={chart.radius}
           fill="none"
           stroke="var(--color-border-light)"
           strokeWidth={chart.strokeWidth}
         />
+        {/* Total value arc */}
         <circle
-          cx="60"
-          cy="60"
+          cx="70"
+          cy="70"
+          r={chart.radius}
+          fill="none"
+          stroke={`var(${impactColorVar})`}
+          strokeWidth={chart.strokeWidth}
+          strokeDasharray={chart.circumference}
+          strokeDashoffset={totalOffset}
+          strokeLinecap="round"
+        />
+        {/* Current value arc (normal color, drawn on top) */}
+        <circle
+          cx="70"
+          cy="70"
           r={chart.radius}
           fill="none"
           stroke={`var(${color})`}
           strokeWidth={chart.strokeWidth}
           strokeDasharray={chart.circumference}
-          strokeDashoffset={mainOffset}
+          strokeDashoffset={currentOffset}
           strokeLinecap="round"
         />
+        {/* Overflow arc */}
         <circle
-          cx="60"
-          cy="60"
+          cx="70"
+          cy="70"
           r={chart.radius}
           fill="none"
-          stroke="rgba(0, 0, 0, 0.2)"
+          stroke={`var(${impactColorVar})`}
           strokeWidth={chart.strokeWidth}
           strokeDasharray={chart.circumference}
           strokeDashoffset={overflowOffset}
@@ -171,18 +185,38 @@ const NutrientCircle: React.FC<NutrientCircleProps> = ({
         />
       </svg>
       <span className={styles.nutrientValue}>
-        {animatedValue.toFixed(0)}
+        {finalTotalValue.toFixed(0)}
         {unit}
       </span>
+      <div className={styles.changeContainer}>
+        <span
+          className={styles.nutrientChange}
+          style={{ color: `var(${impactColorVar})` }}
+        >
+          +{animatedNewValue.toFixed(0)}
+          {unit}
+        </span>
+        {isOverflowing && (
+          <span className={styles.overflowText}>
+            ({overflowAmount.toFixed(0)}
+            {unit} over)
+          </span>
+        )}
+      </div>
       <span className={styles.nutrientLabel}>{label}</span>
     </div>
   );
 };
 
-export const DailySummary: React.FC = () => {
-  const [summary, setSummary] = useState<IDailySummary | null>(null);
-  const [summaryIsLoading, setSummaryIsLoading] = useState<boolean>(true);
-  const [summaryError, setSummaryError] = useState<string | null>(null);
+interface DailyTargetImpactProps {
+  summary: IDailySummary;
+  nutrientProfile: NutrientProfile;
+}
+
+export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
+  summary,
+  nutrientProfile,
+}) => {
   const startAnimation = useAnimationOnLoad();
 
   const {
@@ -192,43 +226,22 @@ export const DailySummary: React.FC = () => {
     error: targetsError,
   } = useNutritionTargets();
 
-  useEffect(() => {
-    const fetchSummary = async () => {
-      try {
-        const data = await getDailySummary();
-        setSummary(data);
-      } catch (err) {
-        setSummaryError(
-          err instanceof Error ? err.message : "An unknown error occurred",
-        );
-      } finally {
-        setSummaryIsLoading(false);
-      }
-    };
-    fetchSummary();
-  }, []);
-
-  if (summaryIsLoading || targetsIsLoading) return <p>Loading summary...</p>;
-  if (summaryError)
-    return <p style={{ color: "red" }}>Error: {summaryError}</p>;
+  if (targetsIsLoading) return <p>Loading targets...</p>;
   if (targetsIsError)
     return (
       <p style={{ color: "red" }}>
         Error fetching targets: {targetsError?.message}
       </p>
     );
-  if (!summary || !targets) return <p>No summary or target data available.</p>;
+  if (!targets) return <p>No target data available.</p>;
 
   return (
     <div className={styles.summaryContainer}>
-      <div className={styles.mealsLoggedContainer}>
-        <span className={styles.mealsCount}>{summary.mealsLogged}</span>
-        <span className={styles.mealsLabel}>Meals Logged</span>
-      </div>
       <div className={styles.nutrientsGrid}>
         <NutrientCircle
           label="Energy"
           value={summary.energy}
+          newValue={nutrientProfile.energy}
           target={targets.energy}
           unit="kcal"
           color="--color-energy"
@@ -237,6 +250,7 @@ export const DailySummary: React.FC = () => {
         <NutrientCircle
           label="Protein"
           value={summary.protein}
+          newValue={nutrientProfile.protein}
           target={targets.protein}
           unit="g"
           color="--color-protein"
@@ -245,6 +259,7 @@ export const DailySummary: React.FC = () => {
         <NutrientCircle
           label="Carbs"
           value={summary.carbohydrates}
+          newValue={nutrientProfile.carbohydrates}
           target={targets.carbohydrates}
           unit="g"
           color="--color-carbs"
@@ -253,6 +268,7 @@ export const DailySummary: React.FC = () => {
         <NutrientCircle
           label="Sugars"
           value={summary.sugars}
+          newValue={nutrientProfile.sugars}
           target={targets.sugars}
           unit="g"
           color="--color-sugars"
@@ -261,6 +277,7 @@ export const DailySummary: React.FC = () => {
         <NutrientCircle
           label="Fat"
           value={summary.fats}
+          newValue={nutrientProfile.fats}
           target={targets.fats}
           unit="g"
           color="--color-fats"
@@ -269,6 +286,7 @@ export const DailySummary: React.FC = () => {
         <NutrientCircle
           label="Fibre"
           value={summary.fibre}
+          newValue={nutrientProfile.fibre}
           target={targets.fibre}
           unit="g"
           color="--color-fibre"
