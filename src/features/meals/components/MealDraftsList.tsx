@@ -4,7 +4,6 @@ import { useMealDrafts } from "../../../hooks/useMealDrafts";
 import type { Draft } from "../types";
 
 const MealDraftItem = ({ draft }: { draft: Draft }) => {
-  // (Component code remains the same as original)
   const styles: { [key: string]: React.CSSProperties } = {
     item: {
       display: "flex",
@@ -22,6 +21,7 @@ const MealDraftItem = ({ draft }: { draft: Draft }) => {
     },
     link: { textDecoration: "none", color: "inherit" },
   };
+
   const renderStatus = () => {
     switch (draft.status) {
       case "pending":
@@ -38,31 +38,32 @@ const MealDraftItem = ({ draft }: { draft: Draft }) => {
         return null;
     }
   };
-  if (draft.status === "complete" && draft.mealDraft) {
+
+  const displayText = draft.mealDraft?.name || draft.originalInput;
+
+  const content = (
+    <div style={styles.item}>
+      {renderStatus()}
+      <span style={styles.text}>{displayText}</span>
+    </div>
+  );
+
+  if (draft.mealDraft) {
     return (
       <Link to={`/draft/${draft.id}`} style={styles.link}>
-        <div style={styles.item}>
-          {renderStatus()}
-          <span style={styles.text}>{draft.originalInput}</span>
-        </div>
+        {content}
       </Link>
     );
   }
-  return (
-    <div style={styles.item}>
-      {renderStatus()}
-      <span style={styles.text}>{draft.originalInput}</span>
-    </div>
-  );
+
+  return content;
 };
 
 export const MealDraftsList = () => {
-  // Fetch drafts using our custom hook
   const { data: drafts, isLoading, error } = useMealDrafts();
 
   const sortedDrafts = useMemo(() => {
     if (!drafts) return [];
-    // Sort drafts by creation date, newest first
     return [...drafts].sort((a, b) => b.createdAt - a.createdAt);
   }, [drafts]);
 
