@@ -19,17 +19,34 @@
   padding-bottom: var(--spacing-3);
 }
 
+.totalWeightRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-primary-blue-light);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+  box-shadow: var(--box-shadow-sm);
+}
+
+.totalWeightValue {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-primary-blue-dark);
+}
+
 .summaryGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--spacing-3);
-  margin-bottom: var(--spacing-4);
   padding-bottom: var(--spacing-3);
   border-bottom: 1px solid var(--color-border-light);
 }
 
 .summaryItem {
-  background-color: var(--color-primary-blue-light);
+  background-color: var(--color-background-light);
+  border: 1px solid var(--color-border-light);
   border-radius: var(--border-radius-md);
   padding: var(--spacing-3);
   display: flex;
@@ -65,8 +82,7 @@
 
 .detailsGrid {
   display: grid;
-  /* Adjust minmax to accommodate fewer items if necessary, but current value is flexible */
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--spacing-2) var(--spacing-4);
 }
 
@@ -82,15 +98,4 @@
 
 .detailItem:last-child {
   border-bottom: none;
-}
-
-/* These styles are no longer actively used by the component but are left here */
-.flagTrue {
-  font-weight: 600;
-  color: var(--color-success);
-}
-
-.flagFalse {
-  font-weight: 600;
-  color: var(--color-error);
 }

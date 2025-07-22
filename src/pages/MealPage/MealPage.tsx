@@ -61,22 +61,21 @@ export const MealPage = () => {
       </header>
 
       <main className={styles.mainContent}>
-        {/* Total Nutrition Card now at the top */}
-        {totalNutrients && (
-          <div className={styles.nutritionSummary}>
-            <TotalNutritionCard
-              totals={totalNutrients}
-              mealWeight={totalWeight}
-            />
-          </div>
-        )}
-
         <div className={styles.componentsSection}>
           <h2 className={styles.sectionTitle}>
             Components ({meal.components.length})
           </h2>
           <MealComponentsList components={meal.components} />
         </div>
+
+        {totalNutrients && (
+          <aside className={styles.nutritionSummary}>
+            <TotalNutritionCard
+              totals={totalNutrients}
+              mealWeight={totalWeight}
+            />
+          </aside>
+        )}
       </main>
 
       <Link to="/" className={styles.backLink}>

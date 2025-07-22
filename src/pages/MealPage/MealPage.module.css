@@ -41,19 +41,21 @@
   background-color: var(--color-primary-blue-dark);
 }
 
-/* Updated mainContent to a column layout */
 .mainContent {
-  display: flex; /* Use flexbox */
-  flex-direction: column; /* Stack items vertically */
-  gap: var(--spacing-4); /* Space between sections */
-}
-
-.nutritionSummary {
-  /* You can add specific styles for the wrapper around TotalNutritionCard here if needed */
-  margin-bottom: var(--spacing-4); /* Add some space below the nutrition card */
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-4);
+  align-items: start;
 }
 
 .componentsSection {
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.nutritionSummary {
+  grid-column: 2;
   display: flex;
   flex-direction: column;
 }

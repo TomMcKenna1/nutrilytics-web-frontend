@@ -87,12 +87,20 @@ export const DraftPage = () => {
             <h2 className={styles.statusHeader}>{draft.mealDraft.name}</h2>
             <p className={styles.description}>{draft.mealDraft.description}</p>
             <div className={styles.contentGrid}>
-              <MealComponentsList components={draft.mealDraft.components} />
+              <div className={styles.componentsSection}>
+                <h2 className={styles.sectionTitle}>
+                  Components ({draft.mealDraft.components.length})
+                </h2>
+                <MealComponentsList components={draft.mealDraft.components} />
+              </div>
+
               {totalNutrients && (
-                <TotalNutritionCard
-                  totals={totalNutrients}
-                  mealWeight={totalWeight}
-                />
+                <aside className={styles.nutritionSummary}>
+                  <TotalNutritionCard
+                    totals={totalNutrients}
+                    mealWeight={totalWeight}
+                  />
+                </aside>
               )}
             </div>
             <div className={styles.actionsContainer}>

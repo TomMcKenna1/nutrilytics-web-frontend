@@ -14,11 +14,15 @@ export const TotalNutritionCard: React.FC<TotalNutritionCardProps> = ({
   return (
     <div className={styles.card}>
       <h3 className={styles.title}>Total Meal Nutrition</h3>
+
+      <div className={styles.totalWeightRow}>
+        <span className={styles.summaryLabel}>Total Weight of Meal</span>
+        <span className={styles.totalWeightValue}>
+          {mealWeight.toFixed(0)}g
+        </span>
+      </div>
+
       <div className={styles.summaryGrid}>
-        <div className={styles.summaryItem}>
-          <span className={styles.summaryLabel}>Total Weight</span>
-          <span className={styles.summaryValue}>{mealWeight.toFixed(0)}g</span>
-        </div>
         <div className={styles.summaryItem}>
           <span className={styles.summaryLabel}>Energy</span>
           <span className={styles.summaryValue}>

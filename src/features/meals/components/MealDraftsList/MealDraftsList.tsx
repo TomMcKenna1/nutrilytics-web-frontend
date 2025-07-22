@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
+import { FiCheck, FiX, FiLoader } from "react-icons/fi";
 import { useMealDrafts } from "../../../../hooks/useMealDrafts";
 import type { Draft } from "../../types";
 import styles from "./MealDraftsList.module.css";
@@ -8,13 +9,24 @@ const MealDraftItem = ({ draft }: { draft: Draft }) => {
   const renderStatus = () => {
     switch (draft.status) {
       case "pending":
-        return <div className={styles.icon}></div>;
+        return (
+          <div className={styles.icon}>
+            <FiLoader className={styles.pendingIcon} />
+          </div>
+        );
       case "complete":
-        return <div className={styles.icon}>✅</div>;
+        return (
+          <div className={`${styles.icon} ${styles.completeIcon}`}>
+            <FiCheck />
+          </div>
+        );
       case "error":
         return (
-          <div className={styles.icon} title={draft.error}>
-            ❌
+          <div
+            className={`${styles.icon} ${styles.errorIcon}`}
+            title={draft.error}
+          >
+            <FiX />
           </div>
         );
       default:
