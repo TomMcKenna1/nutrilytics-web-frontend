@@ -1,41 +1,41 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const NotFoundPage = () => {
   const styles: { [key: string]: React.CSSProperties } = {
     container: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100vh',
-      textAlign: 'center',
-      fontFamily: 'var(--font-primary)',
-      color: 'var(--color-text)',
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "100vh",
+      textAlign: "center",
+      fontFamily: "var(--font-primary)",
+      color: "var(--color-text)",
     },
     heading: {
-      fontSize: '3rem',
-      fontWeight: 'bold',
-      marginBottom: 'var(--spacing-2)',
+      fontSize: "3rem",
+      fontWeight: "bold",
+      marginBottom: "var(--spacing-2)",
     },
     message: {
-      fontSize: '1.25rem',
-      marginBottom: 'var(--spacing-4)',
+      fontSize: "1.25rem",
+      marginBottom: "var(--spacing-4)",
     },
     link: {
-      padding: 'var(--spacing-2) var(--spacing-3)',
-      backgroundColor: 'var(--color-primary)',
-      color: '#FFFFFF',
-      textDecoration: 'none',
-      borderRadius: '8px',
-      fontWeight: 'bold',
-      transition: 'transform 0.2s ease',
+      padding: "var(--spacing-2) var(--spacing-3)",
+      backgroundColor: "var(--color-primary)",
+      color: "#FFFFFF",
+      textDecoration: "none",
+      borderRadius: "8px",
+      fontWeight: "bold",
+      transition: "transform 0.2s ease",
     },
     svg: {
-      width: '150px',
-      height: '150px',
-      marginBottom: 'var(--spacing-4)',
-      color: 'var(--color-border)',
+      width: "150px",
+      height: "150px",
+      marginBottom: "var(--spacing-4)",
+      color: "var(--color-border)",
     },
   };
 

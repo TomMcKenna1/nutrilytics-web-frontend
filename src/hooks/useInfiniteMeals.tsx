@@ -10,7 +10,7 @@ export const useInfiniteMeals = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [nextCursor, setNextCursor] = useState<string | null | undefined>(
-    undefined
+    undefined,
   );
 
   const fetchMeals = useCallback(async (cursor: string | null | undefined) => {
@@ -23,7 +23,7 @@ export const useInfiniteMeals = () => {
         next: cursor,
       });
       setMeals((prevMeals) =>
-        cursor ? [...prevMeals, ...response.meals] : response.meals
+        cursor ? [...prevMeals, ...response.meals] : response.meals,
       );
       setNextCursor(response.next);
     } catch (err) {

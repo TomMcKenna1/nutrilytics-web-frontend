@@ -1,5 +1,5 @@
-import apiClient from '../../../lib/apiClient';
-import type { MealDraftResponse, MealListResponse, MealResponse } from '../types';
+import apiClient from "../../../lib/apiClient";
+import type { Draft, MealListResponse, MealResponse } from "../types";
 
 /**
  * Creates a meal draft. User must be authenticated.
@@ -7,9 +7,9 @@ import type { MealDraftResponse, MealListResponse, MealResponse } from '../types
  * @returns The draftId for the created meal draft.
  */
 export const createMealDraft = (
-  mealDescription: string
+  mealDescription: string,
 ): Promise<{ draftId: string }> => {
-  return apiClient('/api/v1/meal_drafts', {
+  return apiClient("/api/v1/meal_drafts", {
     body: { description: mealDescription },
   });
 };
@@ -19,7 +19,7 @@ export const createMealDraft = (
  * @param draftId The ID of the draft to check.
  * @returns The status and data of the draft.
  */
-export const checkDraftStatus = (draftId: string): Promise<MealDraftResponse> => {
+export const checkDraftStatus = (draftId: string): Promise<Draft> => {
   return apiClient(`/api/v1/meal_drafts/${draftId}`);
 };
 
@@ -29,16 +29,20 @@ export const checkDraftStatus = (draftId: string): Promise<MealDraftResponse> =>
  * @param next The cursor for the next page of results.
  * @returns A list of meals and the next page cursor.
  */
-export const getLatestMeals = (
-  { limit, next }: { limit: number; next?: string | null }
-): Promise<MealListResponse> => {
+export const getLatestMeals = ({
+  limit,
+  next,
+}: {
+  limit: number;
+  next?: string | null;
+}): Promise<MealListResponse> => {
   const params = new URLSearchParams({
-    sort: 'latest',
+    sort: "latest",
     limit: String(limit),
   });
 
   if (next) {
-    params.append('next', next);
+    params.append("next", next);
   }
 
   return apiClient(`/api/v1/meals?${params.toString()}`);
@@ -50,8 +54,8 @@ export const getLatestMeals = (
  * @returns The newly created Meal object from the backend.
  */
 export const saveDraftAsMeal = (draftId: string): Promise<MealResponse> => {
-  return apiClient('/api/v1/meals', {
-    method: 'POST',
+  return apiClient("/api/v1/meals", {
+    method: "POST",
     body: { draftId: draftId },
   });
 };
@@ -73,6 +77,15 @@ export const getMeal = (mealId: string): Promise<MealResponse> => {
  */
 export const discardMealDraft = (draftId: string): Promise<void> => {
   return apiClient(`/api/v1/meal_drafts/${draftId}`, {
-    method: 'DELETE',
+    method: "DELETE",
   });
+};
+
+/**
+ * Get all current meal draft. User must be authenticated.
+ * @param draftId The ID of the draft to discard.
+ * @returns An empty promise on success.
+ */
+export const getMealDrafts = (): Promise<Draft[]> => {
+  return apiClient(`/api/v1/meal_drafts/`);
 };

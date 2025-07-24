@@ -1,0 +1,120 @@
+/* LoginPage.module.css */
+/* Removed @import url as fonts are handled by main.css now */
+
+.pageWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%; /* Remains 100% as parent (MainLayout's main) is scrollable */
+  /* Remove background-color and font-family if MainLayout or global CSS sets them */
+}
+
+.container {
+  width: 100%;
+  max-width: 400px;
+  padding: var(--spacing-4); /* Using spacing variable */
+  background-color: var(--color-background-light); /* White background */
+  border-radius: var(--border-radius-lg); /* Larger radius for a modern feel */
+  box-shadow: var(--box-shadow-google); /* Google-like shadow */
+  text-align: center;
+  border: 1px solid var(--color-border-light); /* Light border */
+}
+
+.heading {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text-dark); /* Dark text */
+  margin-bottom: var(--spacing-4); /* Using spacing variable */
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3); /* Using spacing variable */
+}
+
+.input {
+  padding: 12px 16px;
+  font-size: 1rem;
+  border: 1px solid var(--color-border-light); /* Light border */
+  border-radius: var(--border-radius-md); /* Consistent radius */
+  background-color: var(
+    --color-background-light
+  ); /* White background for input */
+  transition:
+    border-color 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary-blue); /* Google Blue focus */
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15); /* Blue shadow with transparency */
+}
+
+.button {
+  padding: 12px;
+  cursor: pointer;
+  background-color: var(--color-primary-blue); /* Google Blue button */
+  color: var(--color-background-light); /* White text */
+  border: none;
+  border-radius: var(--border-radius-md); /* Consistent radius */
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.button:hover:not(:disabled) {
+  background-color: var(--color-primary-blue-dark); /* Darker blue on hover */
+}
+
+.button:disabled {
+  background-color: var(--color-border-light); /* Lighter gray for disabled */
+  cursor: not-allowed;
+  color: var(--color-text-light); /* Lighter text for disabled */
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--color-text-light); /* Light gray for divider text */
+  margin: var(--spacing-4) 0; /* Using spacing variable */
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid var(--color-border-light); /* Light border for divider lines */
+}
+
+.divider:not(:empty)::before {
+  margin-right: 0.75em;
+}
+
+.divider:not(:empty)::after {
+  margin-left: 0.75em;
+}
+
+.toggleLink {
+  cursor: pointer;
+  color: var(--color-primary-blue);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-top: var(--spacing-3);
+  display: inline-block;
+}
+
+.toggleLink:hover {
+  text-decoration: underline;
+}
+
+.error {
+  color: var(--color-error);
+  font-size: 0.9rem;
+  margin-top: var(--spacing-3);
+}

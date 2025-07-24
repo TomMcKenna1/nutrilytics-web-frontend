@@ -1,0 +1,12 @@
+.appLayout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--color-background-soft);
+}
+
+.appMainContent {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: var(--spacing-4);
+}
