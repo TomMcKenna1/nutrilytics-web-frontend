@@ -1,10 +1,18 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { FiCheck, FiX, FiLoader, FiTrash2 } from "react-icons/fi";
+import { FiCheck, FiX, FiTrash2 } from "react-icons/fi";
 import { useMealDrafts } from "../../../../hooks/useMealDrafts";
 import { useMealDraft } from "../../../../hooks/useMealDraft";
 import type { Draft } from "../../types";
 import styles from "./MealDraftsList.module.css";
+
+const Loader = () => (
+  <div className={styles.loader}>
+    {Array.from({ length: 8 }).map((_, i) => (
+      <div key={i} className={styles.bar} />
+    ))}
+  </div>
+);
 
 const MealDraftItem = ({ draft }: { draft: Draft }) => {
   const { discard, isDiscarding } = useMealDraft(draft.id);
@@ -14,7 +22,7 @@ const MealDraftItem = ({ draft }: { draft: Draft }) => {
       case "pending":
         return (
           <div className={styles.icon}>
-            <FiLoader className={styles.pendingIcon} />
+            <Loader />
           </div>
         );
       case "complete":
@@ -58,14 +66,11 @@ const MealDraftItem = ({ draft }: { draft: Draft }) => {
         disabled={isDiscarding}
         title="Discard Draft"
       >
-        {isDiscarding ? (
-          <FiLoader className={styles.pendingIcon} />
-        ) : (
-          <FiTrash2 />
-        )}
+        {isDiscarding ? <Loader /> : <FiTrash2 />}
       </button>
     </div>
   );
+  
   if (draft.mealDraft && draft.status === "complete") {
     return (
       <Link to={`/draft/${draft.id}`} className={styles.itemLink}>
@@ -77,7 +82,6 @@ const MealDraftItem = ({ draft }: { draft: Draft }) => {
 };
 
 export const MealDraftsList = () => {
-  // The useMealDrafts hook is now only used to fetch the list.
   const { data: drafts, isLoading, error } = useMealDrafts();
 
   const sortedDrafts = useMemo(() => {
