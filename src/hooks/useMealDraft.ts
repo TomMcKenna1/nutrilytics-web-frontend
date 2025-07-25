@@ -21,6 +21,7 @@ export const useMealDraft = (draftId: string | undefined) => {
       return saveDraftAsMeal(draftId);
     },
     onSuccess: (newMeal: MealResponse) => {
+      queryClient.invalidateQueries({ queryKey: ["dailySummary"] });
       queryClient.invalidateQueries({ queryKey: ["meal-drafts"] });
       queryClient.invalidateQueries({ queryKey: ["meals"] });
       queryClient.removeQueries({ queryKey });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import type { DailySummary as IDailySummary } from "../../../metrics/types";
 import type { NutrientProfile } from "../../../meals/types";
 import { useNutritionTargets } from "../../../../hooks/useNutritionTargets";
@@ -7,41 +7,51 @@ import styles from "./DailyTargetImpact.module.css";
 // In ms
 const ANIMATION_DURATION = 1200;
 
-const useCountUp = (
-  target: number,
-  isAnimating: boolean,
-  duration: number = ANIMATION_DURATION,
-): number => {
-  const [count, setCount] = useState(0);
+const usePrevious = <T,>(value: T): T | undefined => {
+  const ref = useRef<T>(undefined);
   useEffect(() => {
-    if (!isAnimating) {
-      setCount(target);
-      return;
-    }
-    let animationFrameId: number;
-    let start = 0;
-    const animate = (timestamp: number): void => {
-      if (!start) start = timestamp;
-      const progress = (timestamp - start) / duration;
-      const current = Math.min(progress * target, target);
-      setCount(current);
-      if (progress < 1) {
-        animationFrameId = requestAnimationFrame(animate);
-      }
-    };
-    animationFrameId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [target, isAnimating, duration]);
-  return count;
+    ref.current = value;
+  });
+  return ref.current;
 };
 
-const useAnimationOnLoad = (): boolean => {
-  const [startAnimation, setStartAnimation] = useState(false);
+const useAnimatedValue = (
+  target: number,
+  duration: number = ANIMATION_DURATION,
+): number => {
+  const [currentValue, setCurrentValue] = useState(0);
+  const prevTarget = usePrevious(target);
+
   useEffect(() => {
-    const timer = setTimeout(() => setStartAnimation(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
-  return startAnimation;
+    const fromValue = prevTarget ?? 0;
+
+    if (fromValue === target) {
+      setCurrentValue(target);
+      return;
+    }
+
+    let animationFrameId: number;
+    let start: number | null = null;
+
+    const animate = (timestamp: number) => {
+      if (!start) start = timestamp;
+      const elapsed = timestamp - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const animatedValue = fromValue + (target - fromValue) * progress;
+      setCurrentValue(animatedValue);
+
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(animate);
+      } else {
+        setCurrentValue(target);
+      }
+    };
+
+    animationFrameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [target, duration]);
+
+  return currentValue;
 };
 
 interface ProgressResult {
@@ -51,39 +61,15 @@ interface ProgressResult {
 }
 
 const useAnimatedProgress = (
-  isAnimating: boolean,
   currentValue: number,
   newValue: number,
   target: number,
   duration: number = ANIMATION_DURATION,
 ): ProgressResult => {
-  const [animatedAddition, setAnimatedAddition] = useState(0);
-
-  useEffect(() => {
-    if (!isAnimating) {
-      setAnimatedAddition(newValue);
-      return;
-    }
-    let animationFrameId: number;
-    let start: number | null = null;
-    const animate = (timestamp: number) => {
-      if (!start) start = timestamp;
-      const elapsed = timestamp - start;
-      const progress = Math.min(elapsed / duration, 1);
-      setAnimatedAddition(progress * newValue);
-
-      if (progress < 1) {
-        animationFrameId = requestAnimationFrame(animate);
-      }
-    };
-    animationFrameId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [isAnimating, newValue, duration]);
-
-  const animatedTotalValue = currentValue + animatedAddition;
-  const animatedTotalPercentage =
-    target > 0 ? animatedTotalValue / target : 0;
+  const animatedNewValue = useAnimatedValue(newValue, duration);
+  const animatedTotalValue = currentValue + animatedNewValue;
   const currentPercentage = target > 0 ? currentValue / target : 0;
+  const animatedTotalPercentage = target > 0 ? animatedTotalValue / target : 0;
 
   return {
     currentProgress: Math.min(currentPercentage, 1),
@@ -99,7 +85,6 @@ interface NutrientCircleProps {
   target: number;
   unit: string;
   color: string;
-  isAnimating: boolean;
 }
 
 const NutrientCircle: React.FC<NutrientCircleProps> = ({
@@ -109,9 +94,8 @@ const NutrientCircle: React.FC<NutrientCircleProps> = ({
   target,
   unit,
   color,
-  isAnimating,
 }) => {
-  const animatedNewValue = useCountUp(newValue, isAnimating);
+  const animatedChange = useAnimatedValue(newValue);
   const finalTotalValue = value + newValue;
 
   const chart = {
@@ -123,7 +107,7 @@ const NutrientCircle: React.FC<NutrientCircleProps> = ({
   };
 
   const { currentProgress, totalProgress, overflowProgress } =
-    useAnimatedProgress(isAnimating, value, newValue, target);
+    useAnimatedProgress(value, newValue, target);
 
   const currentOffset = chart.circumference * (1 - currentProgress);
   const totalOffset = chart.circumference * (1 - totalProgress);
@@ -138,7 +122,6 @@ const NutrientCircle: React.FC<NutrientCircleProps> = ({
   return (
     <div className={styles.nutrientCircleContainer}>
       <svg className={styles.nutrientSvg} viewBox="0 0 140 140">
-        {/* Background track */}
         <circle
           cx="70"
           cy="70"
@@ -147,7 +130,6 @@ const NutrientCircle: React.FC<NutrientCircleProps> = ({
           stroke="var(--color-border-light)"
           strokeWidth={chart.strokeWidth}
         />
-        {/* Total value arc */}
         <circle
           cx="70"
           cy="70"
@@ -159,7 +141,6 @@ const NutrientCircle: React.FC<NutrientCircleProps> = ({
           strokeDashoffset={totalOffset}
           strokeLinecap="round"
         />
-        {/* Current value arc (normal color, drawn on top) */}
         <circle
           cx="70"
           cy="70"
@@ -171,21 +152,22 @@ const NutrientCircle: React.FC<NutrientCircleProps> = ({
           strokeDashoffset={currentOffset}
           strokeLinecap="round"
         />
-        {/* Overflow arc */}
-        <circle
-          cx="70"
-          cy="70"
-          r={chart.radius}
-          fill="none"
-          stroke={`var(${impactColorVar})`}
-          strokeWidth={chart.strokeWidth}
-          strokeDasharray={chart.circumference}
-          strokeDashoffset={overflowOffset}
-          strokeLinecap="round"
-        />
+        {isOverflowing && (
+          <circle
+            cx="70"
+            cy="70"
+            r={chart.radius}
+            fill="none"
+            stroke={`var(${impactColorVar})`}
+            strokeWidth={chart.strokeWidth}
+            strokeDasharray={chart.circumference}
+            strokeDashoffset={overflowOffset}
+            strokeLinecap="round"
+          />
+        )}
       </svg>
       <span className={styles.nutrientValue}>
-        {finalTotalValue.toFixed(0)}
+        {(value + animatedChange).toFixed(0)}
         {unit}
       </span>
       <div className={styles.changeContainer}>
@@ -193,7 +175,8 @@ const NutrientCircle: React.FC<NutrientCircleProps> = ({
           className={styles.nutrientChange}
           style={{ color: `var(${impactColorVar})` }}
         >
-          +{animatedNewValue.toFixed(0)}
+          {animatedChange >= 0 ? "+" : ""}
+          {animatedChange.toFixed(0)}
           {unit}
         </span>
         {isOverflowing && (
@@ -217,8 +200,6 @@ export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
   summary,
   nutrientProfile,
 }) => {
-  const startAnimation = useAnimationOnLoad();
-
   const {
     targets,
     isLoading: targetsIsLoading,
@@ -245,7 +226,6 @@ export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
           target={targets.energy}
           unit="kcal"
           color="--color-energy"
-          isAnimating={startAnimation}
         />
         <NutrientCircle
           label="Protein"
@@ -254,7 +234,6 @@ export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
           target={targets.protein}
           unit="g"
           color="--color-protein"
-          isAnimating={startAnimation}
         />
         <NutrientCircle
           label="Carbs"
@@ -263,7 +242,6 @@ export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
           target={targets.carbohydrates}
           unit="g"
           color="--color-carbs"
-          isAnimating={startAnimation}
         />
         <NutrientCircle
           label="Sugars"
@@ -272,7 +250,6 @@ export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
           target={targets.sugars}
           unit="g"
           color="--color-sugars"
-          isAnimating={startAnimation}
         />
         <NutrientCircle
           label="Fat"
@@ -281,7 +258,6 @@ export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
           target={targets.fats}
           unit="g"
           color="--color-fats"
-          isAnimating={startAnimation}
         />
         <NutrientCircle
           label="Fibre"
@@ -290,7 +266,6 @@ export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
           target={targets.fibre}
           unit="g"
           color="--color-fibre"
-          isAnimating={startAnimation}
         />
       </div>
     </div>
