@@ -10,8 +10,18 @@ import styles from "./DraftPage.module.css";
 export const DraftPage = () => {
   const { draftId } = useParams<{ draftId: string }>();
   const navigate = useNavigate();
-  const { draft, isLoading, error, save, isSaving, discard, isDiscarding } =
-    useMealDraft(draftId);
+
+  const {
+    draft,
+    isLoading,
+    error,
+    save,
+    isSaving,
+    discard,
+    isDiscarding,
+    removeComponent,
+    isRemovingComponent,
+  } = useMealDraft(draftId);
 
   const {
     data: summary,
@@ -41,6 +51,14 @@ export const DraftPage = () => {
       await discard();
     } catch (e) {
       console.error("Failed to discard meal:", e);
+    }
+  };
+
+  const handleDeleteComponent = async (componentId: string) => {
+    try {
+      await removeComponent(componentId);
+    } catch (err) {
+      console.error("Failed to delete component:", err);
     }
   };
 
@@ -105,19 +123,20 @@ export const DraftPage = () => {
 
   if (draft?.status === "complete" && draft.mealDraft && summary) {
     const { mealDraft } = draft;
+    const isProcessing = isSaving || isDiscarding || isRemovingComponent;
 
     const draftActions = (
       <>
         <button
           onClick={handleSaveMeal}
-          disabled={isSaving || isDiscarding}
+          disabled={isProcessing}
           className={`${layoutStyles.button} ${layoutStyles.primary}`}
         >
           {isSaving ? "Saving..." : "Save Meal"}
         </button>
         <button
           onClick={handleDiscardMeal}
-          disabled={isSaving || isDiscarding}
+          disabled={isProcessing}
           className={`${layoutStyles.button} ${layoutStyles.secondary}`}
         >
           {isDiscarding ? "Discarding..." : "Discard Draft"}
@@ -134,6 +153,8 @@ export const DraftPage = () => {
         nutrientProfile={mealDraft.nutrientProfile}
         dailySummary={summary}
         showDailyImpact={true}
+        isDraft={true}
+        onDeleteComponent={handleDeleteComponent}
       />
     );
   }

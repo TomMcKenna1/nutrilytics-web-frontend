@@ -82,6 +82,21 @@ export const discardMealDraft = (draftId: string): Promise<void> => {
 };
 
 /**
+ * Removes a component from a meal draft. User must be authenticated.
+ * @param draftId The ID of the draft.
+ * @param componentId The ID of the component to remove.
+ * @returns An empty promise on success.
+ */
+export const removeComponentFromDraft = (
+  draftId: string,
+  componentId: string,
+): Promise<void> => {
+  return apiClient(`/api/v1/meal_drafts/${draftId}/components/${componentId}`, {
+    method: "DELETE",
+  });
+};
+
+/**
  * Get all current meal draft. User must be authenticated.
  * @param draftId The ID of the draft to discard.
  * @returns An empty promise on success.

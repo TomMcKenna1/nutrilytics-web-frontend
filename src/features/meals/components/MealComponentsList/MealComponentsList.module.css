@@ -1,3 +1,5 @@
+/* src/features/meals/components/MealComponentsList/MealComponentsList.module.css */
+
 .container {
   background-color: var(--color-background-light);
   border: 1px solid var(--color-border-light);
@@ -28,14 +30,27 @@
   background-color: var(--color-background-hover); /* Subtle hover effect */
 }
 
+/* New style to group the arrow and info on the left */
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  flex-grow: 1; /* Allow this section to grow */
+  min-width: 0; /* Prevents overflow issues with long text */
+}
+
 .info {
   display: flex;
   flex-direction: column;
+  min-width: 0; /* Helps with text truncation if needed */
 }
 
 .name {
   font-weight: 500;
   color: var(--color-text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .quantity {
@@ -48,6 +63,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
+  flex-shrink: 0; /* Prevent this section from shrinking */
 }
 
 .weight {
@@ -112,4 +128,23 @@
   padding: var(--spacing-4);
   text-align: center;
   color: var(--color-text-light);
+}
+
+/* Styles for the new delete button */
+.deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-light);
+  padding: var(--spacing-1);
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.deleteButton:hover {
+  background-color: #fef2f2; /* Light red for hover */
+  color: #ef4444; /* Red for icon */
 }

@@ -1,9 +1,12 @@
+// src/hooks/useMealDraft.ts
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
   checkDraftStatus,
   saveDraftAsMeal,
   discardMealDraft,
+  removeComponentFromDraft,
 } from "../features/meals/api/mealService";
 import type { MealResponse } from "../features/meals/types";
 
@@ -37,8 +40,20 @@ export const useMealDraft = (draftId: string | undefined) => {
     },
   });
 
+  const removeComponentMutation = useMutation({
+    mutationFn: (componentId: string) => {
+      if (!draftId)
+        throw new Error("Draft ID is required to remove a component.");
+      return removeComponentFromDraft(draftId, componentId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
+
   const { isPending: isSaving } = saveMutation;
   const { isPending: isDiscarding } = discardMutation;
+  const { isPending: isRemovingComponent } = removeComponentMutation;
 
   const draftQuery = useQuery({
     queryKey,
@@ -57,5 +72,7 @@ export const useMealDraft = (draftId: string | undefined) => {
     isSaving,
     discard: discardMutation.mutateAsync,
     isDiscarding,
+    removeComponent: removeComponentMutation.mutateAsync,
+    isRemovingComponent,
   };
 };

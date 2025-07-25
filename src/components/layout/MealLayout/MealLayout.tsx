@@ -1,3 +1,5 @@
+// src/components/layout/MealLayout/MealLayout.tsx
+
 import React from "react";
 import { Link } from "react-router-dom";
 import type {
@@ -18,6 +20,8 @@ interface MealLayoutProps {
   nutrientProfile: NutrientProfile | null;
   dailySummary?: DailySummary;
   showDailyImpact?: boolean;
+  isDraft?: boolean;
+  onDeleteComponent?: (componentId: string) => void;
 }
 
 export const MealLayout: React.FC<MealLayoutProps> = ({
@@ -28,10 +32,12 @@ export const MealLayout: React.FC<MealLayoutProps> = ({
   nutrientProfile,
   dailySummary,
   showDailyImpact = false,
+  isDraft,
+  onDeleteComponent,
 }) => {
   const totalWeight = components.reduce(
     (total, component) => total + component.totalWeight,
-    0
+    0,
   );
 
   return (
@@ -49,7 +55,6 @@ export const MealLayout: React.FC<MealLayoutProps> = ({
         </div>
       </header>
 
-      {/* Conditionally render this entire section */}
       {showDailyImpact && dailySummary && nutrientProfile && (
         <div className={styles.leftColumn}>
           <h2 className={styles.sectionTitle}>Daily Target Impact</h2>
@@ -67,7 +72,11 @@ export const MealLayout: React.FC<MealLayoutProps> = ({
           <h2 className={styles.sectionTitle}>
             Components ({components.length})
           </h2>
-          <MealComponentsList components={components} />
+          <MealComponentsList
+            components={components}
+            isDraft={isDraft}
+            onDeleteComponent={onDeleteComponent}
+          />
         </div>
 
         {nutrientProfile && (

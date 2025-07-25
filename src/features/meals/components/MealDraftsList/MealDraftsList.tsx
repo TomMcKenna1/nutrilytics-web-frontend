@@ -70,7 +70,7 @@ const MealDraftItem = ({ draft }: { draft: Draft }) => {
       </button>
     </div>
   );
-  
+
   if (draft.mealDraft && draft.status === "complete") {
     return (
       <Link to={`/draft/${draft.id}`} className={styles.itemLink}>

@@ -75,12 +75,12 @@ h6 {
   --color-traffic-green: #1e8e3e;
 
   /* New Nutrient Color Palette */
-  --color-energy: #4169E1; /* Royal Blue */
-  --color-protein: #FFEA00; /* Bright Yellow */
-  --color-carbs: #A64DFF; /* Medium Orchid (Vibrant Purple) */
-  --color-sugars: #00BCD4; /* Cyan/Turquoise */
-  --color-fats: #FFA500; /* Orange */
-  --color-fibre: #DDA0DD; /* Plum (Softer, but Distinct Pink-Purple) */
+  --color-energy: #4169e1; /* Royal Blue */
+  --color-protein: #ffea00; /* Bright Yellow */
+  --color-carbs: #a64dff; /* Medium Orchid (Vibrant Purple) */
+  --color-sugars: #00bcd4; /* Cyan/Turquoise */
+  --color-fats: #ffa500; /* Orange */
+  --color-fibre: #dda0dd; /* Plum (Softer, but Distinct Pink-Purple) */
 
   --color-nutrient-impact: #2ecc71; /* Friendly Green */
 
