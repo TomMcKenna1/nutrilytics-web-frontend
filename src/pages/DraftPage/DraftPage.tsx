@@ -21,6 +21,8 @@ export const DraftPage = () => {
     isDiscarding,
     removeComponent,
     isRemovingComponent,
+    addComponent,
+    isAddingComponent,
   } = useMealDraft(draftId);
 
   const {
@@ -51,6 +53,14 @@ export const DraftPage = () => {
       await discard();
     } catch (e) {
       console.error("Failed to discard meal:", e);
+    }
+  };
+
+  const handleAddComponent = async (description: string) => {
+    try {
+      await addComponent(description);
+    } catch (err) {
+      console.error("Failed to add component:", err);
     }
   };
 
@@ -121,9 +131,18 @@ export const DraftPage = () => {
     );
   }
 
-  if (draft?.status === "complete" && draft.mealDraft && summary) {
+  if (
+    (draft?.status === "complete" || draft?.status === "pending_edit") &&
+    draft.mealDraft &&
+    summary
+  ) {
     const { mealDraft } = draft;
-    const isProcessing = isSaving || isDiscarding || isRemovingComponent;
+    const isProcessing =
+      isSaving ||
+      isDiscarding ||
+      isRemovingComponent ||
+      isAddingComponent ||
+      draft.status === "pending_edit";
 
     const draftActions = (
       <>
@@ -155,6 +174,8 @@ export const DraftPage = () => {
         showDailyImpact={true}
         isDraft={true}
         onDeleteComponent={handleDeleteComponent}
+        isEditing={isProcessing}
+        onAddComponent={handleAddComponent}
       />
     );
   }

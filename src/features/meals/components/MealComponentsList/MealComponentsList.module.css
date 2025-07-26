@@ -1,19 +1,17 @@
-/* src/features/meals/components/MealComponentsList/MealComponentsList.module.css */
-
 .container {
   background-color: var(--color-background-light);
   border: 1px solid var(--color-border-light);
   border-radius: var(--border-radius-lg);
-  overflow: hidden; /* Ensures rounded corners are respected */
+  overflow: hidden;
   box-shadow: var(--box-shadow-sm);
 }
 
 .itemWrapper {
-  border-bottom: 1px solid var(--color-border-light); /* Separator for each component block */
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .itemWrapper:last-child {
-  border-bottom: none; /* No border for the last item */
+  border-bottom: none;
 }
 
 .item {
@@ -21,28 +19,27 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--spacing-3);
-  cursor: pointer; /* Indicate clickable */
+  cursor: pointer;
   background-color: var(--color-background-light);
   transition: background-color 0.2s ease-in-out;
 }
 
 .item:hover {
-  background-color: var(--color-background-hover); /* Subtle hover effect */
+  background-color: var(--color-background-hover);
 }
 
-/* New style to group the arrow and info on the left */
 .leftSection {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
-  flex-grow: 1; /* Allow this section to grow */
-  min-width: 0; /* Prevents overflow issues with long text */
+  flex-grow: 1;
+  min-width: 0;
 }
 
 .info {
   display: flex;
   flex-direction: column;
-  min-width: 0; /* Helps with text truncation if needed */
+  min-width: 0;
 }
 
 .name {
@@ -56,14 +53,14 @@
 .quantity {
   color: var(--color-text-medium);
   font-size: 0.875rem;
-  margin-top: var(--spacing-0); /* Smaller margin for quantity */
+  margin-top: var(--spacing-0);
 }
 
 .rightSection {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
-  flex-shrink: 0; /* Prevent this section from shrinking */
+  flex-shrink: 0;
 }
 
 .weight {
@@ -75,11 +72,11 @@
   font-size: 0.8rem;
   color: var(--color-primary-blue);
   transition: transform 0.3s ease-in-out;
-  transform: rotate(0deg); /* Initial state: pointing down */
+  transform: rotate(0deg);
 }
 
 .arrowOpen {
-  transform: rotate(180deg); /* Rotates up when open */
+  transform: rotate(180deg);
 }
 
 .detailsPanel {
@@ -92,13 +89,13 @@
   opacity: 0;
   background-color: var(
     --color-background-details
-  ); /* Slightly darker background for details */
-  padding: 0 var(--spacing-3); /* No vertical padding when closed */
+  );
+  padding: 0 var(--spacing-3);
 }
 
 .detailsOpen {
-  max-height: 500px; /* Large enough to accommodate content, adjust if needed */
-  padding: var(--spacing-3); /* Apply padding when open */
+  max-height: 500px;
+  padding: var(--spacing-3);
   opacity: 1;
 }
 
@@ -107,7 +104,7 @@
   justify-content: space-between;
   padding: var(--spacing-1) 0;
   font-size: 0.9rem;
-  border-bottom: 1px dashed var(--color-border-light); /* Subtle separator */
+  border-bottom: 1px dashed var(--color-border-light);
 }
 
 .detailRow:last-child {
@@ -130,7 +127,6 @@
   color: var(--color-text-light);
 }
 
-/* Styles for the new delete button */
 .deleteButton {
   background: none;
   border: none;
@@ -141,10 +137,142 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s, color 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
 }
 
 .deleteButton:hover {
-  background-color: #fef2f2; /* Light red for hover */
-  color: #ef4444; /* Red for icon */
+  background-color: #fef2f2;
+  color: #ef4444;
+}
+
+.addComponentRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: var(--spacing-2) var(--spacing-3);
+  cursor: pointer;
+  color: var(--color-primary-blue);
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.addComponentRow[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.addComponentRow:not([aria-disabled="true"]):hover {
+  background-color: var(--color-background-soft);
+}
+
+.addComponentForm {
+  padding: var(--spacing-3);
+  background-color: #f8f9fa;
+}
+
+.addComponentInput {
+  width: 100%;
+  padding: var(--spacing-2);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-background-light);
+  font-size: 1rem;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.addComponentInput:focus {
+  outline: none;
+  border-color: var(--color-primary-blue);
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+}
+
+.formActions {
+  display: flex;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-3);
+  justify-content: flex-end;
+}
+
+.button {
+  padding: var(--spacing-2) var(--spacing-3);
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  font-weight: 500;
+  text-align: center;
+  transition:
+    background-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.primary {
+  background-color: var(--color-primary-blue);
+  color: var(--color-background-light);
+}
+
+.primary:not(:disabled):hover {
+  background-color: var(--color-primary-blue-dark);
+}
+
+.neutral {
+  background-color: var(--color-background-light);
+  color: var(--color-text-medium);
+  border: 1px solid var(--color-border-light);
+}
+
+.neutral:not(:disabled):hover {
+  background-color: #e8eaed;
+}
+
+/* Updated placeholder style to remove its own border */
+.pendingComponentCard {
+  padding: var(--spacing-3);
+  background-color: var(--color-background-soft);
+  position: relative;
+  overflow: hidden;
+}
+
+.pendingText {
+  margin: 0;
+  color: var(--color-text-medium);
+  font-style: italic;
+  font-weight: 500;
+  text-align: center;
+}
+
+.shimmerEffect::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(218, 220, 224, 0.8),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.deleteButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }

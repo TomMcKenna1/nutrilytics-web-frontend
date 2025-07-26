@@ -1,21 +1,93 @@
-// src/features/meals/components/MealComponentsList/MealComponentsList.tsx
-
 import { useState } from "react";
 import { type MealComponent } from "../../types";
 import { NutritionTrafficlightView } from "../NutritionTrafficlightView/NutritionTrafficlightView";
 import styles from "./MealComponentsList.module.css";
-import { FiTrash2 } from "react-icons/fi"; // Import the bin icon
+import { FiTrash2, FiPlus } from "react-icons/fi";
+
+const PendingComponent = () => (
+  <div className={`${styles.pendingComponentCard} ${styles.shimmerEffect}`}>
+    <p className={styles.pendingText}>Analyzing new component...</p>
+  </div>
+);
+
+const AddComponentForm = ({
+  onAddComponent,
+  isEditing,
+}: {
+  onAddComponent: (description: string) => void;
+  isEditing?: boolean;
+}) => {
+  const [description, setDescription] = useState("");
+  const [showForm, setShowForm] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (description.trim()) {
+      onAddComponent(description);
+      setDescription("");
+      setShowForm(false);
+    }
+  };
+
+  return (
+    <div className={styles.itemWrapper}>
+      {!showForm ? (
+        <div
+          className={styles.addComponentRow}
+          onClick={() => !isEditing && setShowForm(true)}
+          role="button"
+          aria-disabled={isEditing}
+          tabIndex={isEditing ? -1 : 0}
+        >
+          <FiPlus />
+          <span>Add Component</span>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className={styles.addComponentForm}>
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="e.g., 100g of sugar"
+            className={styles.addComponentInput}
+            autoFocus
+          />
+          <div className={styles.formActions}>
+            <button
+              type="button"
+              onClick={() => setShowForm(false)}
+              className={`${styles.button} ${styles.neutral}`}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className={`${styles.button} ${styles.primary}`}
+              disabled={!description.trim()}
+            >
+              Add
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
+  );
+};
 
 interface MealComponentsListProps {
   components: MealComponent[];
-  isDraft?: boolean; // Optional: To identify if the meal is a draft
-  onDeleteComponent?: (componentId: string) => void; // Optional: Handler for deleting a component
+  isDraft?: boolean;
+  onDeleteComponent?: (componentId: string) => void;
+  isEditing?: boolean;
+  onAddComponent?: (description: string) => void;
 }
 
 export const MealComponentsList = ({
   components,
   isDraft = false,
   onDeleteComponent,
+  isEditing = false,
+  onAddComponent,
 }: MealComponentsListProps) => {
   const [openComponents, setOpenComponents] = useState<Set<string>>(new Set());
 
@@ -32,26 +104,29 @@ export const MealComponentsList = ({
   };
 
   const handleDelete = (e: React.MouseEvent, componentId: string) => {
-    e.stopPropagation(); // Prevent the details panel from toggling
-    onDeleteComponent?.(componentId);
+    e.stopPropagation();
+    if (!isEditing && components.length > 1) {
+      onDeleteComponent?.(componentId);
+    }
   };
 
-  if (components.length === 0) {
+  if (components.length === 0 && !isDraft && !isEditing) {
     return <p className={styles.emptyState}>This meal has no components.</p>;
   }
 
   return (
     <div className={styles.container}>
-      {components.map((component, index) => (
-        <div key={component.id || index} className={styles.itemWrapper}>
+      {components.map((component) => (
+        <div key={component.id} className={styles.itemWrapper}>
           <div
             className={styles.item}
             onClick={() => toggleDetails(component.id)}
           >
-            {/* Left section containing arrow and info */}
             <div className={styles.leftSection}>
               <div
-                className={`${styles.dropdownArrow} ${openComponents.has(component.id) ? styles.arrowOpen : ""}`}
+                className={`${styles.dropdownArrow} ${
+                  openComponents.has(component.id) ? styles.arrowOpen : ""
+                }`}
               >
                 &#9660;
               </div>
@@ -60,8 +135,6 @@ export const MealComponentsList = ({
                 <div className={styles.quantity}>{component.quantity}</div>
               </div>
             </div>
-
-            {/* Right section containing weight and delete button */}
             <div className={styles.rightSection}>
               <div className={styles.weight}>
                 {component.totalWeight.toFixed(0)}g
@@ -71,16 +144,22 @@ export const MealComponentsList = ({
                   className={styles.deleteButton}
                   onClick={(e) => handleDelete(e, component.id)}
                   aria-label={`Delete ${component.name}`}
-                  title="Delete component"
+                  title={
+                    components.length === 1
+                      ? "A meal draft must have at least one component"
+                      : "Delete component"
+                  }
+                  disabled={isEditing || components.length === 1}
                 >
                   <FiTrash2 />
                 </button>
               )}
             </div>
           </div>
-
           <div
-            className={`${styles.detailsPanel} ${openComponents.has(component.id) ? styles.detailsOpen : ""}`}
+            className={`${styles.detailsPanel} ${
+              openComponents.has(component.id) ? styles.detailsOpen : ""
+            }`}
           >
             <NutritionTrafficlightView
               nutrientProfile={component.nutrientProfile}
@@ -89,6 +168,19 @@ export const MealComponentsList = ({
           </div>
         </div>
       ))}
+
+      {isEditing && (
+        <div className={styles.itemWrapper}>
+          <PendingComponent />
+        </div>
+      )}
+
+      {isDraft && onAddComponent && (
+        <AddComponentForm
+          onAddComponent={onAddComponent}
+          isEditing={isEditing}
+        />
+      )}
     </div>
   );
 };

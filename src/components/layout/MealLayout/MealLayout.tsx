@@ -1,5 +1,3 @@
-// src/components/layout/MealLayout/MealLayout.tsx
-
 import React from "react";
 import { Link } from "react-router-dom";
 import type {
@@ -22,6 +20,8 @@ interface MealLayoutProps {
   showDailyImpact?: boolean;
   isDraft?: boolean;
   onDeleteComponent?: (componentId: string) => void;
+  isEditing?: boolean;
+  onAddComponent?: (description: string) => void;
 }
 
 export const MealLayout: React.FC<MealLayoutProps> = ({
@@ -34,6 +34,8 @@ export const MealLayout: React.FC<MealLayoutProps> = ({
   showDailyImpact = false,
   isDraft,
   onDeleteComponent,
+  isEditing,
+  onAddComponent,
 }) => {
   const totalWeight = components.reduce(
     (total, component) => total + component.totalWeight,
@@ -70,12 +72,14 @@ export const MealLayout: React.FC<MealLayoutProps> = ({
       <main className={styles.mainContent}>
         <div className={styles.leftColumn}>
           <h2 className={styles.sectionTitle}>
-            Components ({components.length})
+            Components ({isEditing ? components.length + 1 : components.length})
           </h2>
           <MealComponentsList
             components={components}
             isDraft={isDraft}
             onDeleteComponent={onDeleteComponent}
+            isEditing={isEditing}
+            onAddComponent={onAddComponent}
           />
         </div>
 

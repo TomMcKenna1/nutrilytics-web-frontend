@@ -59,7 +59,6 @@
   margin-bottom: var(--spacing-5);
 }
 
-/* This is the new rule to add more space */
 .impactSection .sectionTitle {
   margin-bottom: var(--spacing-4);
 }
@@ -91,7 +90,6 @@
   color: var(--color-text-dark);
 }
 
-/* Add styles for buttons if they are not globally defined */
 .button {
   padding: var(--spacing-2) var(--spacing-3);
   border: none;
