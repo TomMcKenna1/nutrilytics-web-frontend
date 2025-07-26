@@ -48,7 +48,7 @@ const AddComponentForm = ({
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="e.g., 100g of sugar"
+            placeholder="A tablespoon of olive oil..."
             className={styles.addComponentInput}
             autoFocus
           />
