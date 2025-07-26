@@ -7,8 +7,11 @@ import type {
 import type { DailySummary } from "../../../features/metrics/types";
 import { MealComponentsList } from "../../../features/meals/components/MealComponentsList/MealComponentsList";
 import { TotalNutritionCard } from "../../../features/meals/components/TotalNutritionCard/TotalNutritionCard";
+import { MealTypeSelector } from "../../../features/meals/components/MealTypeSelector/MealTypeSelector";
 import { DailyTargetImpact } from "../../../features/meals/components/DailyTargetImpact/DailyTargetImpact";
 import styles from "./MealLayout.module.css";
+
+type MealTypeOption = "meal" | "snack" | "beverage";
 
 interface MealLayoutProps {
   title: string;
@@ -22,6 +25,8 @@ interface MealLayoutProps {
   onDeleteComponent?: (componentId: string) => void;
   isEditing?: boolean;
   onAddComponent?: (description: string) => void;
+  mealType?: MealTypeOption;
+  onMealTypeChange?: (newType: MealTypeOption) => void;
 }
 
 export const MealLayout: React.FC<MealLayoutProps> = ({
@@ -36,10 +41,12 @@ export const MealLayout: React.FC<MealLayoutProps> = ({
   onDeleteComponent,
   isEditing,
   onAddComponent,
+  mealType,
+  onMealTypeChange,
 }) => {
   const totalWeight = components.reduce(
     (total, component) => total + component.totalWeight,
-    0,
+    0
   );
 
   return (
@@ -49,9 +56,18 @@ export const MealLayout: React.FC<MealLayoutProps> = ({
           &larr; Back to Dashboard
         </Link>
         <div className={styles.headerMain}>
-          <div>
+          <div className={styles.headerInfo}>
             <h1 className={styles.title}>{title}</h1>
             <p className={styles.description}>{description}</p>
+            {mealType && onMealTypeChange && (
+              <div className={styles.mealTypeContainer}>
+                <MealTypeSelector
+                  value={mealType}
+                  onChange={onMealTypeChange}
+                  disabled={isEditing}
+                />
+              </div>
+            )}
           </div>
           <div className={styles.actionsContainer}>{actions}</div>
         </div>

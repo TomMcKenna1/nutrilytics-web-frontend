@@ -1,18 +1,26 @@
 .summaryContainer {
   display: flex;
   align-items: center;
-  gap: var(--spacing-5);
+  gap: var(--spacing-4);
   font-family: var(--font-primary);
 }
 
 .mealsLoggedContainer {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
   text-align: center;
   padding-right: var(--spacing-4);
   border-right: 1px solid var(--color-border-light);
+  width: 180px; /* Gave a fixed width to prevent layout shifts */
+  flex-shrink: 0;
+}
+
+.primaryCountContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .mealsCount {
@@ -28,9 +36,36 @@
   margin-top: var(--spacing-2);
 }
 
+.secondaryCountsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-3);
+  padding-top: var(--spacing-3);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.secondaryCount {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.secondaryCountValue {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  line-height: 1.1;
+}
+
+.secondaryCountLabel {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+}
+
 .nutrientsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: var(--spacing-4);
   width: 100%;
 }

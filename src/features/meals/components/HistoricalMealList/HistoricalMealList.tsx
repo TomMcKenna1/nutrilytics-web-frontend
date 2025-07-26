@@ -2,11 +2,36 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import { useInfiniteMeals } from "../../../../hooks/useInfiniteMeals";
+import type { MealResponse } from "../../types";
 import MealItemPlaceholder from "../MealItemPlaceholder/MealItemPlaceholder";
 import styles from "./HistoricalMealList.module.css";
+import { FaBowlFood } from "react-icons/fa6";
+import { RiDrinksFill } from "react-icons/ri";
+import { GiChipsBag } from "react-icons/gi";
 
 const ROW_HEIGHT_REM = 3.5;
 const PLACEHOLDER_COUNT = 3;
+
+// A simple, self-contained icon component to avoid adding new dependencies.
+const MealTypeIcon = ({
+  mealType,
+}: {
+  mealType: "meal" | "snack" | "beverage";
+}) => {
+  const iconStyle = {
+    width: "1.25rem",
+    height: "1.25rem",
+    fill: "currentColor",
+  };
+
+  const icons = {
+    meal: <FaBowlFood color={'var(--color-primary-blue)'}/>,
+    snack: <GiChipsBag color={'var(--color-fats)'}/>,
+    beverage: <RiDrinksFill color={'var(--color-fats)'}/>,
+  };
+
+  return icons[mealType] || icons.meal;
+};
 
 interface HistoricalMealListProps {
   maxVisibleRows?: number;
@@ -104,14 +129,21 @@ export const HistoricalMealList = ({
         ref={scrollContainerRef}
       >
         <div className={styles.list}>
-          {meals.map((meal) => (
+          {meals.map((meal: MealResponse) => (
             <Link
               to={`/meal/${meal.id}`}
               key={meal.id}
               className={styles.itemLink}
             >
-              <div className={styles.item}>
-                <span className={styles.mealName}>{meal.name}</span>
+              <div
+                className={`${styles.item} ${
+                  styles[meal.type] || styles.meal
+                }`}
+              >
+                <div className={styles.mealInfo}>
+                  <MealTypeIcon mealType={meal.type} />
+                  <span className={styles.mealName}>{meal.name}</span>
+                </div>
                 <span className={styles.mealDate}>
                   {new Date(meal.createdAt).toLocaleDateString()}
                 </span>

@@ -10,7 +10,7 @@ const ANIMATION_DURATION = 1200;
 const useCountUp = (
   target: number,
   isAnimating: boolean,
-  duration: number = ANIMATION_DURATION,
+  duration: number = ANIMATION_DURATION
 ): number => {
   const [count, setCount] = useState(0);
   useEffect(() => {
@@ -49,7 +49,7 @@ type SequentialProgress = {
 const useSequentialProgress = (
   isAnimating: boolean,
   finalPercentage: number,
-  totalDuration: number = ANIMATION_DURATION,
+  totalDuration: number = ANIMATION_DURATION
 ): SequentialProgress => {
   const [mainProgress, setMainProgress] = useState(0);
   const [overflowProgress, setOverflowProgress] = useState(0);
@@ -130,7 +130,7 @@ const NutrientCircle: React.FC<NutrientCircleProps> = ({
   const finalPercentage = target > 0 ? value / target : 0;
   const { mainProgress, overflowProgress } = useSequentialProgress(
     isAnimating,
-    finalPercentage,
+    finalPercentage
   );
 
   const mainOffset = chart.circumference * (1 - mainProgress);
@@ -199,7 +199,7 @@ export const DailySummary: React.FC = () => {
         setSummary(data);
       } catch (err) {
         setSummaryError(
-          err instanceof Error ? err.message : "An unknown error occurred",
+          err instanceof Error ? err.message : "An unknown error occurred"
         );
       } finally {
         setSummaryIsLoading(false);
@@ -222,8 +222,24 @@ export const DailySummary: React.FC = () => {
   return (
     <div className={styles.summaryContainer}>
       <div className={styles.mealsLoggedContainer}>
-        <span className={styles.mealsCount}>{summary.mealsLogged}</span>
-        <span className={styles.mealsLabel}>Meals Logged</span>
+        <div className={styles.primaryCountContainer}>
+          <span className={styles.mealsCount}>{summary.mealCount}</span>
+          <span className={styles.mealsLabel}>Meals</span>
+        </div>
+        <div className={styles.secondaryCountsGrid}>
+          <div className={styles.secondaryCount}>
+            <span className={styles.secondaryCountValue}>
+              {summary.snackCount}
+            </span>
+            <span className={styles.secondaryCountLabel}>Snacks</span>
+          </div>
+          <div className={styles.secondaryCount}>
+            <span className={styles.secondaryCountValue}>
+              {summary.beverageCount}
+            </span>
+            <span className={styles.secondaryCountLabel}>Beverages</span>
+          </div>
+        </div>
       </div>
       <div className={styles.nutrientsGrid}>
         <NutrientCircle
