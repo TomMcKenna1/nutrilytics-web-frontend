@@ -1,4 +1,6 @@
-export type MealDraftStatus = "pending" | "complete" | "error";
+export type MealDraftStatus = "pending" | "complete" | "pending_edit" | "error";
+
+export type MealType = "meal" | "snack" | "beverage";
 
 export interface NutrientProfile {
   energy: number;
@@ -37,6 +39,7 @@ export interface MealComponent {
 export interface Meal {
   name: string;
   description: string;
+  type: MealType;
   nutrientProfile: NutrientProfile;
   components: MealComponent[];
 }

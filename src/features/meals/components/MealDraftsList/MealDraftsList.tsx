@@ -19,6 +19,7 @@ const MealDraftItem = ({ draft }: { draft: Draft }) => {
 
   const renderStatus = () => {
     switch (draft.status) {
+      case "pending_edit":
       case "pending":
         return (
           <div className={styles.icon}>
@@ -54,7 +55,9 @@ const MealDraftItem = ({ draft }: { draft: Draft }) => {
   };
 
   const displayText = draft.mealDraft?.name || draft.originalInput;
-  const itemClasses = `${styles.item} ${draft.status === "pending" ? styles.pendingItem : ""}`;
+  const isPending =
+    draft.status === "pending" || draft.status === "pending_edit";
+  const itemClasses = `${styles.item} ${isPending ? styles.pendingItem : ""}`;
 
   const content = (
     <div className={itemClasses}>
@@ -63,15 +66,19 @@ const MealDraftItem = ({ draft }: { draft: Draft }) => {
       <button
         className={styles.discardButton}
         onClick={handleDiscard}
-        disabled={isDiscarding}
+        disabled={isDiscarding || isPending}
         title="Discard Draft"
       >
         {isDiscarding ? <Loader /> : <FiTrash2 />}
       </button>
     </div>
   );
-  
-  if (draft.mealDraft && draft.status === "complete") {
+
+  const canNavigate =
+    draft.mealDraft &&
+    (draft.status === "complete" || draft.status === "pending_edit");
+
+  if (canNavigate) {
     return (
       <Link to={`/draft/${draft.id}`} className={styles.itemLink}>
         {content}

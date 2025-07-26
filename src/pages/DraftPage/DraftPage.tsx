@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useMealDraft } from "../../hooks/useMealDraft";
 import { useQuery } from "@tanstack/react-query";
@@ -7,11 +7,34 @@ import MealLayout from "../../components/layout/MealLayout/MealLayout";
 import layoutStyles from "../../components/layout/MealLayout/MealLayout.module.css";
 import styles from "./DraftPage.module.css";
 
+type MealTypeOption = "meal" | "snack" | "beverage";
+
 export const DraftPage = () => {
   const { draftId } = useParams<{ draftId: string }>();
   const navigate = useNavigate();
-  const { draft, isLoading, error, save, isSaving, discard, isDiscarding } =
-    useMealDraft(draftId);
+  const [mealType, setMealType] = useState<MealTypeOption | undefined>();
+
+  const {
+    draft,
+    isLoading,
+    error,
+    save,
+    isSaving,
+    discard,
+    isDiscarding,
+    removeComponent,
+    isRemovingComponent,
+    addComponent,
+    isAddingComponent,
+  } = useMealDraft(draftId);
+
+  // Simulate a pending state for the type change
+  const [isUpdatingMealType, setIsUpdatingMealType] = useState(false);
+
+  useEffect(() => {
+    const currentType = draft?.mealDraft?.type || "meal";
+    setMealType(currentType);
+  }, [draft?.mealDraft?.type]);
 
   const {
     data: summary,
@@ -42,6 +65,34 @@ export const DraftPage = () => {
     } catch (e) {
       console.error("Failed to discard meal:", e);
     }
+  };
+
+  const handleAddComponent = async (description: string) => {
+    try {
+      await addComponent(description);
+    } catch (err) {
+      console.error("Failed to add component:", err);
+    }
+  };
+
+  const handleDeleteComponent = async (componentId: string) => {
+    try {
+      await removeComponent(componentId);
+    } catch (err) {
+      console.error("Failed to delete component:", err);
+    }
+  };
+
+  const handleMealTypeChange = async (newType: MealTypeOption) => {
+    // Simulation for now
+    console.log("Updating meal type to:", newType);
+    setIsUpdatingMealType(true);
+    setMealType(newType);
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    
+    setIsUpdatingMealType(false);
+    console.log("Meal type updated successfully.");
   };
 
   if (
@@ -103,27 +154,43 @@ export const DraftPage = () => {
     );
   }
 
-  if (draft?.status === "complete" && draft.mealDraft && summary) {
+  if (
+    (draft?.status === "complete" || draft?.status === "pending_edit") &&
+    draft.mealDraft &&
+    summary
+  ) {
     const { mealDraft } = draft;
+    const isProcessing =
+      isSaving ||
+      isDiscarding ||
+      isRemovingComponent ||
+      isAddingComponent ||
+      isUpdatingMealType ||
+      draft.status === "pending_edit";
 
     const draftActions = (
       <>
         <button
           onClick={handleSaveMeal}
-          disabled={isSaving || isDiscarding}
+          disabled={isProcessing}
           className={`${layoutStyles.button} ${layoutStyles.primary}`}
         >
           {isSaving ? "Saving..." : "Save Meal"}
         </button>
         <button
           onClick={handleDiscardMeal}
-          disabled={isSaving || isDiscarding}
+          disabled={isProcessing}
           className={`${layoutStyles.button} ${layoutStyles.secondary}`}
         >
           {isDiscarding ? "Discarding..." : "Discard Draft"}
         </button>
       </>
     );
+
+    if (!mealType) {
+      // Render nothing or a placeholder while waiting for state hydration
+      return null;
+    }
 
     return (
       <MealLayout
@@ -134,6 +201,12 @@ export const DraftPage = () => {
         nutrientProfile={mealDraft.nutrientProfile}
         dailySummary={summary}
         showDailyImpact={true}
+        isDraft={true}
+        onDeleteComponent={handleDeleteComponent}
+        isEditing={isProcessing}
+        onAddComponent={handleAddComponent}
+        mealType={mealType}
+        onMealTypeChange={handleMealTypeChange}
       />
     );
   }

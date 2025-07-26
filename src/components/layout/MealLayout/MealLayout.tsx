@@ -7,8 +7,11 @@ import type {
 import type { DailySummary } from "../../../features/metrics/types";
 import { MealComponentsList } from "../../../features/meals/components/MealComponentsList/MealComponentsList";
 import { TotalNutritionCard } from "../../../features/meals/components/TotalNutritionCard/TotalNutritionCard";
+import { MealTypeSelector } from "../../../features/meals/components/MealTypeSelector/MealTypeSelector";
 import { DailyTargetImpact } from "../../../features/meals/components/DailyTargetImpact/DailyTargetImpact";
 import styles from "./MealLayout.module.css";
+
+type MealTypeOption = "meal" | "snack" | "beverage";
 
 interface MealLayoutProps {
   title: string;
@@ -18,6 +21,12 @@ interface MealLayoutProps {
   nutrientProfile: NutrientProfile | null;
   dailySummary?: DailySummary;
   showDailyImpact?: boolean;
+  isDraft?: boolean;
+  onDeleteComponent?: (componentId: string) => void;
+  isEditing?: boolean;
+  onAddComponent?: (description: string) => void;
+  mealType?: MealTypeOption;
+  onMealTypeChange?: (newType: MealTypeOption) => void;
 }
 
 export const MealLayout: React.FC<MealLayoutProps> = ({
@@ -28,6 +37,12 @@ export const MealLayout: React.FC<MealLayoutProps> = ({
   nutrientProfile,
   dailySummary,
   showDailyImpact = false,
+  isDraft,
+  onDeleteComponent,
+  isEditing,
+  onAddComponent,
+  mealType,
+  onMealTypeChange,
 }) => {
   const totalWeight = components.reduce(
     (total, component) => total + component.totalWeight,
@@ -41,15 +56,23 @@ export const MealLayout: React.FC<MealLayoutProps> = ({
           &larr; Back to Dashboard
         </Link>
         <div className={styles.headerMain}>
-          <div>
+          <div className={styles.headerInfo}>
             <h1 className={styles.title}>{title}</h1>
             <p className={styles.description}>{description}</p>
+            {mealType && onMealTypeChange && (
+              <div className={styles.mealTypeContainer}>
+                <MealTypeSelector
+                  value={mealType}
+                  onChange={onMealTypeChange}
+                  disabled={isEditing}
+                />
+              </div>
+            )}
           </div>
           <div className={styles.actionsContainer}>{actions}</div>
         </div>
       </header>
 
-      {/* Conditionally render this entire section */}
       {showDailyImpact && dailySummary && nutrientProfile && (
         <div className={styles.leftColumn}>
           <h2 className={styles.sectionTitle}>Daily Target Impact</h2>
@@ -65,9 +88,15 @@ export const MealLayout: React.FC<MealLayoutProps> = ({
       <main className={styles.mainContent}>
         <div className={styles.leftColumn}>
           <h2 className={styles.sectionTitle}>
-            Components ({components.length})
+            Components ({isEditing ? components.length + 1 : components.length})
           </h2>
-          <MealComponentsList components={components} />
+          <MealComponentsList
+            components={components}
+            isDraft={isDraft}
+            onDeleteComponent={onDeleteComponent}
+            isEditing={isEditing}
+            onAddComponent={onAddComponent}
+          />
         </div>
 
         {nutrientProfile && (

@@ -31,6 +31,10 @@
   border-bottom: 1px solid var(--color-border-light);
 }
 
+.headerInfo {
+  flex-grow: 1;
+}
+
 .title {
   font-size: 2rem;
   font-weight: 700;
@@ -40,7 +44,12 @@
 
 .description {
   color: var(--color-text-medium);
+  margin-bottom: var(--spacing-3);
   max-width: 75ch;
+}
+
+.mealTypeContainer {
+  margin-top: var(--spacing-3);
 }
 
 .actionsContainer {
@@ -59,7 +68,6 @@
   margin-bottom: var(--spacing-5);
 }
 
-/* This is the new rule to add more space */
 .impactSection .sectionTitle {
   margin-bottom: var(--spacing-4);
 }
@@ -91,14 +99,15 @@
   color: var(--color-text-dark);
 }
 
-/* Add styles for buttons if they are not globally defined */
 .button {
   padding: var(--spacing-2) var(--spacing-3);
   border: none;
   border-radius: var(--border-radius-md);
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  transition:
+    background-color 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
   text-align: center;
 }
 

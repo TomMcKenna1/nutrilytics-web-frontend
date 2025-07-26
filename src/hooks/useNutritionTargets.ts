@@ -33,7 +33,6 @@ export const useNutritionTargets = () => {
     isLoading: query.isLoading,
     isError: query.isError,
     error: query.error,
-    // Change this line to use mutateAsync
     updateTargets: mutation.mutateAsync,
     isUpdating: mutation.isPending,
     updateError: mutation.error,

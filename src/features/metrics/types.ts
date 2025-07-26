@@ -1,5 +1,7 @@
 export interface DailySummary {
-  mealsLogged: number;
+  mealCount: number;
+  snackCount: number;
+  beverageCount: number;
   energy: number;
   fats: number;
   saturatedFats: number;
