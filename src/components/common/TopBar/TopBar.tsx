@@ -20,7 +20,7 @@ const TopBar = () => {
         Nutrilytics
       </Link>
 
-      {user && <MealTextInput />}
+      <MealTextInput />
 
       <div>
         {user ? (
