@@ -4,14 +4,18 @@ import MainLayout from "../components/layout/MainLayout/MainLayout";
 import LoginPage from "../pages/LoginPage/LoginPage";
 import DashboardPage from "../pages/DashboardPage/DashboardPage";
 import NotFoundPage from "../pages/NotFoundPage";
-import DraftPage from "../pages/DraftPage/DraftPage";
 import MealPage from "../pages/MealPage/MealPage";
 import AccountPage from "../pages/AccountPage/AccountPage";
+import { LandingPage } from "../pages/LandingPage/LandingPage";
 
 export const router = createBrowserRouter([
   {
     element: <MainLayout />,
     children: [
+      {
+        path: "/",
+        element: <LandingPage />,
+      },
       {
         path: "/login",
         element: <LoginPage />,
@@ -20,12 +24,8 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute />,
         children: [
           {
-            path: "/",
+            path: "/dashboard",
             element: <DashboardPage />,
-          },
-          {
-            path: "/draft/:draftId",
-            element: <DraftPage />,
           },
           {
             path: "/meal/:mealId",

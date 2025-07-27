@@ -1,0 +1,110 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-5);
+  padding: var(--spacing-4) var(--spacing-3);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* --- Hero Section --- */
+.hero {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-4) 0;
+}
+
+.headline {
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 700;
+  color: var(--color-text-dark);
+  line-height: 1.2;
+  margin-bottom: var(--spacing-3);
+}
+
+.headlineAccent {
+  color: var(--color-primary-blue);
+}
+
+.subheadline {
+  font-size: 1.125rem;
+  color: var(--color-text-medium);
+  max-width: 65ch;
+  margin-bottom: var(--spacing-4);
+}
+
+.ctaButton {
+  display: inline-block;
+  background-color: var(--color-primary-blue);
+  color: var(--color-background-light);
+  padding: 0.8rem 2rem;
+  border-radius: var(--border-radius-md);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  box-shadow: var(--box-shadow-sm);
+  transition: all 0.2s ease-in-out;
+}
+
+.ctaButton:hover {
+  background-color: var(--color-primary-blue-dark);
+  box-shadow: var(--box-shadow-md);
+  transform: translateY(-2px);
+}
+
+.ctaButtonLarge {
+  padding: 1rem 2.5rem;
+  font-size: 1.125rem;
+}
+
+/* --- Features Section --- */
+.features {
+  display: grid;
+  /* UPDATED: Adjusted minmax for better 4-column layout on larger screens */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-4);
+  width: 100%;
+}
+
+.featureCard {
+  background-color: var(--color-background-light);
+  padding: var(--spacing-4);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border-light);
+  text-align: center;
+  box-shadow: var(--box-shadow-google);
+}
+
+.featureIcon {
+  font-size: 2.5rem;
+  color: var(--color-primary-blue);
+  margin-bottom: var(--spacing-3);
+}
+
+.featureTitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  margin-bottom: var(--spacing-2);
+}
+
+.featureText {
+  color: var(--color-text-medium);
+  line-height: 1.6;
+}
+
+/* --- Final CTA Section --- */
+.finalCta {
+  text-align: center;
+  padding: var(--spacing-5) 0;
+}
+
+.finalCtaTitle {
+  font-size: 1.75rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  margin-bottom: var(--spacing-4);
+}

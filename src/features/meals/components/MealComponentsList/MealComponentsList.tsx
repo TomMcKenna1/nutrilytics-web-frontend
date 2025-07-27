@@ -48,7 +48,7 @@ const AddComponentForm = ({
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="A tablespoon of olive oil..."
+            placeholder="e.g., a tablespoon of olive oil"
             className={styles.addComponentInput}
             autoFocus
           />
@@ -76,7 +76,6 @@ const AddComponentForm = ({
 
 interface MealComponentsListProps {
   components: MealComponent[];
-  isDraft?: boolean;
   onDeleteComponent?: (componentId: string) => void;
   isEditing?: boolean;
   onAddComponent?: (description: string) => void;
@@ -84,7 +83,6 @@ interface MealComponentsListProps {
 
 export const MealComponentsList = ({
   components,
-  isDraft = false,
   onDeleteComponent,
   isEditing = false,
   onAddComponent,
@@ -110,7 +108,7 @@ export const MealComponentsList = ({
     }
   };
 
-  if (components.length === 0 && !isDraft && !isEditing) {
+  if (components.length === 0 && !onAddComponent) {
     return <p className={styles.emptyState}>This meal has no components.</p>;
   }
 
@@ -139,17 +137,17 @@ export const MealComponentsList = ({
               <div className={styles.weight}>
                 {component.totalWeight.toFixed(0)}g
               </div>
-              {isDraft && (
+              {onDeleteComponent && (
                 <button
                   className={styles.deleteButton}
                   onClick={(e) => handleDelete(e, component.id)}
                   aria-label={`Delete ${component.name}`}
                   title={
-                    components.length === 1
-                      ? "A meal draft must have at least one component"
+                    components.length <= 1
+                      ? "A meal must have at least one component"
                       : "Delete component"
                   }
-                  disabled={isEditing || components.length === 1}
+                  disabled={isEditing || components.length <= 1}
                 >
                   <FiTrash2 />
                 </button>
@@ -175,7 +173,7 @@ export const MealComponentsList = ({
         </div>
       )}
 
-      {isDraft && onAddComponent && (
+      {onAddComponent && (
         <AddComponentForm
           onAddComponent={onAddComponent}
           isEditing={isEditing}

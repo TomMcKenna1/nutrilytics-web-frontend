@@ -1,30 +1,31 @@
 import apiClient from "../../../lib/apiClient";
-import type { Draft, MealListResponse, MealResponse } from "../types";
+import type { MealDB, MealListResponse } from "../types";
 
 /**
- * Creates a meal draft. User must be authenticated.
+ * Creates a new meal. The meal is created with a 'pending' status
+ * and is updated by the backend once generation is complete.
  * @param mealDescription The text input from the user.
- * @returns The draftId for the created meal draft.
+ * @returns The newly created placeholder MealDB object.
  */
-export const createMealDraft = (
-  mealDescription: string,
-): Promise<{ draftId: string }> => {
-  return apiClient("/api/v1/meal_drafts", {
+export const createMeal = (mealDescription: string): Promise<MealDB> => {
+  return apiClient("/api/v1/meals", {
     body: { description: mealDescription },
+    method: "POST",
   });
 };
 
 /**
- * Checks the status of a given meal draft from the backend.
- * @param draftId The ID of the draft to check.
- * @returns The status and data of the draft.
+ * Fetches a single meal by its ID from the backend API.
+ * This can be used to check the status of a pending meal or get a completed one.
+ * @param mealId The ID of the meal document to fetch.
+ * @returns The full MealDB object.
  */
-export const checkDraftStatus = (draftId: string): Promise<Draft> => {
-  return apiClient(`/api/v1/meal_drafts/${draftId}`);
+export const getMeal = (mealId: string): Promise<MealDB> => {
+  return apiClient(`/api/v1/meals/${mealId}`);
 };
 
 /**
- * Fetches a paginated list of the latest saved meals.
+ * Fetches a paginated list of the latest meals for the user.
  * @param limit The number of meals to fetch.
  * @param next The cursor for the next page of results.
  * @returns A list of meals and the next page cursor.
@@ -37,7 +38,6 @@ export const getLatestMeals = ({
   next?: string | null;
 }): Promise<MealListResponse> => {
   const params = new URLSearchParams({
-    sort: "latest",
     limit: String(limit),
   });
 
@@ -49,74 +49,44 @@ export const getLatestMeals = ({
 };
 
 /**
- * Saves a completed draft as a permanent meal.
- * @param draftId The ID of the draft to save.
- * @returns The newly created Meal object from the backend.
- */
-export const saveDraftAsMeal = (draftId: string): Promise<MealResponse> => {
-  return apiClient("/api/v1/meals", {
-    method: "POST",
-    body: { draftId: draftId },
-  });
-};
-
-/**
- * Fetches a single, saved meal by its ID from the backend API.
- * This function is now used instead of talking directly to Firestore.
- * @param mealId The ID of the meal document to fetch.
- * @returns The full Meal object.
- */
-export const getMeal = (mealId: string): Promise<MealResponse> => {
-  return apiClient(`/api/v1/meals/${mealId}`);
-};
-
-/**
- * Discards a meal draft. User must be authenticated.
- * @param draftId The ID of the draft to discard.
+ * Deletes a meal. User must be authenticated.
+ * @param mealId The ID of the meal to delete.
  * @returns An empty promise on success.
  */
-export const discardMealDraft = (draftId: string): Promise<void> => {
-  return apiClient(`/api/v1/meal_drafts/${draftId}`, {
+export const deleteMeal = (mealId: string): Promise<void> => {
+  return apiClient(`/api/v1/meals/${mealId}`, {
     method: "DELETE",
   });
 };
 
 /**
- * Removes a component from a meal draft. User must be authenticated.
- * @param draftId The ID of the draft.
+ * Removes a component from a meal. User must be authenticated.
+ * @param mealId The ID of the meal.
  * @param componentId The ID of the component to remove.
- * @returns An empty promise on success.
+ * @returns The updated meal object.
  */
-export const removeComponentFromDraft = (
-  draftId: string,
-  componentId: string,
-): Promise<void> => {
-  return apiClient(`/api/v1/meal_drafts/${draftId}/components/${componentId}`, {
+export const removeComponentFromMeal = (
+  mealId: string,
+  componentId: string
+): Promise<MealDB> => {
+  return apiClient(`/api/v1/meals/${mealId}/components/${componentId}`, {
     method: "DELETE",
   });
 };
 
 /**
- * Adds a component to a meal draft. User must be authenticated.
- * @param draftId The ID of the draft.
+ * Adds a component to a meal. User must be authenticated.
+ * The meal status will be set to 'pending_edit' until the backend completes the operation.
+ * @param mealId The ID of the meal.
  * @param data The component data to add, containing a description.
- * @returns The updated meal draft.
+ * @returns The updated meal object with a 'pending_edit' status.
  */
-export const addComponentToDraft = (
-  draftId: string,
-  data: { description: string },
-): Promise<Draft> => {
-  return apiClient(`/api/v1/meal_drafts/${draftId}/components`, {
+export const addComponentToMeal = (
+  mealId: string,
+  data: { description: string }
+): Promise<MealDB> => {
+  return apiClient(`/api/v1/meals/${mealId}/components`, {
     method: "POST",
     body: data,
   });
-};
-
-/**
- * Get all current meal draft. User must be authenticated.
- * @param draftId The ID of the draft to discard.
- * @returns An empty promise on success.
- */
-export const getMealDrafts = (): Promise<Draft[]> => {
-  return apiClient(`/api/v1/meal_drafts/`);
 };

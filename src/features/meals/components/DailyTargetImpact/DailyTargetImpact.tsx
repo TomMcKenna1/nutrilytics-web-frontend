@@ -17,36 +17,31 @@ const usePrevious = <T,>(value: T): T | undefined => {
 
 const useAnimatedValue = (
   target: number,
-  duration: number = ANIMATION_DURATION,
+  duration: number = ANIMATION_DURATION
 ): number => {
   const [currentValue, setCurrentValue] = useState(0);
   const prevTarget = usePrevious(target);
 
   useEffect(() => {
     const fromValue = prevTarget ?? 0;
-
     if (fromValue === target) {
       setCurrentValue(target);
       return;
     }
-
     let animationFrameId: number;
     let start: number | null = null;
-
     const animate = (timestamp: number) => {
       if (!start) start = timestamp;
       const elapsed = timestamp - start;
       const progress = Math.min(elapsed / duration, 1);
       const animatedValue = fromValue + (target - fromValue) * progress;
       setCurrentValue(animatedValue);
-
       if (progress < 1) {
         animationFrameId = requestAnimationFrame(animate);
       } else {
         setCurrentValue(target);
       }
     };
-
     animationFrameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrameId);
   }, [target, duration]);
@@ -64,7 +59,7 @@ const useAnimatedProgress = (
   currentValue: number,
   newValue: number,
   target: number,
-  duration: number = ANIMATION_DURATION,
+  duration: number = ANIMATION_DURATION
 ): ProgressResult => {
   const animatedNewValue = useAnimatedValue(newValue, duration);
   const animatedTotalValue = currentValue + animatedNewValue;
@@ -211,7 +206,7 @@ export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
   if (targetsIsError)
     return (
       <p style={{ color: "red" }}>
-        Error fetching targets: {targetsError?.message}
+        Error fetching targets: {(targetsError as Error)?.message}
       </p>
     );
   if (!targets) return <p>No target data available.</p>;
@@ -221,7 +216,7 @@ export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
       <div className={styles.nutrientsGrid}>
         <NutrientCircle
           label="Energy"
-          value={summary.energy}
+          value={summary.energy - nutrientProfile.energy}
           newValue={nutrientProfile.energy}
           target={targets.energy}
           unit="kcal"
@@ -229,7 +224,7 @@ export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
         />
         <NutrientCircle
           label="Protein"
-          value={summary.protein}
+          value={summary.protein - nutrientProfile.protein}
           newValue={nutrientProfile.protein}
           target={targets.protein}
           unit="g"
@@ -237,7 +232,7 @@ export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
         />
         <NutrientCircle
           label="Carbs"
-          value={summary.carbohydrates}
+          value={summary.carbohydrates - nutrientProfile.carbohydrates}
           newValue={nutrientProfile.carbohydrates}
           target={targets.carbohydrates}
           unit="g"
@@ -245,7 +240,7 @@ export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
         />
         <NutrientCircle
           label="Sugars"
-          value={summary.sugars}
+          value={summary.sugars - nutrientProfile.sugars}
           newValue={nutrientProfile.sugars}
           target={targets.sugars}
           unit="g"
@@ -253,7 +248,7 @@ export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
         />
         <NutrientCircle
           label="Fat"
-          value={summary.fats}
+          value={summary.fats - nutrientProfile.fats}
           newValue={nutrientProfile.fats}
           target={targets.fats}
           unit="g"
@@ -261,7 +256,7 @@ export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
         />
         <NutrientCircle
           label="Fibre"
-          value={summary.fibre}
+          value={summary.fibre - nutrientProfile.fibre}
           newValue={nutrientProfile.fibre}
           target={targets.fibre}
           unit="g"

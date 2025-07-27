@@ -1,4 +1,8 @@
-export type MealDraftStatus = "pending" | "complete" | "pending_edit" | "error";
+export type MealGenerationStatus =
+  | "pending"
+  | "complete"
+  | "error"
+  | "pending_edit";
 
 export type MealType = "meal" | "snack" | "beverage";
 
@@ -36,7 +40,7 @@ export interface MealComponent {
   nutrientProfile: NutrientProfile;
 }
 
-export interface Meal {
+export interface GeneratedMeal {
   name: string;
   description: string;
   type: MealType;
@@ -44,24 +48,18 @@ export interface Meal {
   components: MealComponent[];
 }
 
-export interface MealResponse extends Meal {
-  id: string;
-  uid: string;
-  submittedAt: string;
-  createdAt: string;
-}
-
-export interface Draft {
+export interface MealDB {
   id: string;
   uid: string;
   originalInput: string;
-  status: MealDraftStatus;
-  mealDraft: Meal | null;
-  createdAt: number;
+  status: MealGenerationStatus;
+  // Supports Firestore timestamp object
+  createdAt: number | { _seconds: number; _nanoseconds: number };
   error?: string;
+  data?: GeneratedMeal | null;
 }
 
 export interface MealListResponse {
-  meals: MealResponse[];
+  meals: MealDB[];
   next: string | null;
 }

@@ -1,34 +1,67 @@
-import React, { useState, useEffect } from "react";
-import { getDailySummary } from "../../api/summaryService";
+import React, { useState, useEffect, useRef } from "react";
 import { type DailySummary as IDailySummary } from "../../types";
 import { useNutritionTargets } from "../../../../hooks/useNutritionTargets";
+import { useDailySummary } from "../../../../hooks/useDailySummary";
 import styles from "./DailySummary.module.css";
 
 // In ms
 const ANIMATION_DURATION = 1200;
 
+/**
+ * A custom hook to get the previous value of a prop or state.
+ */
+const usePrevious = <T,>(value: T): T | undefined => {
+  const ref = useRef<T>(undefined);
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+  return ref.current;
+};
+
+/**
+ * A custom hook that animates a count from a start value to an end value.
+ */
 const useCountUp = (
-  target: number,
+  startValue: number,
+  endValue: number,
   isAnimating: boolean,
   duration: number = ANIMATION_DURATION
 ): number => {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(startValue);
+
   useEffect(() => {
-    if (!isAnimating) return;
+    if (!isAnimating) {
+      setCount(endValue);
+      return;
+    }
+
+    if (startValue === endValue) {
+      setCount(endValue);
+      return;
+    }
+
     let animationFrameId: number;
-    let start = 0;
+    let startTime: number | null = null;
+
     const animate = (timestamp: number): void => {
-      if (!start) start = timestamp;
-      const progress = (timestamp - start) / duration;
-      const current = Math.min(progress * target, target);
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      const current = startValue + progress * (endValue - startValue);
       setCount(current);
+
       if (progress < 1) {
         animationFrameId = requestAnimationFrame(animate);
+      } else {
+        setCount(endValue);
       }
     };
+
     animationFrameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [target, isAnimating, duration]);
+  }, [startValue, endValue, isAnimating, duration]);
+
   return count;
 };
 
@@ -46,62 +79,66 @@ type SequentialProgress = {
   overflowProgress: number;
 };
 
+/**
+ * A custom hook that animates a progress value from a start to an end percentage,
+ * correctly handling values over 100%.
+ */
 const useSequentialProgress = (
   isAnimating: boolean,
+  startPercentage: number,
   finalPercentage: number,
   totalDuration: number = ANIMATION_DURATION
 ): SequentialProgress => {
-  const [mainProgress, setMainProgress] = useState(0);
-  const [overflowProgress, setOverflowProgress] = useState(0);
+  const [mainProgress, setMainProgress] = useState(
+    Math.min(startPercentage, 1)
+  );
+  const [overflowProgress, setOverflowProgress] = useState(
+    startPercentage > 1 ? startPercentage - 1 : 0
+  );
 
   useEffect(() => {
-    if (!isAnimating || finalPercentage === 0) return;
+    if (!isAnimating) {
+      setMainProgress(Math.min(finalPercentage, 1));
+      setOverflowProgress(finalPercentage > 1 ? finalPercentage - 1 : 0);
+      return;
+    }
+
+    if (startPercentage === finalPercentage) {
+      return;
+    }
+
     let animationFrameId: number;
+    let startTime: number | null = null;
 
-    const targetMain = Math.min(finalPercentage, 1);
-    const targetOverflow = finalPercentage > 1 ? finalPercentage - 1 : 0;
-
-    const mainDuration = totalDuration * (targetMain / finalPercentage);
-    const overflowDuration = totalDuration * (targetOverflow / finalPercentage);
-
-    let start: number | null = null;
     const animate = (timestamp: number): void => {
-      if (!start) start = timestamp;
-      const elapsed = timestamp - start;
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / totalDuration, 1);
 
-      if (elapsed <= mainDuration) {
-        const progress = elapsed / mainDuration;
-        setMainProgress(progress * targetMain);
-      } else {
-        setMainProgress(targetMain);
-      }
+      const currentPercentage =
+        startPercentage + progress * (finalPercentage - startPercentage);
 
-      if (
-        targetOverflow > 0 &&
-        elapsed > mainDuration &&
-        elapsed <= totalDuration
-      ) {
-        const overflowElapsed = elapsed - mainDuration;
-        const progress = overflowElapsed / overflowDuration;
-        setOverflowProgress(progress * targetOverflow);
-      } else if (targetOverflow > 0 && elapsed > totalDuration) {
-        setOverflowProgress(targetOverflow);
-      }
+      setMainProgress(Math.min(currentPercentage, 1));
+      setOverflowProgress(currentPercentage > 1 ? currentPercentage - 1 : 0);
 
-      if (elapsed < totalDuration) {
+      if (progress < 1) {
         animationFrameId = requestAnimationFrame(animate);
+      } else {
+        setMainProgress(Math.min(finalPercentage, 1));
+        setOverflowProgress(finalPercentage > 1 ? finalPercentage - 1 : 0);
       }
     };
 
     animationFrameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [isAnimating, finalPercentage, totalDuration]);
+  }, [isAnimating, startPercentage, finalPercentage, totalDuration]);
 
   return { mainProgress, overflowProgress };
 };
 
 interface NutrientCircleProps {
   label: string;
+  previousValue: number;
   value: number;
   target: number;
   unit: string;
@@ -111,13 +148,14 @@ interface NutrientCircleProps {
 
 const NutrientCircle: React.FC<NutrientCircleProps> = ({
   label,
+  previousValue,
   value,
   target,
   unit,
   color,
   isAnimating,
 }) => {
-  const animatedValue = useCountUp(value, isAnimating);
+  const animatedValue = useCountUp(previousValue, value, isAnimating);
 
   const chart = {
     radius: 52,
@@ -127,9 +165,11 @@ const NutrientCircle: React.FC<NutrientCircleProps> = ({
     },
   };
 
+  const startPercentage = target > 0 ? previousValue / target : 0;
   const finalPercentage = target > 0 ? value / target : 0;
   const { mainProgress, overflowProgress } = useSequentialProgress(
     isAnimating,
+    startPercentage,
     finalPercentage
   );
 
@@ -180,9 +220,12 @@ const NutrientCircle: React.FC<NutrientCircleProps> = ({
 };
 
 export const DailySummary: React.FC = () => {
-  const [summary, setSummary] = useState<IDailySummary | null>(null);
-  const [summaryIsLoading, setSummaryIsLoading] = useState<boolean>(true);
-  const [summaryError, setSummaryError] = useState<string | null>(null);
+  const {
+    data: summary,
+    isLoading: summaryIsLoading,
+    error: summaryError,
+  } = useDailySummary();
+  const previousSummary = usePrevious(summary);
   const startAnimation = useAnimationOnLoad();
 
   const {
@@ -192,25 +235,9 @@ export const DailySummary: React.FC = () => {
     error: targetsError,
   } = useNutritionTargets();
 
-  useEffect(() => {
-    const fetchSummary = async () => {
-      try {
-        const data = await getDailySummary();
-        setSummary(data);
-      } catch (err) {
-        setSummaryError(
-          err instanceof Error ? err.message : "An unknown error occurred"
-        );
-      } finally {
-        setSummaryIsLoading(false);
-      }
-    };
-    fetchSummary();
-  }, []);
-
   if (summaryIsLoading || targetsIsLoading) return <p>Loading summary...</p>;
   if (summaryError)
-    return <p style={{ color: "red" }}>Error: {summaryError}</p>;
+    return <p style={{ color: "red" }}>Error: {summaryError.message}</p>;
   if (targetsIsError)
     return (
       <p style={{ color: "red" }}>
@@ -218,6 +245,10 @@ export const DailySummary: React.FC = () => {
       </p>
     );
   if (!summary || !targets) return <p>No summary or target data available.</p>;
+
+  const getPreviousValue = (key: keyof IDailySummary) => {
+    return (previousSummary?.[key] as number) ?? 0;
+  };
 
   return (
     <div className={styles.summaryContainer}>
@@ -244,6 +275,7 @@ export const DailySummary: React.FC = () => {
       <div className={styles.nutrientsGrid}>
         <NutrientCircle
           label="Energy"
+          previousValue={getPreviousValue("energy")}
           value={summary.energy}
           target={targets.energy}
           unit="kcal"
@@ -252,6 +284,7 @@ export const DailySummary: React.FC = () => {
         />
         <NutrientCircle
           label="Protein"
+          previousValue={getPreviousValue("protein")}
           value={summary.protein}
           target={targets.protein}
           unit="g"
@@ -260,6 +293,7 @@ export const DailySummary: React.FC = () => {
         />
         <NutrientCircle
           label="Carbs"
+          previousValue={getPreviousValue("carbohydrates")}
           value={summary.carbohydrates}
           target={targets.carbohydrates}
           unit="g"
@@ -268,6 +302,7 @@ export const DailySummary: React.FC = () => {
         />
         <NutrientCircle
           label="Sugars"
+          previousValue={getPreviousValue("sugars")}
           value={summary.sugars}
           target={targets.sugars}
           unit="g"
@@ -276,6 +311,7 @@ export const DailySummary: React.FC = () => {
         />
         <NutrientCircle
           label="Fat"
+          previousValue={getPreviousValue("fats")}
           value={summary.fats}
           target={targets.fats}
           unit="g"
@@ -284,6 +320,7 @@ export const DailySummary: React.FC = () => {
         />
         <NutrientCircle
           label="Fibre"
+          previousValue={getPreviousValue("fibre")}
           value={summary.fibre}
           target={targets.fibre}
           unit="g"

@@ -1,5 +1,4 @@
-import { MealDraftsList } from "../../features/meals/components/MealDraftsList/MealDraftsList";
-import { HistoricalMealList } from "../../features/meals/components/HistoricalMealList/HistoricalMealList";
+import { MealList } from "../../features/meals/components/MealList/MealList";
 import { DailySummary } from "../../features/metrics/components/DailySummary/DailySummary";
 import styles from "./DashboardPage.module.css";
 
@@ -12,11 +11,8 @@ const DashboardPage = () => {
         <DailySummary />
       </section>
 
-      <h2 className={styles.listHeader}>Recent Generations</h2>
-      <MealDraftsList />
-
       <h2 className={styles.listHeader}>Recent Logs</h2>
-      <HistoricalMealList />
+      <MealList />
     </div>
   );
 };

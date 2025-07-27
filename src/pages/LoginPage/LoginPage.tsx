@@ -98,7 +98,7 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      navigate("/");
+      navigate("/dashboard");
     }
   }, [user, navigate]);
 
