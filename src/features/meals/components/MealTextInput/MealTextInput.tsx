@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useCreateMealDraft } from "../../../../hooks/useCreateMealDraft";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createMeal } from "../../../../features/meals/api/mealService";
 import styles from "./MealTextInput.module.css";
 
 const placeholderMeals = [
@@ -21,10 +22,9 @@ const useTypingEffect = (words: string[]) => {
   const [text, setText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [showCursor, setShowCursor] = useState(true);
-  // in ms
   const START_DELAY = 1000;
   const END_DELAY = 3000;
-  const DELETING_SPEED = 5;
+  const DELETING_SPEED = 50;
   const TYPING_SPEED = 75;
   const CURSOR_BLINK_INTERVAL = 500;
 
@@ -66,20 +66,24 @@ const MealTextInput = () => {
   const [mealInput, setMealInput] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const dynamicPlaceholder = useTypingEffect(placeholderMeals);
+  const queryClient = useQueryClient();
+
   const {
-    mutate: createDraft,
+    mutate: createMealMutation,
     isPending: isSubmitting,
     error,
-  } = useCreateMealDraft();
+  } = useMutation({
+    mutationFn: (description: string) => createMeal(description),
+    onSuccess: () => {
+      // Invalidate the main list so it refetches with the new pending meal
+      queryClient.invalidateQueries({ queryKey: ["mealsList"] });
+      setMealInput("");
+    },
+  });
 
   const handleMealSubmit = async () => {
-    if (!mealInput.trim()) return;
-
-    createDraft(mealInput, {
-      onSuccess: () => {
-        setMealInput("");
-      },
-    });
+    if (!mealInput.trim() || isSubmitting) return;
+    createMealMutation(mealInput);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -106,7 +110,7 @@ const MealTextInput = () => {
       />
       <button
         onClick={handleMealSubmit}
-        disabled={isSubmitting}
+        disabled={isSubmitting || !mealInput.trim()}
         className={styles.mealButton}
       >
         {isSubmitting ? "..." : "Log"}

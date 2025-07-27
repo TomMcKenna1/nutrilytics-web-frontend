@@ -1,75 +1,166 @@
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { useAuth } from "../../providers/AuthProvider";
-import { getMeal } from "../../features/meals/api/mealService";
-import type { MealResponse } from "../../features/meals/types";
+import { useParams, useNavigate } from "react-router-dom";
+import { useMeal } from "../../hooks/useMeals";
+import { useDailySummary } from "../../hooks/useDailySummary";
 import MealLayout from "../../components/layout/MealLayout/MealLayout";
+import type { MealDB } from "../../features/meals/types";
+import styles from "./MealPage.module.css";
 import layoutStyles from "../../components/layout/MealLayout/MealLayout.module.css";
+
+/**
+ * Parses the flexible 'createdAt' field into a standard Date object.
+ */
+const parseCreatedAt = (createdAt: MealDB["createdAt"]): Date | null => {
+  if (!createdAt) return null;
+  if (typeof createdAt === "string") {
+    // Handles ISO date strings like "2025-07-27T12:53:44.864000Z"
+    return new Date(createdAt);
+  }
+  if (typeof createdAt === "number") {
+    // Handles Unix timestamps (assuming they are in seconds)
+    return new Date(createdAt * 1000);
+  }
+  if (createdAt?._seconds) {
+    // Handles Firestore timestamp objects
+    return new Date(createdAt._seconds * 1000);
+  }
+  return null;
+};
+
+/**
+ * Checks if a given Date object represents today's date.
+ */
+const isDateToday = (date: Date | null): boolean => {
+  if (!date) return false;
+  const today = new Date();
+  return date.toISOString().split("T")[0] === today.toISOString().split("T")[0];
+};
+
+const Loader = () => (
+  <div className={styles.loadingContainer}>
+    <h2 className={styles.statusHeader}>Analyzing your meal...</h2>
+    <p className={styles.description}>
+      This can take a moment. The page will update automatically when it's
+      ready.
+    </p>
+    <div className={styles.loader}>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+);
 
 export const MealPage = () => {
   const { mealId } = useParams<{ mealId: string }>();
-  const { user } = useAuth();
+  const navigate = useNavigate();
 
-  const [meal, setMeal] = useState<MealResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    meal,
+    isLoading,
+    error,
+    deleteMeal,
+    isDeleting,
+    addComponent,
+    isAddingComponent,
+    removeComponent,
+    isRemovingComponent,
+  } = useMeal(mealId);
 
-  useEffect(() => {
-    if (!mealId || !user) {
-      setError("Cannot load meal. Missing ID or user information.");
-      setIsLoading(false);
-      return;
-    }
+  const { data: dailySummary, isLoading: summaryIsLoading } = useDailySummary();
 
-    getMeal(mealId)
-      .then((mealData) => {
-        if (mealData) {
-          setMeal(mealData);
-        } else {
-          setError("Meal not found or you do not have permission to view it.");
-        }
-      })
-      .catch((err) => setError((err as Error).message))
-      .finally(() => setIsLoading(false));
-  }, [mealId, user]);
+  const handleDeleteMeal = async () => {
+    if (!mealId) return;
+    await deleteMeal(mealId);
+    navigate("/");
+  };
 
-  if (isLoading) {
-    return <p className={layoutStyles.centered}>Loading meal...</p>;
+  const handleAddComponent = async (description: string) => {
+    await addComponent(description);
+  };
+
+  const handleDeleteComponent = async (componentId: string) => {
+    await removeComponent(componentId);
+  };
+
+  if (isLoading || summaryIsLoading) {
+    return <p className={styles.centered}>Loading meal...</p>;
   }
 
   if (error) {
     return (
-      <p className={`${layoutStyles.centered} ${layoutStyles.error}`}>
-        Error: {error}
-      </p>
+      <p className={`${styles.centered} ${styles.error}`}>Error: {error}</p>
     );
   }
 
   if (!meal) {
-    return <p className={layoutStyles.centered}>Meal not found.</p>;
+    return <p className={styles.centered}>Meal not found.</p>;
   }
 
-  // The "Edit" button is defined as an action to be passed to the layout.
-  const mealActions = (
-    <Link
-      to={`/meal/${meal.id}/edit`}
-      className={`${layoutStyles.button} ${layoutStyles.primary}`}
-    >
-      Edit Meal
-    </Link>
-  );
+  if (meal.status === "pending" && !meal.data) {
+    return <Loader />;
+  }
 
-  // This call to MealLayout remains unchanged.
-  // It will not show the impact section by default.
-  return (
-    <MealLayout
-      title={meal.name}
-      description={meal.description}
-      actions={mealActions}
-      components={meal.components}
-      nutrientProfile={meal.nutrientProfile}
-    />
-  );
+  if (meal.status === "error") {
+    return (
+      <div className={styles.errorContainer}>
+        <h2 className={styles.statusHeader}>Generation Failed ❌</h2>
+        <p className={styles.errorText}>
+          Unfortunately, we couldn't analyze this meal.
+          {meal.error && <strong> Reason: {meal.error}</strong>}
+        </p>
+        <div className={styles.actionsContainer}>
+          <button
+            onClick={handleDeleteMeal}
+            disabled={isDeleting}
+            className={`${layoutStyles.button} ${layoutStyles.secondary}`}
+          >
+            {isDeleting ? "Deleting..." : "Delete Meal"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (meal.data) {
+    const isProcessing =
+      isDeleting ||
+      isAddingComponent ||
+      isRemovingComponent ||
+      meal.status === "pending_edit";
+
+    const createdAtDate = parseCreatedAt(meal.createdAt);
+
+    const mealActions = (
+      <>
+        <button
+          onClick={handleDeleteMeal}
+          disabled={isProcessing}
+          className={`${layoutStyles.button} ${layoutStyles.secondary}`}
+        >
+          {isDeleting ? "Deleting..." : "Delete Meal"}
+        </button>
+      </>
+    );
+
+    return (
+      <MealLayout
+        title={meal.data.name}
+        description={meal.data.description}
+        actions={mealActions}
+        components={meal.data.components}
+        nutrientProfile={meal.data.nutrientProfile}
+        dailySummary={dailySummary}
+        showDailyImpact={isDateToday(createdAtDate)}
+        onDeleteComponent={handleDeleteComponent}
+        isEditing={isProcessing}
+        onAddComponent={handleAddComponent}
+        mealType={meal.data.type}
+      />
+    );
+  }
+
+  return <p className={styles.centered}>Could not display meal.</p>;
 };
 
 export default MealPage;

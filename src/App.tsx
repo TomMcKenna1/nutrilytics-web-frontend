@@ -1,12 +1,12 @@
 import { RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./providers/AuthProvider";
 import { router } from "./routes/AppRoutes";
-import { DraftsPollingManager } from "./features/meals/components/DraftsPollingManager";
+import { SSEManager } from "./components/common/SSEManager/SSEManager";
 
 function App() {
   return (
     <AuthProvider>
-      <DraftsPollingManager />
+      <SSEManager />
       <RouterProvider router={router} />
     </AuthProvider>
   );

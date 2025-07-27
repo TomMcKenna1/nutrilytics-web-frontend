@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import type {
   MealComponent,
   NutrientProfile,
+  MealType,
 } from "../../../features/meals/types";
 import type { DailySummary } from "../../../features/metrics/types";
 import { MealComponentsList } from "../../../features/meals/components/MealComponentsList/MealComponentsList";
@@ -10,8 +11,6 @@ import { TotalNutritionCard } from "../../../features/meals/components/TotalNutr
 import { MealTypeSelector } from "../../../features/meals/components/MealTypeSelector/MealTypeSelector";
 import { DailyTargetImpact } from "../../../features/meals/components/DailyTargetImpact/DailyTargetImpact";
 import styles from "./MealLayout.module.css";
-
-type MealTypeOption = "meal" | "snack" | "beverage";
 
 interface MealLayoutProps {
   title: string;
@@ -21,12 +20,11 @@ interface MealLayoutProps {
   nutrientProfile: NutrientProfile | null;
   dailySummary?: DailySummary;
   showDailyImpact?: boolean;
-  isDraft?: boolean;
   onDeleteComponent?: (componentId: string) => void;
   isEditing?: boolean;
   onAddComponent?: (description: string) => void;
-  mealType?: MealTypeOption;
-  onMealTypeChange?: (newType: MealTypeOption) => void;
+  mealType?: MealType;
+  onMealTypeChange?: (newType: MealType) => void;
 }
 
 export const MealLayout: React.FC<MealLayoutProps> = ({
@@ -37,7 +35,6 @@ export const MealLayout: React.FC<MealLayoutProps> = ({
   nutrientProfile,
   dailySummary,
   showDailyImpact = false,
-  isDraft,
   onDeleteComponent,
   isEditing,
   onAddComponent,
@@ -74,14 +71,12 @@ export const MealLayout: React.FC<MealLayoutProps> = ({
       </header>
 
       {showDailyImpact && dailySummary && nutrientProfile && (
-        <div className={styles.leftColumn}>
+        <div className={styles.impactSection}>
           <h2 className={styles.sectionTitle}>Daily Target Impact</h2>
-          <div className={styles.impactSection}>
-            <DailyTargetImpact
-              summary={dailySummary}
-              nutrientProfile={nutrientProfile}
-            />
-          </div>
+          <DailyTargetImpact
+            summary={dailySummary}
+            nutrientProfile={nutrientProfile}
+          />
         </div>
       )}
 
@@ -92,7 +87,6 @@ export const MealLayout: React.FC<MealLayoutProps> = ({
           </h2>
           <MealComponentsList
             components={components}
-            isDraft={isDraft}
             onDeleteComponent={onDeleteComponent}
             isEditing={isEditing}
             onAddComponent={onAddComponent}

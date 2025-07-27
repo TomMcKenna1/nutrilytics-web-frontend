@@ -22,7 +22,7 @@ export const useNutritionTargets = () => {
 
   const mutation = useMutation<NutritionTarget, Error, UpdateNutritionTarget>({
     mutationFn: updateNutritionTargets,
-    onSuccess: (data) => {
+    onSuccess: () => {
       // On success, invalidate the query to refetch the fresh data.
       queryClient.invalidateQueries({ queryKey: ["nutrition-targets"] });
     },

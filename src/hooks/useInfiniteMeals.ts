@@ -1,16 +1,16 @@
 import { useState, useCallback } from "react";
 import { getLatestMeals } from "../features/meals/api/mealService";
-import type { MealResponse } from "../features/meals/types";
+import type { MealDB } from "../features/meals/types";
 
 const MEALS_PER_PAGE = 5;
 
 export const useInfiniteMeals = () => {
-  const [meals, setMeals] = useState<MealResponse[]>([]);
+  const [meals, setMeals] = useState<MealDB[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [nextCursor, setNextCursor] = useState<string | null | undefined>(
-    undefined,
+    undefined
   );
 
   const fetchMeals = useCallback(async (cursor: string | null | undefined) => {
@@ -23,7 +23,7 @@ export const useInfiniteMeals = () => {
         next: cursor,
       });
       setMeals((prevMeals) =>
-        cursor ? [...prevMeals, ...response.meals] : response.meals,
+        cursor ? [...prevMeals, ...response.meals] : response.meals
       );
       setNextCursor(response.next);
     } catch (err) {
