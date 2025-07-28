@@ -1,10 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { useInView } from "react-intersection-observer";
 import { FiX, FiTrash2 } from "react-icons/fi";
 import { FaBowlFood } from "react-icons/fa6";
 import { RiDrinksFill } from "react-icons/ri";
-import { GiChipsBag } from "react-icons/gi";
 import { useMealList } from "../../../../hooks/useMealList";
 import type { MealDB, MealType } from "../../types";
 import styles from "./MealList.module.css";
@@ -20,7 +18,7 @@ const Loader = () => (
 const MealTypeIcon = ({ mealType }: { mealType: MealType }) => {
   const icons = {
     meal: <FaBowlFood color={"var(--color-primary-blue)"} />,
-    snack: <GiChipsBag color={"var(--color-fats)"} />,
+    snack: <FaBowlFood color={"var(--color-fats)"} />,
     beverage: <RiDrinksFill color={"var(--color-fats)"} />,
   };
   return icons[mealType] || icons.meal;
@@ -36,7 +34,9 @@ const MealItem = ({
   isDeleting: boolean;
 }) => {
   const isPending = meal.status === "pending" || meal.status === "pending_edit";
-  const itemClasses = `${styles.item} ${isPending ? styles.pendingItem : ""} ${meal.data ? styles[meal.data.type] : ""}`;
+  const itemClasses = `${styles.item} ${isPending ? styles.pendingItem : ""} ${
+    meal.data ? styles[meal.data.type] : ""
+  }`;
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -107,7 +107,7 @@ const MealItem = ({
   );
 };
 
-export const MealList = () => {
+export const MealList = ({ visibleRows = 5 }: { visibleRows?: number }) => {
   const {
     meals,
     isLoading,
@@ -118,13 +118,46 @@ export const MealList = () => {
     deleteMeal,
     isDeleting,
   } = useMealList();
-  const { ref, inView } = useInView({ threshold: 0.1 });
 
-  useEffect(() => {
-    if (inView && hasMore && !isFetchingMore) {
+  const [isAtBottom, setIsAtBottom] = useState(false);
+  const [isScrollable, setIsScrollable] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = container;
+
+    const isScrolledToBottom =
+      Math.ceil(scrollTop + clientHeight) >= scrollHeight;
+    setIsAtBottom(isScrolledToBottom);
+
+    if (
+      scrollHeight - scrollTop - clientHeight < 200 &&
+      hasMore &&
+      !isFetchingMore
+    ) {
       fetchNextPage();
     }
-  }, [inView, hasMore, isFetchingMore, fetchNextPage]);
+  };
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      const hasScrollbar = container.scrollHeight > container.clientHeight;
+      setIsScrollable(hasScrollbar);
+      if (!hasScrollbar) {
+        setIsAtBottom(true);
+      }
+    }
+  }, [meals]);
+
+  const containerStyle = {
+    maxHeight: `${visibleRows * 3.5}rem`,
+  };
+
+  const showFade = isScrollable && (!isAtBottom || hasMore);
 
   if (isLoading)
     return <p className={styles.statusMessage}>Loading meals...</p>;
@@ -137,19 +170,26 @@ export const MealList = () => {
     );
 
   return (
-    <div className={styles.container}>
-      {meals.map((meal) => (
-        <MealItem
-          key={meal.id}
-          meal={meal}
-          onDelete={deleteMeal}
-          isDeleting={isDeleting}
-        />
-      ))}
-      <div ref={ref} style={{ height: "1px" }} />
-      {isFetchingMore && (
-        <p className={styles.statusMessage}>Loading more...</p>
-      )}
+    <div className={styles.wrapper}>
+      <div
+        className={styles.container}
+        style={containerStyle}
+        ref={containerRef}
+        onScroll={handleScroll}
+      >
+        {meals.map((meal) => (
+          <MealItem
+            key={meal.id}
+            meal={meal}
+            onDelete={deleteMeal}
+            isDeleting={isDeleting}
+          />
+        ))}
+        {isFetchingMore && (
+          <p className={styles.statusMessage}>Loading more...</p>
+        )}
+      </div>
+      {showFade && <div className={styles.fadeOverlay} />}
     </div>
   );
 };

@@ -17,7 +17,7 @@ const usePrevious = <T,>(value: T): T | undefined => {
 
 const useAnimatedValue = (
   target: number,
-  duration: number = ANIMATION_DURATION
+  duration: number = ANIMATION_DURATION,
 ): number => {
   const [currentValue, setCurrentValue] = useState(0);
   const prevTarget = usePrevious(target);
@@ -59,7 +59,7 @@ const useAnimatedProgress = (
   currentValue: number,
   newValue: number,
   target: number,
-  duration: number = ANIMATION_DURATION
+  duration: number = ANIMATION_DURATION,
 ): ProgressResult => {
   const animatedNewValue = useAnimatedValue(newValue, duration);
   const animatedTotalValue = currentValue + animatedNewValue;

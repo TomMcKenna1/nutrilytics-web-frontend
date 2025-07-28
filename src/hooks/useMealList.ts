@@ -6,7 +6,7 @@ import {
 import { getLatestMeals, deleteMeal } from "../features/meals/api/mealService";
 import type { MealListResponse } from "../features/meals/types";
 
-const MEALS_PER_PAGE = 10;
+const MEALS_PER_PAGE = 5;
 const MEAL_LIST_QUERY_KEY = ["mealsList"];
 
 /**
