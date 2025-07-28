@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useMeal } from "../../hooks/useMeals";
 import { useDailySummary } from "../../hooks/useDailySummary";
 import MealLayout from "../../components/layout/MealLayout/MealLayout";
-import type { MealDB } from "../../features/meals/types";
+import type { MealDB, MealType } from "../../features/meals/types";
 import styles from "./MealPage.module.css";
 import layoutStyles from "../../components/layout/MealLayout/MealLayout.module.css";
 
@@ -65,6 +65,8 @@ export const MealPage = () => {
     isAddingComponent,
     removeComponent,
     isRemovingComponent,
+    updateMealType,
+    isUpdatingMealType,
   } = useMeal(mealId);
 
   const { data: dailySummary, isLoading: summaryIsLoading } = useDailySummary();
@@ -81,6 +83,11 @@ export const MealPage = () => {
 
   const handleDeleteComponent = async (componentId: string) => {
     await removeComponent(componentId);
+  };
+
+  const handleMealTypeChange = async (newType: MealType) => {
+    if (!mealId) return;
+    await updateMealType(newType);
   };
 
   if (isLoading || summaryIsLoading) {
@@ -127,6 +134,7 @@ export const MealPage = () => {
       isDeleting ||
       isAddingComponent ||
       isRemovingComponent ||
+      isUpdatingMealType ||
       meal.status === "pending_edit";
 
     const createdAtDate = parseCreatedAt(meal.createdAt);
@@ -156,6 +164,7 @@ export const MealPage = () => {
         isEditing={isProcessing}
         onAddComponent={handleAddComponent}
         mealType={meal.data.type}
+        onMealTypeChange={handleMealTypeChange}
       />
     );
   }

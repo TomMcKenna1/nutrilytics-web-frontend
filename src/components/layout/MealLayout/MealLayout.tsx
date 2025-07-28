@@ -43,7 +43,7 @@ export const MealLayout: React.FC<MealLayoutProps> = ({
 }) => {
   const totalWeight = components.reduce(
     (total, component) => total + component.totalWeight,
-    0
+    0,
   );
 
   return (

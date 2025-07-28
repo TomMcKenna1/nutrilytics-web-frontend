@@ -1,10 +1,10 @@
 import { Link, Navigate } from "react-router-dom";
-import { FiType, FiBarChart2, FiCpu, FiShield } from "react-icons/fi"; // Added FiShield for the new feature
+import { FiType, FiCpu, FiShield } from "react-icons/fi";
 import styles from "./LandingPage.module.css";
 import { useAuth } from "../../providers/AuthProvider";
 
 export const LandingPage = () => {
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
   if (user) {
     return <Navigate to="/dashboard" replace />;
   }

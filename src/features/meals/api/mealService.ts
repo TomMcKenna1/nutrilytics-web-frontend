@@ -1,5 +1,5 @@
 import apiClient from "../../../lib/apiClient";
-import type { MealDB, MealListResponse } from "../types";
+import type { MealDB, MealListResponse, MealType } from "../types";
 
 /**
  * Creates a new meal. The meal is created with a 'pending' status
@@ -67,7 +67,7 @@ export const deleteMeal = (mealId: string): Promise<void> => {
  */
 export const removeComponentFromMeal = (
   mealId: string,
-  componentId: string
+  componentId: string,
 ): Promise<MealDB> => {
   return apiClient(`/api/v1/meals/${mealId}/components/${componentId}`, {
     method: "DELETE",
@@ -83,10 +83,26 @@ export const removeComponentFromMeal = (
  */
 export const addComponentToMeal = (
   mealId: string,
-  data: { description: string }
+  data: { description: string },
 ): Promise<MealDB> => {
   return apiClient(`/api/v1/meals/${mealId}/components`, {
     method: "POST",
     body: data,
+  });
+};
+
+/**
+ * Updates the type of a meal. User must be authenticated.
+ * @param mealId The ID of the meal to update.
+ * @param type The new meal type for the meal.
+ * @returns The updated meal object.
+ */
+export const updateMealType = (
+  mealId: string,
+  type: MealType,
+): Promise<MealDB> => {
+  return apiClient(`/api/v1/meals/${mealId}/type`, {
+    method: "PATCH",
+    body: { type },
   });
 };
