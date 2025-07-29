@@ -1,7 +1,4 @@
-export interface DailySummary {
-  mealCount: number;
-  snackCount: number;
-  beverageCount: number;
+export interface NutrientSummary {
   energy: number;
   fats: number;
   saturatedFats: number;
@@ -11,3 +8,11 @@ export interface DailySummary {
   protein: number;
   salt: number;
 }
+
+export interface DailySummary extends NutrientSummary {
+  mealCount: number;
+  snackCount: number;
+  beverageCount: number;
+}
+
+export type WeeklySummaryResponse = Record<string, NutrientSummary | null>;

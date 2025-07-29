@@ -1,0 +1,124 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-3);
+}
+
+.nutrientSelect {
+  padding: var(--spacing-2);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-light);
+  background-color: var(--color-background-light);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.dateControls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.navButton {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: var(--color-text-medium);
+  padding: 0 var(--spacing-2);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+}
+
+.navButton:hover {
+  background-color: var(--color-background-soft);
+}
+
+.dateRange {
+  font-weight: 500;
+  color: var(--color-text-dark);
+  min-width: 180px;
+  text-align: center;
+}
+
+/* --- MODIFIED: Main chart wrapper --- */
+.chartWrapper {
+  width: 100%;
+  height: 250px;
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+/* --- NEW: Y-Axis styling --- */
+.yAxis {
+  width: 40px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--color-text-medium);
+  font-weight: 500;
+}
+
+/* --- NEW: Wrapper for chart area + x-axis --- */
+.chartContent {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chartArea {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--spacing-3);
+  align-items: flex-end;
+  position: relative;
+  /* border-left has been removed */
+  padding-left: var(--spacing-1); /* Add a little space */
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.bar {
+  width: 100%;
+  background-color: var(--color-primary-blue);
+  border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
+  transition: height 0.3s ease-in-out;
+}
+
+.targetLine {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  border-top: 2px dashed var(--color-traffic-amber);
+  z-index: 1;
+}
+
+.targetLabel {
+  position: absolute;
+  top: -10px;
+  right: 5px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-traffic-amber);
+  background-color: var(--color-background-light);
+  padding: 0 var(--spacing-1);
+}
+
+.xAxis {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--spacing-3);
+  padding: var(--spacing-2) 0;
+  padding-left: var(--spacing-1); /* Match chartArea padding */
+  /* border-top has been removed */
+  color: var(--color-text-medium);
+  font-weight: 500;
+  text-align: center;
+}
