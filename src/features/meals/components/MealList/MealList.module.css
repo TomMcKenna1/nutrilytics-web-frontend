@@ -25,7 +25,7 @@
   );
   pointer-events: none;
   z-index: 5;
-  border-radius: inherit;
+  border-radius: var(--border-radius-md);
 }
 
 .item,
