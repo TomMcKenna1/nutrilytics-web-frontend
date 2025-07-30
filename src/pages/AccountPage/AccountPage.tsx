@@ -1,161 +1,153 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../providers/AuthProvider";
 import { signOut } from "../../features/auth/api/authService";
-import { useNutritionTargets } from "../../hooks/useNutritionTargets";
-import type { NutritionTarget } from "../../features/account/types";
+import { useAccount } from "../../hooks/useAccount";
+import {
+  type UserProfileCreate,
+  type NutritionTarget,
+} from "../../features/account/types";
+import { ProfileForm } from "../../features/account/components/ProfileForm/ProfileForm";
+import { TargetsForm } from "../../features/account/components//TargetsForm/TargetsForm";
 import styles from "./AccountPage.module.css";
 
 const AccountPage = () => {
-  const { user } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
+
   const {
-    targets,
-    isLoading,
+    account,
+    isLoading: isLoadingAccount,
     isError,
     error,
+    updateProfile,
+    isUpdatingProfile,
+    isProfileUpdateSuccess,
     updateTargets,
-    isUpdating,
-    updateError,
-  } = useNutritionTargets();
+    isUpdatingTargets,
+    isTargetsUpdateSuccess,
+  } = useAccount();
 
-  const [nutritionForm, setNutritionForm] = useState<NutritionTarget>({
-    energy: 0,
-    protein: 0,
-    carbohydrates: 0,
-    sugars: 0,
-    fats: 0,
-    saturatedFats: 0,
-    fibre: 0,
-    salt: 0,
-  });
-
-  const [isUpdated, setIsUpdated] = useState(false);
+  const [profileForm, setProfileForm] = useState<Partial<UserProfileCreate>>(
+    {}
+  );
+  const [nutritionForm, setNutritionForm] = useState<Partial<NutritionTarget>>(
+    {}
+  );
+  const [activeSection, setActiveSection] = useState<"profile" | "targets">(
+    "profile"
+  );
 
   useEffect(() => {
-    if (targets) {
-      setNutritionForm({
-        energy: targets.energy || 0,
-        fats: targets.fats || 0,
-        saturatedFats: targets.saturatedFats || 0,
-        carbohydrates: targets.carbohydrates || 0,
-        sugars: targets.sugars || 0,
-        fibre: targets.fibre || 0,
-        protein: targets.protein || 0,
-        salt: targets.salt || 0,
-      });
+    if (account) {
+      setProfileForm(account.profile);
+      setNutritionForm(account.nutritionTargets ?? {});
     }
-  }, [targets]);
+  }, [account]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const isProfileFormDirty = useMemo(() => {
+    if (!account?.profile) return false;
+    return JSON.stringify(account.profile) !== JSON.stringify(profileForm);
+  }, [account, profileForm]);
+
+  const isTargetsFormDirty = useMemo(() => {
+    if (!account?.nutritionTargets) return false;
+    return (
+      JSON.stringify(account.nutritionTargets) !== JSON.stringify(nutritionForm)
+    );
+  }, [account, nutritionForm]);
+
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setNutritionForm((prev) => ({
-      ...prev,
-      [name]: Number(value),
-    }));
-    if (isUpdated) setIsUpdated(false);
+    if (activeSection === "profile") {
+      setProfileForm((prev) => ({
+        ...prev,
+        [name]: isNaN(Number(value)) ? value : Number(value),
+      }));
+    } else {
+      setNutritionForm((prev) => ({
+        ...prev,
+        [name]: Number(value),
+      }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (activeSection === "profile") {
+      await updateProfile(profileForm);
+    } else {
+      await updateTargets(nutritionForm);
+    }
   };
 
   const handleSignOut = async () => {
-    const { error } = await signOut();
-    if (error) {
-      console.error("Error signing out:", error);
-    } else {
-      navigate("/login");
-    }
+    await signOut();
+    navigate("/login");
   };
 
-  const handleUpdateTargets = async (e: React.FormEvent) => {
-    e.preventDefault();
+  if (isLoadingAccount || isAuthLoading) {
+    return <p className={styles.message}>Loading your account...</p>;
+  }
 
-    if (isUpdated) setIsUpdated(false);
-
-    try {
-      await updateTargets(nutritionForm);
-      setIsUpdated(true);
-      setTimeout(() => setIsUpdated(false), 3000);
-    } catch (err) {
-      console.error("Update failed:", err);
-    }
-  };
-
-  if (!user) {
-    return <p className={styles.message}>No user is signed in.</p>;
+  if (isError) {
+    return (
+      <p className={`${styles.message} ${styles.errorMessage}`}>
+        Error: {error?.message}
+      </p>
+    );
   }
 
   return (
-    <div className={styles.pageContainer}>
+    <div className={styles.pageWrapper}>
       <header className={styles.header}>
         <h1 className={styles.pageTitle}>Account Settings</h1>
       </header>
+      <div className={styles.pageContainer}>
+        <aside className={styles.sidebar}>
+          <button
+            className={`${styles.sidebarItem} ${activeSection === "profile" ? styles.active : ""}`}
+            onClick={() => setActiveSection("profile")}
+          >
+            Profile
+          </button>
+          <button
+            className={`${styles.sidebarItem} ${activeSection === "targets" ? styles.active : ""}`}
+            onClick={() => setActiveSection("targets")}
+          >
+            Targets
+          </button>
+        </aside>
 
-      <div className={styles.card}>
-        <h2 className={styles.cardTitle}>User Information</h2>
-        <div className={styles.detail}>
-          <span className={styles.detailLabel}>Email</span>
-          <span className={styles.detailValue}>{user.email}</span>
-        </div>
-        <button onClick={handleSignOut} className={styles.signOutButton}>
-          Sign Out
-        </button>
-      </div>
+        <main className={styles.contentArea}>
+          {activeSection === "profile" && (
+            <ProfileForm
+              email={user?.email}
+              profileForm={profileForm}
+              originalProfile={account?.profile}
+              isDirty={isProfileFormDirty}
+              isUpdating={isUpdatingProfile}
+              isSuccess={isProfileUpdateSuccess}
+              onFormChange={handleFormChange}
+              onSubmit={handleSubmit}
+              onSignOut={handleSignOut}
+            />
+          )}
 
-      <div className={styles.card}>
-        <h2 className={styles.cardTitle}>Daily Nutrition Targets</h2>
-        {isLoading && <p className={styles.message}>Loading targets...</p>}
-        {isError && (
-          <p className={`${styles.message} ${styles.errorMessage}`}>
-            Error: {error?.message}
-          </p>
-        )}
-
-        <form onSubmit={handleUpdateTargets} className={styles.form}>
-          <div className={styles.formGrid}>
-            {Object.keys(nutritionForm).map((key) => {
-              const label =
-                key.charAt(0).toUpperCase() +
-                key.slice(1).replace(/([A-Z])/g, " $1");
-              const unit = key === "energy" ? "kcal" : "g";
-
-              return (
-                <div className={styles.formGroup} key={key}>
-                  <label htmlFor={key} className={styles.label}>
-                    {label} ({unit})
-                  </label>
-                  <input
-                    type="number"
-                    id={key}
-                    name={key}
-                    className={styles.input}
-                    value={nutritionForm[key as keyof NutritionTarget]}
-                    onChange={handleInputChange}
-                    placeholder="0"
-                    min="0"
-                  />
-                </div>
-              );
-            })}
-          </div>
-          <div className={styles.formActions}>
-            <button
-              type="submit"
-              className={styles.button}
-              disabled={isUpdating || isLoading}
-            >
-              {isUpdating ? "Updating..." : "Update Targets"}
-            </button>
-            {isUpdated && (
-              <p className={`${styles.message} ${styles.successMessage}`}>
-                Targets updated successfully!
-              </p>
-            )}
-            {updateError && (
-              <p className={`${styles.message} ${styles.errorMessage}`}>
-                Error: {updateError.message}
-              </p>
-            )}
-          </div>
-        </form>
+          {activeSection === "targets" && (
+            <TargetsForm
+              nutritionForm={nutritionForm}
+              originalTargets={account?.nutritionTargets}
+              isDirty={isTargetsFormDirty}
+              isUpdating={isUpdatingTargets}
+              isSuccess={isTargetsUpdateSuccess}
+              onFormChange={handleFormChange}
+              onSubmit={handleSubmit}
+            />
+          )}
+        </main>
       </div>
     </div>
   );

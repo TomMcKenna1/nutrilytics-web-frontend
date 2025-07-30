@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getNutritionTargets,
   updateNutritionTargets,
-} from "../features/account/api/accountConfigService";
+} from "../features/account/api/accountService";
 import type {
   NutritionTarget,
   UpdateNutritionTarget,

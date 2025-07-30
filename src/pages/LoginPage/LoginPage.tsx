@@ -8,6 +8,13 @@ import {
 import { useAuth } from "../../providers/AuthProvider";
 import GoogleSignInButton from "../../features/auth/components/GoogleSignInButton/GoogleSignInButton";
 import styles from "./LoginPage.module.css";
+import { createUserProfile } from "../../features/account/api/accountService";
+import {
+  type UserProfileCreate,
+  ActivityLevelOptions,
+  GoalOptions,
+  SexOptions,
+} from "../../features/account/types";
 
 interface AuthError extends Error {
   code?: string;
@@ -27,52 +34,40 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
     setError(null);
 
-    const authAction = isLoginView ? signInWithEmail : signUpWithEmail;
-    const { error: authError } = (await authAction(email, password)) as {
-      error: AuthError | null;
-    };
+    if (isLoginView) {
+      const { error: authError } = (await signInWithEmail(email, password)) as {
+        error: AuthError | null;
+      };
+      handleAuthError(authError);
+    } else {
+      const { user: newUser, error: signUpError } = await signUpWithEmail(
+        email,
+        password
+      );
 
-    if (authError) {
-      console.error("Firebase Auth Error:", authError.code);
-      switch (authError.code) {
-        // --- SIGN UP ERRORS ---
-        case "auth/email-already-in-use":
-          setError("An account already exists with this email. Please log in.");
-          break;
-        case "auth/weak-password":
-          setError(
-            "Password is too weak. It should be at least 6 characters long.",
-          );
-          break;
+      if (signUpError) {
+        handleAuthError(signUpError as AuthError);
+        setIsLoading(false);
+        return;
+      }
 
-        // --- LOGIN ERRORS ---
-        case "auth/invalid-credential":
+      if (newUser) {
+        try {
+          const defaultProfile: UserProfileCreate = {
+            sex: SexOptions.MALE,
+            age: 30,
+            heightCm: 175,
+            weightKg: 75,
+            goal: GoalOptions.MAINTAIN_WEIGHT,
+            activityLevel: ActivityLevelOptions.MODERATELY_ACTIVE,
+          };
+          await createUserProfile(defaultProfile);
+        } catch (profileError) {
+          console.error("Profile Creation Error:", profileError);
           setError(
-            "Invalid credentials. Please check your email and password.",
+            "Your account was created, but we couldn't set up your profile. Please contact support."
           );
-          break;
-
-        // --- COMMON ERRORS ---
-        case "auth/invalid-email":
-          setError(
-            "The email address is not valid. Please enter a valid email.",
-          );
-          break;
-        case "auth/too-many-requests":
-          setError(
-            "Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.",
-          );
-          break;
-        case "auth/network-request-failed":
-          setError(
-            "Network error. Please check your internet connection and try again.",
-          );
-          break;
-
-        // --- DEFAULT ---
-        default:
-          setError("An unexpected error occurred. Please try again.");
-          break;
+        }
       }
     }
     setIsLoading(false);
@@ -81,23 +76,84 @@ const LoginPage: React.FC = () => {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     setError(null);
-    const { error: authError } = (await signInWithGoogle()) as {
-      error: AuthError | null;
-    };
+
+    const {
+      user: googleUser,
+      error: authError,
+      isNewUser,
+    } = await signInWithGoogle();
+
     if (authError) {
-      switch (authError.code) {
-        case "auth/popup-closed-by-user":
-          setError("The sign-in window was closed. Please try again.");
-          break;
-        default:
-          setError("Could not sign in with Google. Please try again.");
+      handleAuthError(authError as AuthError);
+      setIsLoading(false);
+      return;
+    }
+
+    if (googleUser && isNewUser) {
+      console.log("New user signed in with Google, creating profile...");
+      try {
+        const defaultProfile: UserProfileCreate = {
+          sex: SexOptions.MALE,
+          age: 30,
+          heightCm: 175,
+          weightKg: 75,
+          goal: GoalOptions.MAINTAIN_WEIGHT,
+          activityLevel: ActivityLevelOptions.MODERATELY_ACTIVE,
+        };
+        await createUserProfile(defaultProfile);
+        navigate("/dashboard");
+      } catch (profileError) {
+        console.error(
+          "Profile Creation Error after Google Sign-In:",
+          profileError
+        );
+        setError(
+          "Your account was created, but we couldn't set up your profile. Please contact support."
+        );
       }
     }
+
     setIsLoading(false);
   };
 
+  const handleAuthError = (authError: AuthError | null) => {
+    if (!authError) return;
+
+    console.error("Firebase Auth Error:", authError.code);
+    switch (authError.code) {
+      case "auth/popup-closed-by-user":
+        setError("The sign-in window was closed. Please try again.");
+        break;
+      case "auth/email-already-in-use":
+        setError("An account already exists with this email. Please log in.");
+        break;
+      case "auth/weak-password":
+        setError(
+          "Password is too weak. It should be at least 6 characters long."
+        );
+        break;
+      case "auth/invalid-credential":
+        setError("Invalid credentials. Please check your email and password.");
+        break;
+      case "auth/invalid-email":
+        setError("The email address is not valid. Please enter a valid email.");
+        break;
+      case "auth/too-many-requests":
+        setError(
+          "Access to this account has been temporarily disabled. Please reset your password or try again later."
+        );
+        break;
+      case "auth/network-request-failed":
+        setError("Network error. Please check your internet connection.");
+        break;
+      default:
+        setError("An unexpected error occurred. Please try again.");
+        break;
+    }
+  };
+
   useEffect(() => {
-    if (user) {
+    if (user && !isLoading) {
       navigate("/dashboard");
     }
   }, [user, navigate]);
