@@ -25,6 +25,7 @@ type GaugeProps = {
   unit: string;
   average: number;
   target: number;
+  nutrientKey: keyof NutrientSummary;
 };
 
 const STATUS_INFO = {
@@ -33,7 +34,13 @@ const STATUS_INFO = {
   tooHigh: { message: "Too High", className: styles.statusOutOfRange },
 };
 
-const SingleGauge = ({ title, unit, average, target }: GaugeProps) => {
+const SingleGauge = ({
+  title,
+  unit,
+  average,
+  target,
+  nutrientKey,
+}: GaugeProps) => {
   const gaugeData = useMemo(() => {
     if (target === 0) {
       return {
@@ -43,24 +50,35 @@ const SingleGauge = ({ title, unit, average, target }: GaugeProps) => {
         status: "inRange" as keyof typeof STATUS_INFO,
       };
     }
+
     const gaugeMax = target * 2;
-    const buffer = 0.15;
-    const greenMin = target * (1 - buffer);
-    const greenMax = target * (1 + buffer);
-
-    const greenStartPercent = (greenMin / gaugeMax) * 100;
-    const greenWidthPercent = ((greenMax - greenMin) / gaugeMax) * 100;
     const needlePercent = Math.min((average / gaugeMax) * 100, 100);
+    const isUnderTargetGood =
+      nutrientKey === "sugars" || nutrientKey === "saturatedFats";
 
-    let status: keyof typeof STATUS_INFO = "inRange";
-    if (average < greenMin) {
-      status = "tooLow";
-    } else if (average > greenMax) {
-      status = "tooHigh";
+    if (isUnderTargetGood) {
+      const greenStartPercent = 0;
+      const greenWidthPercent = (target / gaugeMax) * 100;
+      const status: keyof typeof STATUS_INFO =
+        average <= target ? "inRange" : "tooHigh";
+      return { needlePercent, greenStartPercent, greenWidthPercent, status };
+    } else {
+      const buffer = 0.15;
+      const greenMin = target * (1 - buffer);
+      const greenMax = target * (1 + buffer);
+
+      const greenStartPercent = (greenMin / gaugeMax) * 100;
+      const greenWidthPercent = ((greenMax - greenMin) / gaugeMax) * 100;
+
+      let status: keyof typeof STATUS_INFO = "inRange";
+      if (average < greenMin) {
+        status = "tooLow";
+      } else if (average > greenMax) {
+        status = "tooHigh";
+      }
+      return { needlePercent, greenStartPercent, greenWidthPercent, status };
     }
-
-    return { needlePercent, greenStartPercent, greenWidthPercent, status };
-  }, [average, target]);
+  }, [average, target, nutrientKey]);
 
   const isInTarget = gaugeData.status === "inRange";
   const needleClasses = `${styles.needle} ${
@@ -119,7 +137,6 @@ export const MacroGaugeCharts = ({
     if (!weeklyData) return 0;
 
     const todayString = toLocalDateString(new Date());
-    // Get all days from the response that are not null and not today
     const pastDays = Object.entries(weeklyData).filter(
       ([dateString, dayData]) => dayData !== null && dateString !== todayString
     ) as [string, WeeklyBreakdown][];
@@ -128,7 +145,6 @@ export const MacroGaugeCharts = ({
       return 0;
     }
 
-    // Sum the total nutrient value for all past days
     const total = pastDays.reduce((acc, [, dayData]) => {
       const mealValue = dayData.meals?.[selectedNutrient] ?? 0;
       const snackValue = dayData.snacks?.[selectedNutrient] ?? 0;
@@ -137,7 +153,6 @@ export const MacroGaugeCharts = ({
       return acc + dayTotal;
     }, 0);
 
-    // Return the average
     return total / pastDays.length;
   }, [weeklyData, selectedNutrient]);
 
@@ -155,6 +170,7 @@ export const MacroGaugeCharts = ({
           unit={macroInfo.unit}
           average={weeklyAverage}
           target={targets?.[selectedNutrient] ?? 0}
+          nutrientKey={macroInfo.key}
         />
       )}
     </div>
