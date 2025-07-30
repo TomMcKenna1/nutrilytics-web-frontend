@@ -1,8 +1,6 @@
-/* --- MODIFIED: The main container now expands to fill its parent's height --- */
 .gaugesContainer {
   display: flex;
   flex-direction: column;
-  /* Use space-around for a balanced vertical distribution of gauges */
   justify-content: space-around; 
   height: 100%;
 }
@@ -20,7 +18,13 @@
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
+}
+
+.titleContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
 }
 
 .title {
@@ -28,6 +32,25 @@
   font-weight: 500;
   color: var(--color-text-dark);
 }
+
+.statusInRange, .statusOutOfRange {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.statusInRange {
+  color: var(--color-traffic-green);
+  background-color: #e6f4ea;
+}
+
+.statusOutOfRange {
+  color: var(--color-traffic-amber);
+  background-color: #fff8e1;
+}
+
 
 .baseline {
   font-size: 0.8rem;

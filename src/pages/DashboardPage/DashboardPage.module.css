@@ -23,6 +23,13 @@
   margin-bottom: var(--spacing-4);
 }
 
+.sectionSubtitle {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  margin-bottom: var(--spacing-3);
+}
+
 .chartControlsHeader {
   display: flex;
   justify-content: space-between;

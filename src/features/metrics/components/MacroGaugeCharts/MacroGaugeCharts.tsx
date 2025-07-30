@@ -3,7 +3,6 @@ import { useWeeklySummary } from "../../../../hooks/useWeeklySummary";
 import { useNutritionTargets } from "../../../../hooks/useNutritionTargets";
 import { type NutrientSummary } from "../../types";
 import styles from "./MacroGaugeCharts.module.css";
-// Importing the date utility to get today's date string
 import { toLocalDateString } from "../../../../utils/dateUtils";
 
 const ALL_MACROS: {
@@ -28,6 +27,12 @@ type GaugeProps = {
   target: number;
 };
 
+const STATUS_INFO = {
+  inRange: { message: "In Range", className: styles.statusInRange },
+  tooLow: { message: "Too Low", className: styles.statusOutOfRange },
+  tooHigh: { message: "Too High", className: styles.statusOutOfRange },
+};
+
 const SingleGauge = ({ title, unit, average, target }: GaugeProps) => {
   const gaugeData = useMemo(() => {
     if (target === 0) {
@@ -35,7 +40,7 @@ const SingleGauge = ({ title, unit, average, target }: GaugeProps) => {
         needlePercent: 0,
         greenStartPercent: 0,
         greenWidthPercent: 0,
-        isInTarget: false,
+        status: "inRange" as keyof typeof STATUS_INFO,
       };
     }
     const gaugeMax = target * 2;
@@ -47,17 +52,27 @@ const SingleGauge = ({ title, unit, average, target }: GaugeProps) => {
     const greenWidthPercent = ((greenMax - greenMin) / gaugeMax) * 100;
     const needlePercent = Math.min((average / gaugeMax) * 100, 100);
 
-    const isInTarget = average >= greenMin && average <= greenMax;
+    let status: keyof typeof STATUS_INFO = "inRange";
+    if (average < greenMin) {
+      status = "tooLow";
+    } else if (average > greenMax) {
+      status = "tooHigh";
+    }
 
-    return { needlePercent, greenStartPercent, greenWidthPercent, isInTarget };
+    return { needlePercent, greenStartPercent, greenWidthPercent, status };
   }, [average, target]);
 
-  const needleClasses = `${styles.needle} ${gaugeData.isInTarget ? styles.inRange : styles.outOfRange}`;
+  const isInTarget = gaugeData.status === "inRange";
+  const needleClasses = `${styles.needle} ${isInTarget ? styles.inRange : styles.outOfRange}`;
+  const statusInfo = STATUS_INFO[gaugeData.status];
 
   return (
     <div className={styles.singleGauge}>
       <div className={styles.header}>
-        <h3 className={styles.title}>{title}</h3>
+        <div className={styles.titleContainer}>
+          <h3 className={styles.title}>{title}</h3>
+          <span className={statusInfo.className}>{statusInfo.message}</span>
+        </div>
         <span className={styles.baseline}>
           Target: {Math.round(target)}
           {unit}
@@ -65,7 +80,6 @@ const SingleGauge = ({ title, unit, average, target }: GaugeProps) => {
       </div>
       <div className={styles.valueDisplay}>
         <span className={styles.currentValue}>{Math.round(average)}</span>
-        {/* Updated label to clarify it's an average of past days */}
         <span className={styles.targetValue}>{unit} (wk avg)</span>
       </div>
       <div className={styles.gaugeBar}>

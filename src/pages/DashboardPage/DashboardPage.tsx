@@ -42,6 +42,7 @@ const DashboardPage = () => {
         <DailySummary />
       </section>
 
+      <h2 className={styles.sectionSubtitle}>Weekly Nutrition</h2>
       <section className={styles.summarySection}>
         <div className={styles.chartControlsHeader}>
           <select
