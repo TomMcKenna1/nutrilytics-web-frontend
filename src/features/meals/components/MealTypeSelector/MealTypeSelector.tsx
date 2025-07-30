@@ -22,11 +22,17 @@ export const MealTypeSelector: React.FC<MealTypeSelectorProps> = ({
   useLayoutEffect(() => {
     const selectedIndex = options.findIndex((opt) => opt === value);
     const selectedOption = optionRefs.current[selectedIndex];
+    const container = containerRef.current;
 
-    if (selectedOption) {
+    if (selectedOption && container) {
+      const containerPadding = parseFloat(
+        getComputedStyle(container).paddingLeft
+      );
+      const transformX = selectedOption.offsetLeft - containerPadding;
+
       setSliderStyle({
         width: `${selectedOption.offsetWidth}px`,
-        transform: `translateX(${selectedOption.offsetLeft}px)`,
+        transform: `translateX(${transformX}px)`,
       });
     }
   }, [value]);

@@ -1,5 +1,9 @@
 import apiClient from "../../../lib/apiClient";
-import { type DailySummary, type WeeklySummaryResponse } from "../types";
+import {
+  type DailySummary,
+  type MonthlySummaryResponse,
+  type WeeklySummaryResponse,
+} from "../types";
 
 /**
  * Provides a summary of nutrition for the day
@@ -15,8 +19,18 @@ export const getDailySummary = (): Promise<DailySummary> => {
  * @returns The weekly macro summary.
  */
 export const getWeeklySummary = (
-  startDate: string,
+  startDate: string
 ): Promise<WeeklySummaryResponse> => {
-  // The endpoint path is constructed as requested.
   return apiClient(`/api/v1/metrics/weeklySummary?startDate=${startDate}`);
+};
+
+/**
+ * Provides a day-by-day nutritional summary for a given month.
+ * @param yearMonth The month to fetch data for, in 'YYYY-MM' format.
+ * @returns The monthly summary response.
+ */
+export const getMonthlySummary = (
+  yearMonth: string
+): Promise<MonthlySummaryResponse> => {
+  return apiClient(`/api/v1/metrics/monthlySummary/${yearMonth}`);
 };

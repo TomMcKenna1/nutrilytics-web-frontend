@@ -55,17 +55,102 @@ export const parseCreatedAt = (createdAt: MealDB["createdAt"]): Date | null => {
 export const isDateToday = (date: Date | null): boolean => {
   if (!date) return false;
   const today = new Date();
-  return date.toISOString().split("T")[0] === today.toISOString().split("T")[0];
+  return (
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate()
+  );
 };
 
 /**
  * Checks if a given Date object is within the current week (Monday-Sunday).
  */
 export const isDateInCurrentWeek = (d: Date | null): boolean => {
-    if (!d) return false;
-    const today = new Date();
-    // Uses other utils from this file to determine the week
-    const currentWeekMondayString = toLocalDateString(getMonday(today));
-    const dateMondayString = toLocalDateString(getMonday(d));
-    return currentWeekMondayString === dateMondayString;
+  if (!d) return false;
+  const today = new Date();
+  // Uses other utils from this file to determine the week
+  const currentWeekMondayString = toLocalDateString(getMonday(today));
+  const dateMondayString = toLocalDateString(getMonday(d));
+  return currentWeekMondayString === dateMondayString;
+};
+
+/**
+ * Formats a date object into a string.
+ * Supports 'MMMM yyyy', 'd', and 'yyyy-MM'.
+ */
+export const formatDate = (
+  date: Date,
+  format: "MMMM yyyy" | "d" | "yyyy-MM"
+): string => {
+  if (format === "MMMM yyyy") {
+    return `${date.toLocaleString("default", { month: "long" })} ${date.getFullYear()}`;
+  }
+  if (format === "d") {
+    return date.getDate().toString();
+  }
+  if (format === "yyyy-MM") {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    return `${year}-${month}`;
+  }
+  return "";
+};
+
+/**
+ * Returns a new Date object for the first day of the given date's month.
+ */
+export const getStartOfMonth = (date: Date): Date => {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+};
+
+/**
+ * Returns an array of Date objects for each day in a given month.
+ */
+export const getDaysInMonth = (date: Date): Date[] => {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = new Date(year, month, 1);
+  const days = [];
+  while (day.getMonth() === month) {
+    days.push(new Date(day));
+    day.setDate(day.getDate() + 1);
+  }
+  return days;
+};
+
+/**
+ * Checks if two dates are in the same month and year.
+ */
+export const isSameMonth = (date1: Date, date2: Date): boolean => {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth()
+  );
+};
+
+/**
+ * Returns a new Date object with the specified number of months added.
+ */
+export const addMonths = (date: Date, months: number): Date => {
+  const newDate = new Date(date);
+  newDate.setMonth(newDate.getMonth() + months);
+  return newDate;
+};
+
+/**
+ * Returns a new Date object with the specified number of months subtracted.
+ */
+export const subMonths = (date: Date, months: number): Date => {
+  const newDate = new Date(date);
+  newDate.setMonth(newDate.getMonth() - months);
+  return newDate;
+};
+
+/**
+ * Returns a new Date object set to the end of the day.
+ */
+export const getEndOfDay = (date: Date): Date => {
+  const newDate = new Date(date);
+  newDate.setHours(23, 59, 59, 999);
+  return newDate;
 };

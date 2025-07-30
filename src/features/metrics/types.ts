@@ -22,3 +22,11 @@ export interface WeeklyBreakdown {
 }
 
 export type WeeklySummaryResponse = Record<string, WeeklyBreakdown | null>;
+
+export interface MonthlyNutritionLog {
+  mealCount: number;
+  nutrition: NutrientSummary;
+  logs: string[];
+}
+
+export type MonthlySummaryResponse = Record<string, MonthlyNutritionLog | null>;

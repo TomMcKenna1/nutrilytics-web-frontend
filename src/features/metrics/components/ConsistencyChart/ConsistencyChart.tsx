@@ -16,28 +16,21 @@ const NUTRIENT_OPTIONS: { key: keyof NutrientSummary; unit: string }[] = [
 ];
 
 const NUTRIENT_COLORS: Record<keyof NutrientSummary, string> = {
-  // var(--color-energy)
-  energy: "hsl(38, 96%, 56%)",
-  // var(--color-protein)
-  protein: "hsl(340, 75%, 65%)",
-  // var(--color-carbs)
-  carbohydrates: "hsl(205, 80%, 65%)",
-  // var(--color-fats)
-  fats: "hsl(260, 65%, 68%)",
-  // var(--color-sugars)
-  sugars: "hsl(300, 70%, 70%)",
-  // var(--color-fibre)
-  fibre: "hsl(125, 55%, 55%)",
-  // var(--color-fats)
-  saturatedFats: "hsl(260, 65%, 68%)",
-  // var(--color-text-medium)
-  salt: "hsl(210, 10%, 55%)",
+  energy: "var(--color-energy)",
+  protein: "var(--color-protein)",
+  carbohydrates: "var(--color-carbs)",
+  fats: "var(--color-fats)",
+  sugars: "var(--color-sugars)",
+  fibre: "var(--color-fibre)",
+  saturatedFats: "var(--color-fats)",
+  salt: "var(--color-text-medium)",
 };
 
+
 const STACK_LEGEND = [
-  { name: "Meals", key: "meals" as const },
-  { name: "Snacks", key: "snacks" as const },
-  { name: "Beverages", key: "beverages" as const },
+  { name: "Meals", key: "meal" as const },
+  { name: "Snacks", key: "snack" as const },
+  { name: "Beverages", key: "beverage" as const },
 ];
 
 interface ConsistencyChartProps {
@@ -81,26 +74,6 @@ export const ConsistencyChart = ({
     return { days: weekDays, values, targetValue, yAxisMax, yAxisLabels };
   }, [currentMonday, weeklyData, selectedNutrient, targets]);
 
-  const getStackColor = (
-    nutrient: keyof NutrientSummary,
-    stackType: "meals" | "snacks" | "beverages"
-  ) => {
-    const baseColor = NUTRIENT_COLORS[nutrient];
-    // HSL colors to easily modify lightness for visual difference
-    switch (stackType) {
-      case "meals":
-        return baseColor; // e.g., hsl(38, 96%, 56%)
-      case "snacks":
-        // Lighter
-        return baseColor.replace(/,\s*([\d.]+)%\)/, ", 75%)");
-      case "beverages":
-        // Lightest
-        return baseColor.replace(/,\s*([\d.]+)%\)/, ", 85%)");
-      default:
-        return baseColor;
-    }
-  };
-
   const selectedNutrientInfo = NUTRIENT_OPTIONS.find(
     (n) => n.key === selectedNutrient
   );
@@ -134,34 +107,28 @@ export const ConsistencyChart = ({
               {chartData.values.map((dayValue, index) => (
                 <div key={index} className={styles.barStack}>
                   <div
-                    className={styles.barSegment}
+                    className={`${styles.barSegment} ${styles.beverageSegment}`}
                     style={{
                       height: `${
                         (dayValue.beverages / chartData.yAxisMax) * 100
                       }%`,
-                      backgroundColor: getStackColor(
-                        selectedNutrient,
-                        "beverages"
-                      ),
+                      backgroundColor: NUTRIENT_COLORS[selectedNutrient],
                     }}
                   />
                   <div
-                    className={styles.barSegment}
+                    className={`${styles.barSegment} ${styles.snackSegment}`}
                     style={{
                       height: `${
                         (dayValue.snacks / chartData.yAxisMax) * 100
                       }%`,
-                      backgroundColor: getStackColor(
-                        selectedNutrient,
-                        "snacks"
-                      ),
+                      backgroundColor: NUTRIENT_COLORS[selectedNutrient],
                     }}
                   />
                   <div
-                    className={styles.barSegment}
+                    className={`${styles.barSegment} ${styles.mealSegment}`}
                     style={{
                       height: `${(dayValue.meals / chartData.yAxisMax) * 100}%`,
-                      backgroundColor: getStackColor(selectedNutrient, "meals"),
+                      backgroundColor: NUTRIENT_COLORS[selectedNutrient],
                     }}
                   />
                 </div>
@@ -181,9 +148,11 @@ export const ConsistencyChart = ({
         {STACK_LEGEND.map((item) => (
           <div key={item.key} className={styles.legendItem}>
             <span
-              className={styles.legendColorBox}
+              className={`${styles.legendColorBox} ${
+                styles[`${item.key}Segment`]
+              }`}
               style={{
-                backgroundColor: getStackColor(selectedNutrient, item.key),
+                backgroundColor: NUTRIENT_COLORS[selectedNutrient],
               }}
             />
             <span>{item.name}</span>

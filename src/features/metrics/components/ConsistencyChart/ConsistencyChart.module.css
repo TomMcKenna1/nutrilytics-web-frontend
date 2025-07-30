@@ -99,7 +99,19 @@
 
 .barSegment {
   width: 100%;
-  transition: height 0.3s ease-in-out;
+  transition: height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.mealSegment {
+  opacity: 1;
+}
+
+.snackSegment {
+  opacity: 0.7;
+}
+
+.beverageSegment {
+  opacity: 0.4;
 }
 
 .targetLine {
