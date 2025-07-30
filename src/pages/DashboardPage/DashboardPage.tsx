@@ -16,6 +16,7 @@ const NUTRIENT_OPTIONS: {
   { key: "protein", label: "Protein" },
   { key: "carbohydrates", label: "Carbs" },
   { key: "fats", label: "Fats" },
+  { key: "saturatedFats", label: "Saturated Fats" },
   { key: "sugars", label: "Sugars" },
   { key: "fibre", label: "Fibre" },
 ];

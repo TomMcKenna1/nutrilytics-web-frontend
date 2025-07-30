@@ -10,6 +10,7 @@ const NUTRIENT_OPTIONS: { key: keyof NutrientSummary; unit: string }[] = [
   { key: "protein", unit: "g" },
   { key: "carbohydrates", unit: "g" },
   { key: "fats", unit: "g" },
+  { key: "saturatedFats", unit: "g" },
   { key: "sugars", unit: "g" },
   { key: "fibre", unit: "g" },
 ];
