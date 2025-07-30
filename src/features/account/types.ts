@@ -43,6 +43,7 @@ export interface UserInDB {
   onboardingComplete: boolean;
   profile: Partial<UserProfileCreate> | null;
   nutritionTargets?: Partial<NutritionTarget> | null;
+  logStreak: number;
 }
 
 export type UpdateNutritionTarget = Partial<NutritionTarget>;

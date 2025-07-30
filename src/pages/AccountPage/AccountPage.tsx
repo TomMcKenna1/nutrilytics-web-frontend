@@ -10,10 +10,12 @@ import {
 import { ProfileForm } from "../../features/account/components/ProfileForm/ProfileForm";
 import { TargetsForm } from "../../features/account/components//TargetsForm/TargetsForm";
 import styles from "./AccountPage.module.css";
+import { useQueryClient } from "@tanstack/react-query";
 
 const AccountPage = () => {
   const { user, isLoading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const {
     account,
@@ -39,7 +41,7 @@ const AccountPage = () => {
   );
 
   useEffect(() => {
-    if (account) {
+    if (account?.profile) {
       setProfileForm(account.profile);
       setNutritionForm(account.nutritionTargets ?? {});
     }
@@ -85,6 +87,7 @@ const AccountPage = () => {
 
   const handleSignOut = async () => {
     await signOut();
+    queryClient.clear();
     navigate("/login");
   };
 
@@ -122,7 +125,7 @@ const AccountPage = () => {
         </aside>
 
         <main className={styles.contentArea}>
-          {activeSection === "profile" && (
+          {activeSection === "profile" && account?.profile && (
             <ProfileForm
               email={user?.email}
               profileForm={profileForm}
@@ -136,7 +139,7 @@ const AccountPage = () => {
             />
           )}
 
-          {activeSection === "targets" && (
+          {activeSection === "targets" && account?.nutritionTargets && (
             <TargetsForm
               nutritionForm={nutritionForm}
               originalTargets={account?.nutritionTargets}

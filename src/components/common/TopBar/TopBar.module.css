@@ -123,3 +123,32 @@
 .signInButton:hover {
   background-color: var(--color-primary-blue-dark);
 }
+
+.accountSection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.streakDisplay {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  color: var(--color-text-dark);
+}
+
+.streakIconFilled {
+  font-size: 1.6rem;
+  color: #f97316;
+}
+
+.streakIconOutline {
+  font-size: 1.6rem;
+  color: var(--color-text-light);
+}
+
+.streakCount {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+}

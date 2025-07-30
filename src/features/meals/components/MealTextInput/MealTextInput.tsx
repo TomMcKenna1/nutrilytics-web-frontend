@@ -75,8 +75,8 @@ const MealTextInput = () => {
   } = useMutation({
     mutationFn: (description: string) => createMeal(description),
     onSuccess: () => {
-      // Invalidate the main list so it refetches with the new pending meal
       queryClient.invalidateQueries({ queryKey: ["mealsList"] });
+      queryClient.invalidateQueries({ queryKey: ["account"] });
       setMealInput("");
     },
   });
