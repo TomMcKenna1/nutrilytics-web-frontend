@@ -3,18 +3,9 @@ import { useWeeklySummary } from "../../../../hooks/useWeeklySummary";
 import { useNutritionTargets } from "../../../../hooks/useNutritionTargets";
 import { type NutrientSummary } from "../../types";
 import styles from "./MacroGaugeCharts.module.css";
+// Importing the date utility to get today's date string
+import { toLocalDateString } from "../../../../utils/dateUtils";
 
-// --- Date Helper Functions ---
-const getMonday = (d: Date) => {
-  const date = new Date(d);
-  const day = date.getDay();
-  const diff = (day + 6) % 7;
-  date.setDate(date.getDate() - diff);
-  date.setHours(0, 0, 0, 0);
-  return date;
-};
-
-// --- A comprehensive list of all possible macros ---
 const ALL_MACROS: {
   key: keyof NutrientSummary;
   title: string;
@@ -56,13 +47,11 @@ const SingleGauge = ({ title, unit, average, target }: GaugeProps) => {
     const greenWidthPercent = ((greenMax - greenMin) / gaugeMax) * 100;
     const needlePercent = Math.min((average / gaugeMax) * 100, 100);
 
-    // --- NEW: Check if the average is within the green zone ---
     const isInTarget = average >= greenMin && average <= greenMax;
 
     return { needlePercent, greenStartPercent, greenWidthPercent, isInTarget };
   }, [average, target]);
 
-  // --- NEW: Conditionally apply style class for the needle color ---
   const needleClasses = `${styles.needle} ${gaugeData.isInTarget ? styles.inRange : styles.outOfRange}`;
 
   return (
@@ -76,7 +65,8 @@ const SingleGauge = ({ title, unit, average, target }: GaugeProps) => {
       </div>
       <div className={styles.valueDisplay}>
         <span className={styles.currentValue}>{Math.round(average)}</span>
-        <span className={styles.targetValue}>{unit} (7d Avg)</span>
+        {/* Updated label to clarify it's an average of past days */}
+        <span className={styles.targetValue}>{unit} (wk avg)</span>
       </div>
       <div className={styles.gaugeBar}>
         <div className={styles.gaugeBackground}></div>
@@ -111,10 +101,13 @@ export const MacroGaugeCharts = ({
 
   const weeklyAverage = useMemo(() => {
     if (!weeklyData) return 0;
-    const validDays = Object.values(weeklyData).filter((day) => day !== null);
-    const dayCount = validDays.length || 1;
-    const total = validDays.reduce(
-      (acc, day) => acc + (day?.[selectedNutrient] ?? 0),
+    const todayString = toLocalDateString(new Date());
+    const pastDays = Object.entries(weeklyData).filter(
+      ([dateString, dayData]) => dayData !== null && dateString !== todayString
+    );
+    const dayCount = pastDays.length || 1;
+    const total = pastDays.reduce(
+      (acc, [, dayData]) => acc + (dayData?.[selectedNutrient] ?? 0),
       0
     );
     return total / dayCount;
@@ -128,7 +121,6 @@ export const MacroGaugeCharts = ({
 
   return (
     <div className={styles.gaugesContainer}>
-      {/* Now only renders the single gauge for the selected nutrient */}
       {macroInfo && (
         <SingleGauge
           title={macroInfo.title}

@@ -1,17 +1,27 @@
 import {
+  type InfiniteData,
   useInfiniteQuery,
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
 import { getLatestMeals, deleteMeal } from "../features/meals/api/mealService";
-import type { MealListResponse } from "../features/meals/types";
+import type { MealListResponse, MealDB } from "../features/meals/types";
+import {
+  getMonday,
+  isDateInCurrentWeek,
+  isDateToday,
+  parseCreatedAt,
+  toLocalDateString,
+} from "../utils/dateUtils";
 
 const MEALS_PER_PAGE = 5;
 const MEAL_LIST_QUERY_KEY = ["mealsList"];
 
-/**
- * Hook for fetching and managing the infinite list of meals.
- */
+type DeleteMutationContext = {
+  previousMealListData?: InfiniteData<MealListResponse>;
+  deletedMeal?: MealDB;
+};
+
 export const useMealList = () => {
   const queryClient = useQueryClient();
 
@@ -33,11 +43,59 @@ export const useMealList = () => {
 
   const deleteMealMutation = useMutation({
     mutationFn: (mealId: string) => deleteMeal(mealId),
-    onSuccess: (_data, mealId) => {
-      // Invalidate the list query to refetch and show the updated list
+    onMutate: async (mealId: string): Promise<DeleteMutationContext> => {
+      await queryClient.cancelQueries({ queryKey: MEAL_LIST_QUERY_KEY });
+
+      const previousMealListData =
+        queryClient.getQueryData<InfiniteData<MealListResponse>>(
+          MEAL_LIST_QUERY_KEY
+        );
+
+      const deletedMeal = previousMealListData?.pages
+        .flatMap((page) => page.meals)
+        .find((meal) => meal.id === mealId);
+
+      queryClient.setQueryData<InfiniteData<MealListResponse>>(
+        MEAL_LIST_QUERY_KEY,
+        (oldData) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              meals: page.meals.filter((meal) => meal.id !== mealId),
+            })),
+          };
+        }
+      );
+      return { previousMealListData, deletedMeal };
+    },
+    onError: (_err, _mealId, context) => {
+      if (context?.previousMealListData) {
+        queryClient.setQueryData(
+          MEAL_LIST_QUERY_KEY,
+          context.previousMealListData
+        );
+      }
+    },
+    onSuccess: (_data, mealId, context) => {
       queryClient.invalidateQueries({ queryKey: MEAL_LIST_QUERY_KEY });
-      queryClient.invalidateQueries({ queryKey: ["dailySummary"] });
       queryClient.removeQueries({ queryKey: ["meal", mealId] });
+
+      if (!context?.deletedMeal) return;
+
+      const createdAtDate = parseCreatedAt(context.deletedMeal.createdAt);
+
+      if (isDateToday(createdAtDate)) {
+        queryClient.invalidateQueries({ queryKey: ["dailySummary"] });
+      }
+
+      if (isDateInCurrentWeek(createdAtDate)) {
+        const currentWeekMonday = toLocalDateString(getMonday(new Date()));
+        queryClient.invalidateQueries({
+          queryKey: ["weeklySummary", currentWeekMonday],
+        });
+      }
     },
   });
 

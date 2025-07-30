@@ -2,38 +2,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useMeal } from "../../hooks/useMeals";
 import { useDailySummary } from "../../hooks/useDailySummary";
 import MealLayout from "../../components/layout/MealLayout/MealLayout";
-import type { MealDB, MealType } from "../../features/meals/types";
+import type { MealType } from "../../features/meals/types";
 import styles from "./MealPage.module.css";
 import layoutStyles from "../../components/layout/MealLayout/MealLayout.module.css";
-
-/**
- * Parses the flexible 'createdAt' field into a standard Date object.
- */
-const parseCreatedAt = (createdAt: MealDB["createdAt"]): Date | null => {
-  if (!createdAt) return null;
-  if (typeof createdAt === "string") {
-    // Handles ISO date strings like "2025-07-27T12:53:44.864000Z"
-    return new Date(createdAt);
-  }
-  if (typeof createdAt === "number") {
-    // Handles Unix timestamps (assuming they are in seconds)
-    return new Date(createdAt * 1000);
-  }
-  if (createdAt?._seconds) {
-    // Handles Firestore timestamp objects
-    return new Date(createdAt._seconds * 1000);
-  }
-  return null;
-};
-
-/**
- * Checks if a given Date object represents today's date.
- */
-const isDateToday = (date: Date | null): boolean => {
-  if (!date) return false;
-  const today = new Date();
-  return date.toISOString().split("T")[0] === today.toISOString().split("T")[0];
-};
+import { isDateToday, parseCreatedAt } from "../../utils/dateUtils";
 
 const Loader = () => (
   <div className={styles.loadingContainer}>

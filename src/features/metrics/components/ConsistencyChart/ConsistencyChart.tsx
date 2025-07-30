@@ -3,7 +3,6 @@ import { useWeeklySummary } from "../../../../hooks/useWeeklySummary";
 import { useNutritionTargets } from "../../../../hooks/useNutritionTargets";
 import { type NutrientSummary } from "../../types";
 import styles from "./ConsistencyChart.module.css";
-// --- NEW: Importing from the shared utility file ---
 import { addDays, toLocalDateString } from "../../../../utils/dateUtils";
 
 const NUTRIENT_OPTIONS: { key: keyof NutrientSummary; unit: string }[] = [
@@ -55,7 +54,6 @@ export const ConsistencyChart = ({ currentMonday, selectedNutrient }: Consistenc
 
   const selectedNutrientInfo = NUTRIENT_OPTIONS.find((n) => n.key === selectedNutrient);
 
-  // --- REMOVED: All header/control JSX has been moved to the parent page ---
   return (
     <div className={styles.chartWrapper}>
       <div className={styles.yAxis}>

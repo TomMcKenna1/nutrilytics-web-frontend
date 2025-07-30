@@ -8,7 +8,6 @@ import { type NutrientSummary } from "../../features/metrics/types";
 import { getMonday, addDays } from "../../utils/dateUtils";
 import styles from "./DashboardPage.module.css";
 
-// This constant can now be shared by the page and its children if needed
 const NUTRIENT_OPTIONS: {
   key: keyof NutrientSummary;
   label: string;
@@ -22,7 +21,6 @@ const NUTRIENT_OPTIONS: {
 ];
 
 const DashboardPage = () => {
-  // --- STATE LIFTED UP: The page now manages the date and selected nutrient ---
   const [currentMonday, setCurrentMonday] = useState<Date>(
     getMonday(new Date())
   );
@@ -31,6 +29,9 @@ const DashboardPage = () => {
 
   const handlePrevWeek = () => setCurrentMonday((prev) => addDays(prev, -7));
   const handleNextWeek = () => setCurrentMonday((prev) => addDays(prev, 7));
+
+  const isNextWeekDisabled =
+    currentMonday.getTime() >= getMonday(new Date()).getTime();
 
   const weekRange = `${currentMonday.toLocaleDateString("en-GB", { month: "short", day: "numeric" })} - ${addDays(currentMonday, 6).toLocaleDateString("en-GB", { month: "short", day: "numeric", year: "numeric" })}`;
 
@@ -41,9 +42,7 @@ const DashboardPage = () => {
         <DailySummary />
       </section>
 
-      {/* This section now contains the shared controls and the charts */}
       <section className={styles.summarySection}>
-        {/* --- NEW: Shared controls are now part of the page --- */}
         <div className={styles.chartControlsHeader}>
           <select
             className={styles.nutrientSelect}
@@ -63,7 +62,11 @@ const DashboardPage = () => {
               <FaAngleLeft />
             </button>
             <span className={styles.dateRange}>{weekRange}</span>
-            <button onClick={handleNextWeek} className={styles.navButton}>
+            <button
+              onClick={handleNextWeek}
+              className={styles.navButton}
+              disabled={isNextWeekDisabled}
+            >
               <FaAngleRight />
             </button>
           </div>
@@ -71,14 +74,12 @@ const DashboardPage = () => {
 
         <div className={styles.chartsContainer}>
           <div className={styles.barChartWrapper}>
-            {/* The chart now receives state as props and has no internal controls */}
             <ConsistencyChart
               currentMonday={currentMonday}
               selectedNutrient={selectedNutrient}
             />
           </div>
           <div className={styles.gaugeChartWrapper}>
-            {/* The gauge now also updates based on the shared state */}
             <MacroGaugeCharts
               currentMonday={currentMonday}
               selectedNutrient={selectedNutrient}

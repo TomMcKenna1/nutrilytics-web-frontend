@@ -4,6 +4,12 @@ import {
   type EventSourceMessage,
 } from "@microsoft/fetch-event-source";
 import type { MealDB } from "../features/meals/types";
+import {
+  getMonday,
+  isDateToday,
+  parseCreatedAt,
+  toLocalDateString,
+} from "../utils/dateUtils";
 
 let authToken: string | null = null;
 
@@ -61,17 +67,30 @@ class SSEService {
     }
   }
 
+  /**
+   * Handles incoming meal updates by updating the specific meal cache
+   * and invalidating relevant list and summary queries.
+   */
   private handleMealUpdate = (event: EventSourceMessage): void => {
     if (!this.queryClient) return;
 
     try {
       const updatedMeal: MealDB = JSON.parse(event.data);
       console.log("SSE: Received meal_update", updatedMeal);
-
       this.queryClient.setQueryData(["meal", updatedMeal.id], updatedMeal);
-
       this.queryClient.invalidateQueries({ queryKey: ["mealsList"] });
-      this.queryClient.invalidateQueries({ queryKey: ["dailySummary"] });
+
+      const createdAtDate = parseCreatedAt(updatedMeal.createdAt);
+
+      if (isDateToday(createdAtDate)) {
+        this.queryClient.invalidateQueries({ queryKey: ["dailySummary"] });
+      }
+      if (createdAtDate) {
+        const mealWeekMonday = toLocalDateString(getMonday(createdAtDate));
+        this.queryClient.invalidateQueries({
+          queryKey: ["weeklySummary", mealWeekMonday],
+        });
+      }
     } catch (error) {
       console.error("SSE: Error parsing meal_update data", error);
     }

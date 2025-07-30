@@ -6,35 +6,16 @@ import {
   removeComponentFromMeal,
   updateMealType,
 } from "../features/meals/api/mealService";
-import type { MealDB, MealType } from "../features/meals/types";
+import type { MealType } from "../features/meals/types";
+import {
+  getMonday,
+  isDateInCurrentWeek,
+  isDateToday,
+  parseCreatedAt,
+  toLocalDateString,
+} from "../utils/dateUtils";
 
 const MEAL_LIST_QUERY_KEY = ["mealsList"];
-
-/**
- * Parses the flexible 'createdAt' field into a standard Date object.
- */
-const parseCreatedAt = (createdAt: MealDB["createdAt"]): Date | null => {
-  if (!createdAt) return null;
-  if (typeof createdAt === "string") {
-    return new Date(createdAt);
-  }
-  if (typeof createdAt === "number") {
-    return new Date(createdAt * 1000);
-  }
-  if (createdAt?._seconds) {
-    return new Date(createdAt._seconds * 1000);
-  }
-  return null;
-};
-
-/**
- * Checks if a given Date object represents today's date.
- */
-const isDateToday = (date: Date | null): boolean => {
-  if (!date) return false;
-  const today = new Date();
-  return date.toISOString().split("T")[0] === today.toISOString().split("T")[0];
-};
 
 /**
  * Hook for fetching and managing a single meal by its ID.
@@ -58,7 +39,20 @@ export const useMeal = (mealId: string | undefined) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: MEAL_LIST_QUERY_KEY });
       queryClient.removeQueries({ queryKey: mealQueryKey });
-      queryClient.invalidateQueries({ queryKey: ["dailySummary"] });
+      if (!meal) {
+        return;
+      }
+      const createdAtDate = parseCreatedAt(meal?.createdAt);
+
+      if (isDateToday(createdAtDate)) {
+        queryClient.invalidateQueries({ queryKey: ["dailySummary"] });
+      }
+      if (isDateInCurrentWeek(createdAtDate)) {
+        const currentWeekMonday = toLocalDateString(getMonday(new Date()));
+        queryClient.invalidateQueries({
+          queryKey: ["weeklySummary", currentWeekMonday],
+        });
+      }
     },
   });
 
@@ -81,9 +75,17 @@ export const useMeal = (mealId: string | undefined) => {
     onSuccess: (updatedMeal) => {
       queryClient.setQueryData(mealQueryKey, updatedMeal);
       queryClient.invalidateQueries({ queryKey: MEAL_LIST_QUERY_KEY });
+
       const createdAtDate = parseCreatedAt(updatedMeal.createdAt);
+
       if (isDateToday(createdAtDate)) {
         queryClient.invalidateQueries({ queryKey: ["dailySummary"] });
+      }
+      if (isDateInCurrentWeek(createdAtDate)) {
+        const currentWeekMonday = toLocalDateString(getMonday(new Date()));
+        queryClient.invalidateQueries({
+          queryKey: ["weeklySummary", currentWeekMonday],
+        });
       }
     },
   });
@@ -96,9 +98,17 @@ export const useMeal = (mealId: string | undefined) => {
     onSuccess: (updatedMeal) => {
       queryClient.setQueryData(mealQueryKey, updatedMeal);
       queryClient.invalidateQueries({ queryKey: MEAL_LIST_QUERY_KEY });
+
       const createdAtDate = parseCreatedAt(updatedMeal.createdAt);
+
       if (isDateToday(createdAtDate)) {
         queryClient.invalidateQueries({ queryKey: ["dailySummary"] });
+      }
+      if (isDateInCurrentWeek(createdAtDate)) {
+        const currentWeekMonday = toLocalDateString(getMonday(new Date()));
+        queryClient.invalidateQueries({
+          queryKey: ["weeklySummary", currentWeekMonday],
+        });
       }
     },
   });
