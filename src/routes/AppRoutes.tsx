@@ -7,6 +7,7 @@ import NotFoundPage from "../pages/NotFoundPage";
 import MealPage from "../pages/MealPage/MealPage";
 import AccountPage from "../pages/AccountPage/AccountPage";
 import { LandingPage } from "../pages/LandingPage/LandingPage";
+import OnboardingPage from "../pages/OnboardingPage/OnboardingPage";
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ export const router = createBrowserRouter([
       {
         element: <ProtectedRoute />,
         children: [
+          {
+            path: "/onboarding",
+            element: <OnboardingPage />,
+          },
           {
             path: "/dashboard",
             element: <DashboardPage />,

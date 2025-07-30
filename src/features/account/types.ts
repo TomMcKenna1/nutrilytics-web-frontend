@@ -34,13 +34,15 @@ export interface UserProfileCreate {
   goal: Goal;
   activityLevel: ActivityLevel;
 }
+
 export interface UserInDB {
   uid: string;
   email: string | null;
   name: string | null;
   createdAt: string;
-  profile: Partial<UserProfileCreate>;
-  nutritionTargets?: Partial<NutritionTarget>;
+  onboardingComplete: boolean;
+  profile: Partial<UserProfileCreate> | null;
+  nutritionTargets?: Partial<NutritionTarget> | null;
 }
 
 export type UpdateNutritionTarget = Partial<NutritionTarget>;
@@ -54,4 +56,9 @@ export interface NutritionTarget {
   fibre: number;
   protein: number;
   salt: number;
+}
+
+export interface OnboardingPayload {
+  profile: UserProfileCreate;
+  nutritionTargets: NutritionTarget;
 }

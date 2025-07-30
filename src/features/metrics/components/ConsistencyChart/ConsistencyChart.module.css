@@ -45,7 +45,12 @@
   text-align: center;
 }
 
-/* --- MODIFIED: Main chart wrapper --- */
+.chartContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
 .chartWrapper {
   width: 100%;
   height: 250px;
@@ -53,7 +58,6 @@
   gap: var(--spacing-2);
 }
 
-/* --- NEW: Y-Axis styling --- */
 .yAxis {
   width: 40px;
   flex-shrink: 0;
@@ -66,7 +70,6 @@
   font-weight: 500;
 }
 
-/* --- NEW: Wrapper for chart area + x-axis --- */
 .chartContent {
   flex-grow: 1;
   display: flex;
@@ -80,15 +83,22 @@
   gap: var(--spacing-3);
   align-items: flex-end;
   position: relative;
-  /* border-left has been removed */
-  padding-left: var(--spacing-1); /* Add a little space */
+  padding-left: var(--spacing-1);
   border-bottom: 1px solid var(--color-border-light);
 }
 
-.bar {
+.barStack {
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  background-color: var(--color-primary-blue);
+  height: 100%;
+  justify-content: flex-end;
   border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
+  overflow: hidden;
+}
+
+.barSegment {
+  width: 100%;
   transition: height 0.3s ease-in-out;
 }
 
@@ -116,9 +126,30 @@
   grid-template-columns: repeat(7, 1fr);
   gap: var(--spacing-3);
   padding: var(--spacing-2) 0;
-  padding-left: var(--spacing-1); /* Match chartArea padding */
-  /* border-top has been removed */
+  padding-left: var(--spacing-1);
   color: var(--color-text-medium);
   font-weight: 500;
   text-align: center;
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-4);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-medium);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.legendColorBox {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--border-radius-sm);
 }

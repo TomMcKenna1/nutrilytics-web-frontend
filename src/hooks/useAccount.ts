@@ -3,12 +3,14 @@ import {
   getAccountProfile,
   updateAccountProfile,
   updateNutritionTargets,
+  onboardAccount,
 } from "../features/account/api/accountService";
 import type {
   UserInDB,
   UserProfileCreate,
   UpdateNutritionTarget,
   NutritionTarget,
+  OnboardingPayload,
 } from "../features/account/types";
 
 // A single query key for the entire user account
@@ -21,7 +23,6 @@ const accountQueryKey = ["account"];
 export const useAccount = () => {
   const queryClient = useQueryClient();
 
-  // The main query to fetch the entire UserInDB object
   const {
     data: account,
     isLoading,
@@ -30,6 +31,19 @@ export const useAccount = () => {
   } = useQuery<UserInDB, Error>({
     queryKey: accountQueryKey,
     queryFn: getAccountProfile,
+    retry: 1,
+  });
+
+  // Mutation for the new onboarding process
+  const {
+    mutateAsync: onboard,
+    isPending: isOnboarding,
+    isSuccess: isOnboardingSuccess,
+  } = useMutation<UserInDB, Error, OnboardingPayload>({
+    mutationFn: onboardAccount,
+    onSuccess: (data) => {
+      queryClient.setQueryData(accountQueryKey, data);
+    },
   });
 
   // Mutation for updating the core user profile
@@ -40,7 +54,6 @@ export const useAccount = () => {
   } = useMutation<UserInDB, Error, Partial<UserProfileCreate>>({
     mutationFn: updateAccountProfile,
     onSuccess: (data) => {
-      // On success, update the cache directly with the returned data
       queryClient.setQueryData(accountQueryKey, data);
     },
   });
@@ -53,7 +66,6 @@ export const useAccount = () => {
   } = useMutation<NutritionTarget, Error, UpdateNutritionTarget>({
     mutationFn: updateNutritionTargets,
     onSuccess: () => {
-      // On success, invalidate the main account query to refetch everything
       queryClient.invalidateQueries({ queryKey: accountQueryKey });
     },
   });
@@ -63,6 +75,9 @@ export const useAccount = () => {
     isLoading,
     isError,
     error,
+    onboard,
+    isOnboarding,
+    isOnboardingSuccess,
     updateProfile,
     isUpdatingProfile,
     isProfileUpdateSuccess,

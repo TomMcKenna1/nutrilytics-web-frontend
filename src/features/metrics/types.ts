@@ -15,4 +15,10 @@ export interface DailySummary extends NutrientSummary {
   beverageCount: number;
 }
 
-export type WeeklySummaryResponse = Record<string, NutrientSummary | null>;
+export interface WeeklyBreakdown {
+  meals: NutrientSummary | null;
+  snacks: NutrientSummary | null;
+  beverages: NutrientSummary | null;
+}
+
+export type WeeklySummaryResponse = Record<string, WeeklyBreakdown | null>;

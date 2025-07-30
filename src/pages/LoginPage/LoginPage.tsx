@@ -8,13 +8,7 @@ import {
 import { useAuth } from "../../providers/AuthProvider";
 import GoogleSignInButton from "../../features/auth/components/GoogleSignInButton/GoogleSignInButton";
 import styles from "./LoginPage.module.css";
-import { createUserProfile } from "../../features/account/api/accountService";
-import {
-  type UserProfileCreate,
-  ActivityLevelOptions,
-  GoalOptions,
-  SexOptions,
-} from "../../features/account/types";
+import { createUserRecord } from "../../features/account/api/accountService";
 
 interface AuthError extends Error {
   code?: string;
@@ -47,26 +41,13 @@ const LoginPage: React.FC = () => {
 
       if (signUpError) {
         handleAuthError(signUpError as AuthError);
-        setIsLoading(false);
-        return;
-      }
-
-      if (newUser) {
+      } else if (newUser) {
         try {
-          const defaultProfile: UserProfileCreate = {
-            sex: SexOptions.MALE,
-            age: 30,
-            heightCm: 175,
-            weightKg: 75,
-            goal: GoalOptions.MAINTAIN_WEIGHT,
-            activityLevel: ActivityLevelOptions.MODERATELY_ACTIVE,
-          };
-          await createUserProfile(defaultProfile);
-        } catch (profileError) {
-          console.error("Profile Creation Error:", profileError);
-          setError(
-            "Your account was created, but we couldn't set up your profile. Please contact support."
-          );
+          await createUserRecord();
+          navigate("/dashboard");
+        } catch (apiError) {
+          setError("Could not initialize your account. Please try again.");
+          console.error("API Error creating user record:", apiError);
         }
       }
     }
@@ -89,27 +70,17 @@ const LoginPage: React.FC = () => {
       return;
     }
 
-    if (googleUser && isNewUser) {
-      console.log("New user signed in with Google, creating profile...");
-      try {
-        const defaultProfile: UserProfileCreate = {
-          sex: SexOptions.MALE,
-          age: 30,
-          heightCm: 175,
-          weightKg: 75,
-          goal: GoalOptions.MAINTAIN_WEIGHT,
-          activityLevel: ActivityLevelOptions.MODERATELY_ACTIVE,
-        };
-        await createUserProfile(defaultProfile);
+    if (googleUser) {
+      if (isNewUser) {
+        try {
+          await createUserRecord();
+          navigate("/dashboard");
+        } catch (apiError) {
+          setError("Could not initialize your account. Please try again.");
+          console.error("API Error creating user record:", apiError);
+        }
+      } else {
         navigate("/dashboard");
-      } catch (profileError) {
-        console.error(
-          "Profile Creation Error after Google Sign-In:",
-          profileError
-        );
-        setError(
-          "Your account was created, but we couldn't set up your profile. Please contact support."
-        );
       }
     }
 

@@ -1,6 +1,7 @@
 import apiClient from "../../../lib/apiClient";
 import type {
   NutritionTarget,
+  OnboardingPayload,
   UpdateNutritionTarget,
   UserProfileCreate,
   UserInDB,
@@ -17,34 +18,46 @@ export const getAccountProfile = (): Promise<UserInDB> => {
 };
 
 /**
+ * Creates the initial user record in the backend after Firebase sign-up.
+ * This endpoint takes no body and sets onboardingComplete to false.
+ * @returns A promise that resolves with the newly created user record.
+ */
+export const createUserRecord = (): Promise<UserInDB> => {
+  return apiClient("/api/v1/account/", {
+    method: "POST",
+  });
+};
+
+/**
+ * Submits the full onboarding payload to the backend.
+ * This sets the user's profile and initial targets, and marks onboarding as complete.
+ * @param payload - The user's profile and calculated nutrition targets.
+ * @returns A promise that resolves with the updated user data.
+ */
+export const onboardAccount = (
+  payload: OnboardingPayload
+): Promise<UserInDB> => {
+  return apiClient("/api/v1/account/onboard", {
+    method: "POST",
+    body: { ...payload },
+  });
+};
+
+/**
  * Sends an authenticated request to update the user's core profile information.
  * @param profileData - An object containing the profile fields to update.
  * @returns A promise that resolves with the updated user profile.
  */
 export const updateAccountProfile = (
-  profileData: Partial<UserProfileCreate>,
+  profileData: Partial<UserProfileCreate>
 ): Promise<UserInDB> => {
-  return apiClient("/api/v1/account", {
+  return apiClient("/api/v1/account/", {
     method: "PUT",
     body: { ...profileData },
   });
 };
 
-/**
- * Creates the user profile document in the backend database.
- * This should be called immediately after a new user signs up with Firebase.
- * @param profileData - The initial profile data for the user.
- * @returns A promise that resolves with the newly created user profile.
- */
-export const createUserProfile = (
-  profileData: UserProfileCreate
-): Promise<UserInDB> => {
-  return apiClient("/api/v1/account/", {
-    method: "POST",
-    body: { ...profileData },
-  });
-};
-
+// ... the other functions (updateNutritionTargets, getNutritionTargets) remain unchanged
 /**
  * Sends an authenticated request to update the user's daily nutrition targets.
  * @param targets - An object containing the nutrition targets.

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useWeeklySummary } from "../../../../hooks/useWeeklySummary";
 import { useNutritionTargets } from "../../../../hooks/useNutritionTargets";
-import { type NutrientSummary } from "../../types";
+import { type NutrientSummary, type WeeklyBreakdown } from "../../types";
 import styles from "./MacroGaugeCharts.module.css";
 import { toLocalDateString } from "../../../../utils/dateUtils";
 
@@ -63,7 +63,9 @@ const SingleGauge = ({ title, unit, average, target }: GaugeProps) => {
   }, [average, target]);
 
   const isInTarget = gaugeData.status === "inRange";
-  const needleClasses = `${styles.needle} ${isInTarget ? styles.inRange : styles.outOfRange}`;
+  const needleClasses = `${styles.needle} ${
+    isInTarget ? styles.inRange : styles.outOfRange
+  }`;
   const statusInfo = STATUS_INFO[gaugeData.status];
 
   return (
@@ -115,16 +117,28 @@ export const MacroGaugeCharts = ({
 
   const weeklyAverage = useMemo(() => {
     if (!weeklyData) return 0;
+
     const todayString = toLocalDateString(new Date());
+    // Get all days from the response that are not null and not today
     const pastDays = Object.entries(weeklyData).filter(
       ([dateString, dayData]) => dayData !== null && dateString !== todayString
-    );
-    const dayCount = pastDays.length || 1;
-    const total = pastDays.reduce(
-      (acc, [, dayData]) => acc + (dayData?.[selectedNutrient] ?? 0),
-      0
-    );
-    return total / dayCount;
+    ) as [string, WeeklyBreakdown][];
+
+    if (pastDays.length === 0) {
+      return 0;
+    }
+
+    // Sum the total nutrient value for all past days
+    const total = pastDays.reduce((acc, [, dayData]) => {
+      const mealValue = dayData.meals?.[selectedNutrient] ?? 0;
+      const snackValue = dayData.snacks?.[selectedNutrient] ?? 0;
+      const beverageValue = dayData.beverages?.[selectedNutrient] ?? 0;
+      const dayTotal = mealValue + snackValue + beverageValue;
+      return acc + dayTotal;
+    }, 0);
+
+    // Return the average
+    return total / pastDays.length;
   }, [weeklyData, selectedNutrient]);
 
   const macroInfo = ALL_MACROS.find((m) => m.key === selectedNutrient);
