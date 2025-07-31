@@ -7,6 +7,7 @@ import { MacroGaugeCharts } from "../../features/metrics/components/MacroGaugeCh
 import { type NutrientSummary } from "../../features/metrics/types";
 import { getMonday, addDays } from "../../utils/dateUtils";
 import styles from "./DashboardSummaryPage.module.css";
+import WeightLog from "../../features/metrics/components/WeightLog/WeightLog";
 
 const NUTRIENT_OPTIONS: {
   key: keyof NutrientSummary;
@@ -42,6 +43,8 @@ const DashboardSummaryPage = () => {
       <section className={styles.summarySection}>
         <DailySummary />
       </section>
+
+      <WeightLog />
 
       <h2 className={styles.sectionSubtitle}>This week</h2>
       <section className={styles.summarySection}>
