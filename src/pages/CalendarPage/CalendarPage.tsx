@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import { useMonthlySummary } from "../../hooks/useMonthlySummary";
 import { useNutritionTargets } from "../../hooks/useNutritionTargets";
@@ -14,8 +14,13 @@ import {
   getEndOfDay,
   toLocalDateString,
 } from "../../utils/dateUtils";
-import { type MonthlyNutritionLog } from "../../features/metrics/types";
+import {
+  type MonthlyNutritionLog,
+  type NutrientSummary,
+} from "../../features/metrics/types";
 import { type NutritionTarget } from "../../features/account/types";
+import GaugeBar from "../../features/metrics/components/GaugeBar/GaugeBar";
+import { getNutrientZones } from "../../utils/macroZoneUtils";
 
 const getCalorieStatusClass = (consumed: number, target: number): string => {
   if (!consumed || !target) return "";
@@ -129,13 +134,6 @@ const DayDetailTooltip = ({
   data: MonthlyNutritionLog;
   targets: NutritionTarget;
 }) => {
-  const nutrientColorClasses: Record<string, string> = {
-    energy: styles.progressFill_energy,
-    protein: styles.progressFill_protein,
-    carbohydrates: styles.progressFill_carbs,
-    fats: styles.progressFill_fats,
-  };
-
   return (
     <div className={styles.tooltip}>
       <div className={styles.tooltipHeader}>
@@ -148,36 +146,24 @@ const DayDetailTooltip = ({
 
       <div className={styles.tooltipSection}>
         <strong>Daily Summary</strong>
-        {Object.entries(targets).map(([key, target]) => {
+        {Object.entries(targets).map(([key, targetValue]) => {
+          const nutrientKey = key as keyof NutrientSummary;
           if (
-            key === "saturatedFats" ||
-            key === "sugars" ||
-            key === "fibre" ||
-            key === "salt"
+            nutrientKey === "saturatedFats" ||
+            nutrientKey === "sugars" ||
+            nutrientKey === "fibre" ||
+            nutrientKey === "salt"
           )
             return null;
 
-          const consumed = data.nutrition[key as keyof NutritionTarget] || 0;
-          const colorClass = nutrientColorClasses[key] || "";
-          const unit = key === "energy" ? "kcal" : "g";
-
+          const consumed = data.nutrition[nutrientKey] || 0;
           return (
-            <div key={key} className={styles.macro}>
-              <div className={styles.macroInfo}>
-                <span>{key.charAt(0).toUpperCase() + key.slice(1)}</span>
-                <p>
-                  {Math.round(consumed)} / {target} {unit}
-                </p>
-              </div>
-              <div className={styles.progressBar}>
-                <div
-                  className={`${styles.progressFill} ${colorClass}`}
-                  style={{
-                    width: `${Math.min((consumed / (target || 1)) * 100, 100)}%`,
-                  }}
-                />
-              </div>
-            </div>
+            <MacroGauge
+              key={nutrientKey}
+              nutrientKey={nutrientKey}
+              consumed={consumed}
+              target={targetValue}
+            />
           );
         })}
       </div>
@@ -190,6 +176,75 @@ const DayDetailTooltip = ({
           ))}
         </ul>
       </div>
+    </div>
+  );
+};
+
+const MacroGauge = ({
+  nutrientKey,
+  consumed,
+  target,
+}: {
+  nutrientKey: keyof NutrientSummary;
+  consumed: number;
+  target: number;
+}) => {
+  const gaugeData = useMemo(() => {
+    if (target === 0) {
+      return {
+        needlePercent: 0,
+        greenZone: { start: 0, width: 0 },
+        orangeZone: { start: 0, width: 0 },
+        status: "inRange" as const,
+      };
+    }
+
+    const gaugeMax = target * 2;
+    const { dangerMin, warningMin, warningMax, dangerMax } = getNutrientZones(
+      nutrientKey,
+      target
+    );
+
+    const greenZone = {
+      start: (warningMin / gaugeMax) * 100,
+      width: ((warningMax - warningMin) / gaugeMax) * 100,
+    };
+
+    const orangeZone = {
+      start: (dangerMin / gaugeMax) * 100,
+      width: ((dangerMax - dangerMin) / gaugeMax) * 100,
+    };
+
+    let status: "inRange" | "warning" | "danger" = "danger";
+    if (consumed >= warningMin && consumed <= warningMax) {
+      status = "inRange";
+    } else if (consumed >= dangerMin && consumed <= dangerMax) {
+      status = "warning";
+    }
+
+    const needlePercent = Math.min((consumed / gaugeMax) * 100, 100);
+
+    return { needlePercent, greenZone, orangeZone, status };
+  }, [consumed, target, nutrientKey]);
+
+  const unit = nutrientKey === "energy" ? "kcal" : "g";
+
+  return (
+    <div className={styles.macro}>
+      <div className={styles.macroInfo}>
+        <span>
+          {nutrientKey.charAt(0).toUpperCase() + nutrientKey.slice(1)}
+        </span>
+        <p>
+          {Math.round(consumed)} / {target} {unit}
+        </p>
+      </div>
+      <GaugeBar
+        needlePercent={gaugeData.needlePercent}
+        greenZone={gaugeData.greenZone}
+        orangeZone={gaugeData.orangeZone}
+        status={gaugeData.status}
+      />
     </div>
   );
 };

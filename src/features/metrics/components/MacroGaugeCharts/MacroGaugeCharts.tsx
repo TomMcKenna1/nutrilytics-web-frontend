@@ -4,6 +4,8 @@ import { useNutritionTargets } from "../../../../hooks/useNutritionTargets";
 import { type NutrientSummary, type WeeklyBreakdown } from "../../types";
 import styles from "./MacroGaugeCharts.module.css";
 import { toLocalDateString } from "../../../../utils/dateUtils";
+import GaugeBar from "../GaugeBar/GaugeBar";
+import { getNutrientZones } from "../../../../utils/macroZoneUtils";
 
 const ALL_MACROS: {
   key: keyof NutrientSummary;
@@ -45,46 +47,69 @@ const SingleGauge = ({
     if (target === 0) {
       return {
         needlePercent: 0,
-        greenStartPercent: 0,
-        greenWidthPercent: 0,
-        status: "inRange" as keyof typeof STATUS_INFO,
+        greenZone: { start: 0, width: 0 },
+        orangeZone: { start: 0, width: 0 },
+        status: "inRange" as const,
+        needleStatus: "inRange" as const,
       };
     }
 
     const gaugeMax = target * 2;
-    const needlePercent = Math.min((average / gaugeMax) * 100, 100);
-    const isUnderTargetGood =
-      nutrientKey === "sugars" || nutrientKey === "saturatedFats";
+    const { dangerMin, warningMin, warningMax, dangerMax, zoneType } =
+      getNutrientZones(nutrientKey, target);
 
-    if (isUnderTargetGood) {
-      const greenStartPercent = 0;
-      const greenWidthPercent = (target / gaugeMax) * 100;
-      const status: keyof typeof STATUS_INFO =
-        average <= target ? "inRange" : "tooHigh";
-      return { needlePercent, greenStartPercent, greenWidthPercent, status };
+    const greenZone = {
+      start: (warningMin / gaugeMax) * 100,
+      width: ((warningMax - warningMin) / gaugeMax) * 100,
+    };
+    const orangeZone = {
+      start: (dangerMin / gaugeMax) * 100,
+      width: ((dangerMax - dangerMin) / gaugeMax) * 100,
+    };
+
+    let status:
+      | "inRange"
+      | "warningLow"
+      | "warningHigh"
+      | "dangerLow"
+      | "dangerHigh" = "inRange";
+
+    if (zoneType === "upperLimit") {
+      if (average <= target) status = "inRange";
+      else if (average <= dangerMax) status = "warningHigh";
+      else status = "dangerHigh";
     } else {
-      const buffer = 0.15;
-      const greenMin = target * (1 - buffer);
-      const greenMax = target * (1 + buffer);
-
-      const greenStartPercent = (greenMin / gaugeMax) * 100;
-      const greenWidthPercent = ((greenMax - greenMin) / gaugeMax) * 100;
-
-      let status: keyof typeof STATUS_INFO = "inRange";
-      if (average < greenMin) {
-        status = "tooLow";
-      } else if (average > greenMax) {
-        status = "tooHigh";
-      }
-      return { needlePercent, greenStartPercent, greenWidthPercent, status };
+      if (average >= warningMin && average <= warningMax) status = "inRange";
+      else if (average >= dangerMin && average < warningMin)
+        status = "warningLow";
+      else if (average > warningMax && average <= dangerMax)
+        status = "warningHigh";
+      else if (average < dangerMin) status = "dangerLow";
+      else status = "dangerHigh";
     }
+
+    const needlePercent = Math.min((average / gaugeMax) * 100, 100);
+    const needleStatus: "inRange" | "warning" | "danger" =
+      status === "inRange"
+        ? "inRange"
+        : status.includes("warning")
+          ? "warning"
+          : "danger";
+
+    return { needlePercent, greenZone, orangeZone, status, needleStatus };
   }, [average, target, nutrientKey]);
 
-  const isInTarget = gaugeData.status === "inRange";
-  const needleClasses = `${styles.needle} ${
-    isInTarget ? styles.inRange : styles.outOfRange
-  }`;
-  const statusInfo = STATUS_INFO[gaugeData.status];
+  const getStatusInfo = () => {
+    if (gaugeData.status === "inRange") {
+      return STATUS_INFO.inRange;
+    }
+    if (gaugeData.status.includes("Low")) {
+      return STATUS_INFO.tooLow;
+    }
+    return STATUS_INFO.tooHigh;
+  };
+
+  const statusInfo = getStatusInfo();
 
   return (
     <div className={styles.singleGauge}>
@@ -102,20 +127,12 @@ const SingleGauge = ({
         <span className={styles.currentValue}>{Math.round(average)}</span>
         <span className={styles.targetValue}>{unit} (wk avg)</span>
       </div>
-      <div className={styles.gaugeBar}>
-        <div className={styles.gaugeBackground}></div>
-        <div
-          className={styles.segmentGood}
-          style={{
-            left: `${gaugeData.greenStartPercent}%`,
-            width: `${gaugeData.greenWidthPercent}%`,
-          }}
-        />
-        <div
-          className={needleClasses}
-          style={{ left: `${gaugeData.needlePercent}%` }}
-        />
-      </div>
+      <GaugeBar
+        needlePercent={gaugeData.needlePercent}
+        greenZone={gaugeData.greenZone}
+        orangeZone={gaugeData.orangeZone}
+        status={gaugeData.needleStatus}
+      />
     </div>
   );
 };
