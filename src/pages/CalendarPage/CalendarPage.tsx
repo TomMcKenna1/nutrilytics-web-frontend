@@ -22,12 +22,51 @@ import { type NutritionTarget } from "../../features/account/types";
 import GaugeBar from "../../features/metrics/components/GaugeBar/GaugeBar";
 import { getNutrientZones } from "../../utils/macroZoneUtils";
 
-const getCalorieStatusClass = (consumed: number, target: number): string => {
-  if (!consumed || !target) return "";
-  const ratio = consumed / target;
-  if (ratio >= 0.9 && ratio <= 1.1) return styles.ringGreen;
-  if (ratio > 1.25 || ratio < 0.75) return styles.ringRed;
-  return styles.ringAmber;
+/**
+ * Aggregates the status of key nutrients into a single status for the day ring color
+ * using a scoring average.
+ * - Green: Average score > 2.5
+ * - Amber: Average score > 1.75 and <= 2.5
+ * - Red: Average score <= 1.75
+ */
+const getOverallDayStatus = (
+  dayData: MonthlyNutritionLog | null | undefined,
+  targets: NutritionTarget | undefined
+): string => {
+  if (!dayData || !targets) return "";
+
+  const keyNutrients: (keyof NutrientSummary)[] = [
+    "energy",
+    "protein",
+    "carbohydrates",
+    "fats",
+  ];
+
+  const scores = keyNutrients.map((nutrientKey) => {
+    const consumed = dayData.nutrition[nutrientKey] || 0;
+    const target = targets[nutrientKey] || 0;
+    if (target === 0) return 3;
+
+    const { warningMin, warningMax, dangerMin, dangerMax } = getNutrientZones(
+      nutrientKey,
+      target
+    );
+
+    if (consumed >= warningMin && consumed <= warningMax) {
+      return 3;
+    } else if (consumed >= dangerMin && consumed <= dangerMax) {
+      return 2;
+    } else {
+      return 1;
+    }
+  });
+
+  const averageScore =
+    scores.reduce((sum, score) => sum + score, 0) / scores.length;
+
+  if (averageScore > 2.5) return styles.ringGreen;
+  if (averageScore > 1.75) return styles.ringAmber;
+  return styles.ringRed;
 };
 
 const Calendar = () => {
@@ -82,10 +121,8 @@ const Calendar = () => {
           const isFutureDay = !isPastDay && !isCurrentDay;
 
           const dayData = monthlyData?.[toLocalDateString(day)];
-          const calorieClass =
-            dayData?.nutrition?.energy && targets
-              ? getCalorieStatusClass(dayData.nutrition.energy, targets.energy)
-              : "";
+
+          const dayStatusClass = getOverallDayStatus(dayData, targets);
 
           const cellStyle = isCurrentDay
             ? styles.todayCell
@@ -101,7 +138,7 @@ const Calendar = () => {
               className={`${styles.dayCell} ${cellStyle}`}
             >
               <div className={styles.dayContent}>
-                <span className={`${styles.dayNumber} ${calorieClass}`}>
+                <span className={`${styles.dayNumber} ${dayStatusClass}`}>
                   {formatDate(day, "d")}
                 </span>
                 {dayData && (
