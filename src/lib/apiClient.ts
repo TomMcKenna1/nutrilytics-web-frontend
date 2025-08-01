@@ -1,7 +1,7 @@
 import { auth } from "./firebase";
 
 interface ApiClientOptions extends Omit<RequestInit, "body"> {
-  body?: Record<string, unknown>;
+  body?: any;
   requiresAuth?: boolean;
   customHeaders?: HeadersInit;
 }
@@ -13,7 +13,7 @@ interface ApiClientOptions extends Omit<RequestInit, "body"> {
  */
 const apiClient = async <T>(
   endpoint: string,
-  options: ApiClientOptions = {},
+  options: ApiClientOptions = {}
 ): Promise<T> => {
   const {
     body,

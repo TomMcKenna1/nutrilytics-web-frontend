@@ -84,7 +84,6 @@ const AccountPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (activeSection === "profile") {
-      // Exclude weightKg from the payload to match the UserProfileUpdate type
       const { weightKg, ...profileToUpdate } = profileForm;
       await updateProfile(profileToUpdate);
     } else {

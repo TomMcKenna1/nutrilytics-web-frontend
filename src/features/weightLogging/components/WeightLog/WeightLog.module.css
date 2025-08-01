@@ -18,32 +18,46 @@
   align-items: center;
   position: relative;
   max-width: 350px;
+  background-color: var(--color-background-soft);
+  border: 2px solid transparent;
+  border-radius: var(--border-radius-lg);
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s;
+  overflow: hidden;
+}
+
+.inputWrapper:focus-within {
+  border-color: var(--color-primary-blue);
+}
+
+.inputWrapper.success {
+  border-color: var(--color-traffic-green);
+}
+
+.inputWrapper.error {
+  border-color: var(--color-error);
 }
 
 .weightInput {
   width: 100%;
   font-size: 1rem;
-  padding: 0.75rem 5rem 0.75rem 1.25rem; /* Make space for button and unit */
-  background-color: var(--color-background-soft);
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--box-shadow-sm);
-  transition:
-    box-shadow 0.2s,
-    border-color 0.2s;
+  padding: 0.75rem 9rem 0.75rem 1.25rem;
+  background-color: transparent;
+  border: none;
+  color: var(--color-text-dark);
 }
 
 .weightInput:focus {
   outline: none;
-  border-color: var(--color-accent-google);
-  box-shadow: var(--box-shadow-google);
 }
 
 .unitLabel {
   position: absolute;
-  right: 7rem; /* Position to the left of the button */
+  right: 6.5rem;
   color: var(--color-text-medium);
   font-weight: 500;
+  pointer-events: none;
 }
 
 .logButton {
@@ -51,15 +65,16 @@
   border: none;
   font-size: 1rem;
   font-weight: 500;
-  border-radius: 0 var(--border-radius-lg) var(--border-radius-lg) 0;
+  border-radius: 0;
   background-color: var(--color-primary-blue);
   color: var(--color-background-light);
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
   position: absolute;
   right: 0;
   top: 0;
   bottom: 0;
+  width: 6rem;
 }
 
 .logButton:hover:not(:disabled) {
@@ -70,4 +85,18 @@
   background-color: var(--color-border-light);
   color: var(--color-text-light);
   cursor: not-allowed;
+}
+
+.feedbackMessage {
+  margin-top: var(--spacing-2);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.errorMessage {
+  color: var(--color-error);
+}
+
+.successMessage {
+  color: var(--color-traffic-green);
 }

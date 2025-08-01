@@ -7,7 +7,7 @@ import { MacroGaugeCharts } from "../../features/metrics/components/MacroGaugeCh
 import { type NutrientSummary } from "../../features/metrics/types";
 import { getMonday, addDays } from "../../utils/dateUtils";
 import styles from "./DashboardSummaryPage.module.css";
-import WeightLog from "../../features/metrics/components/WeightLog/WeightLog";
+import WeightLog from "../../features/weightLogging/components/WeightLog/WeightLog";
 
 const NUTRIENT_OPTIONS: {
   key: keyof NutrientSummary;
