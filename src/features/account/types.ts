@@ -35,6 +35,8 @@ export interface UserProfileCreate {
   activityLevel: ActivityLevel;
 }
 
+export type UserProfileUpdate = Partial<Omit<UserProfileCreate, "weightKg">>;
+
 export interface UserInDB {
   uid: string;
   email: string | null;
@@ -44,6 +46,7 @@ export interface UserInDB {
   profile: Partial<UserProfileCreate> | null;
   nutritionTargets?: Partial<NutritionTarget> | null;
   logStreak: number;
+  currentWeightKg?: number | null;
 }
 
 export type UpdateNutritionTarget = Partial<NutritionTarget>;

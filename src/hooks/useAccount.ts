@@ -7,13 +7,12 @@ import {
 } from "../features/account/api/accountService";
 import type {
   UserInDB,
-  UserProfileCreate,
+  UserProfileUpdate,
   UpdateNutritionTarget,
   NutritionTarget,
   OnboardingPayload,
 } from "../features/account/types";
 
-// A single query key for the entire user account
 const accountQueryKey = ["account"];
 
 /**
@@ -51,7 +50,7 @@ export const useAccount = () => {
     mutateAsync: updateProfile,
     isPending: isUpdatingProfile,
     isSuccess: isProfileUpdateSuccess,
-  } = useMutation<UserInDB, Error, Partial<UserProfileCreate>>({
+  } = useMutation<UserInDB, Error, UserProfileUpdate>({
     mutationFn: updateAccountProfile,
     onSuccess: (data) => {
       queryClient.setQueryData(accountQueryKey, data);

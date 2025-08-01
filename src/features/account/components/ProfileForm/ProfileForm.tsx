@@ -9,6 +9,7 @@ import styles from "./ProfileForm.module.css";
 
 interface AccountProfileFormProps {
   email?: string | null;
+  currentWeightKg?: number | null;
   profileForm: Partial<UserProfileCreate>;
   originalProfile?: Partial<UserProfileCreate>;
   isDirty: boolean;
@@ -23,6 +24,7 @@ interface AccountProfileFormProps {
 
 export const ProfileForm = ({
   email,
+  currentWeightKg,
   profileForm,
   originalProfile,
   isDirty,
@@ -63,18 +65,11 @@ export const ProfileForm = ({
           <span className={styles.detailValue}>{email ?? "N/A"}</span>
         </div>
         <div className={styles.formGrid}>
-          <div className={styles.formGroup}>
-            <label htmlFor="age" className={styles.label}>
-              Age
-            </label>
-            <input
-              type="number"
-              id="age"
-              name="age"
-              className={`${styles.input} ${isFieldDirty("age") ? styles.dirty : ""}`}
-              value={profileForm.age ?? ""}
-              onChange={onFormChange}
-            />
+          <div className={styles.detail}>
+            <span className={styles.detailLabel}>Current Weight (kg)</span>
+            <span className={styles.detailValue}>
+              {currentWeightKg?.toFixed(1) ?? "N/A"}
+            </span>
           </div>
           <div className={styles.formGroup}>
             <label htmlFor="heightCm" className={styles.label}>
@@ -90,15 +85,15 @@ export const ProfileForm = ({
             />
           </div>
           <div className={styles.formGroup}>
-            <label htmlFor="weightKg" className={styles.label}>
-              Weight (kg)
+            <label htmlFor="age" className={styles.label}>
+              Age
             </label>
             <input
               type="number"
-              id="weightKg"
-              name="weightKg"
-              className={`${styles.input} ${isFieldDirty("weightKg") ? styles.dirty : ""}`}
-              value={profileForm.weightKg ?? ""}
+              id="age"
+              name="age"
+              className={`${styles.input} ${isFieldDirty("age") ? styles.dirty : ""}`}
+              value={profileForm.age ?? ""}
               onChange={onFormChange}
             />
           </div>

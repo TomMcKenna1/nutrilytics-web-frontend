@@ -43,7 +43,9 @@ const AccountPage = () => {
   useEffect(() => {
     if (account?.profile) {
       setProfileForm(account.profile);
-      setNutritionForm(account.nutritionTargets ?? {});
+    }
+    if (account?.nutritionTargets) {
+      setNutritionForm(account.nutritionTargets);
     }
   }, [account]);
 
@@ -63,15 +65,18 @@ const AccountPage = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    const numericValue =
+      e.target.type === "number" && value !== "" ? Number(value) : value;
+
     if (activeSection === "profile") {
       setProfileForm((prev) => ({
         ...prev,
-        [name]: isNaN(Number(value)) ? value : Number(value),
+        [name]: numericValue,
       }));
     } else {
       setNutritionForm((prev) => ({
         ...prev,
-        [name]: Number(value),
+        [name]: numericValue,
       }));
     }
   };
@@ -79,7 +84,9 @@ const AccountPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (activeSection === "profile") {
-      await updateProfile(profileForm);
+      // Exclude weightKg from the payload to match the UserProfileUpdate type
+      const { weightKg, ...profileToUpdate } = profileForm;
+      await updateProfile(profileToUpdate);
     } else {
       await updateTargets(nutritionForm);
     }
@@ -128,6 +135,7 @@ const AccountPage = () => {
           {activeSection === "profile" && account?.profile && (
             <ProfileForm
               email={user?.email}
+              currentWeightKg={account?.currentWeightKg}
               profileForm={profileForm}
               originalProfile={account?.profile}
               isDirty={isProfileFormDirty}
