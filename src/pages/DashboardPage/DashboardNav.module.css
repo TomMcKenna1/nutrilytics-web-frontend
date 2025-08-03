@@ -46,6 +46,6 @@
 }
 
 .navLink.active .indicator {
-  width: 24px;
+  width: 100%;
   opacity: 1;
 }

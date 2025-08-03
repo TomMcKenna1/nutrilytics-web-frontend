@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from "react";
+import React from "react"; // Removed unused hooks
 import styles from "./MealTypeSelector.module.css";
 
 type MealType = "meal" | "snack" | "beverage";
@@ -15,40 +15,13 @@ export const MealTypeSelector: React.FC<MealTypeSelectorProps> = ({
   onChange,
   disabled,
 }) => {
-  const [sliderStyle, setSliderStyle] = useState({});
-  const containerRef = useRef<HTMLDivElement>(null);
-  const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
-  useLayoutEffect(() => {
-    const selectedIndex = options.findIndex((opt) => opt === value);
-    const selectedOption = optionRefs.current[selectedIndex];
-    const container = containerRef.current;
-
-    if (selectedOption && container) {
-      const containerPadding = parseFloat(
-        getComputedStyle(container).paddingLeft
-      );
-      const transformX = selectedOption.offsetLeft - containerPadding;
-
-      setSliderStyle({
-        width: `${selectedOption.offsetWidth}px`,
-        transform: `translateX(${transformX}px)`,
-      });
-    }
-  }, [value]);
-
   return (
     <div
-      ref={containerRef}
       className={`${styles.selectorContainer} ${disabled ? styles.disabled : ""}`}
     >
-      <div className={styles.slider} style={sliderStyle} />
-      {options.map((option, index) => (
+      {options.map((option) => (
         <button
           key={option}
-          ref={(el) => {
-            optionRefs.current[index] = el;
-          }}
           className={`${styles.optionButton} ${
             value === option ? styles.active : ""
           }`}

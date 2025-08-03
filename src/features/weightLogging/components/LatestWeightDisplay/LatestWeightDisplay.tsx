@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useGetWeightLogs } from "../../../../hooks/useGetWeightLogs";
+import { useWeightLogs } from "../../../../hooks/useWeightLogs";
 import { MetricDisplayCard } from "../../../../components/layout/MetricDisplayCard/MetricDisplayCard";
 
 const toYyyyMmDd = (date: Date): string => {
@@ -11,7 +11,7 @@ const LatestWeightDisplay = () => {
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(today.getDate() - 7);
 
-  const { data: weightLogs, isLoading } = useGetWeightLogs(
+  const { data: weightLogs, isLoading } = useWeightLogs(
     toYyyyMmDd(sevenDaysAgo),
     toYyyyMmDd(today)
   );

@@ -8,3 +8,10 @@ export interface WeightLogInDB {
   date: string;
   weightKg: number;
 }
+
+export interface WeightForecast {
+  date: string;
+  predictedWeightKg: number;
+  lowerBoundKg: number;
+  upperBoundKg: number;
+}

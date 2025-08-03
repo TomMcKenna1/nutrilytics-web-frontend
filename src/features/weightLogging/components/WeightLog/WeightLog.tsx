@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { useWeightLogs } from "../../../../hooks/useWeightLogs";
+import { useWeightLogMutations } from "../../../../hooks/useWeightLogMutations";
 import styles from "./WeightLog.module.css";
 
 const WeightLog = () => {
   const [weight, setWeight] = useState("");
   const { submitWeightLog, isLogging, isSuccess, isError, error, reset } =
-    useWeightLogs();
+    useWeightLogMutations();
 
   const handleLogWeight = () => {
     const weightNum = Number(weight);

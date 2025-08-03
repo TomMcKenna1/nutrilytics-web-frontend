@@ -1,5 +1,5 @@
 import apiClient from "../../../lib/apiClient";
-import type { WeightLogCreate, WeightLogInDB } from "../types";
+import type { WeightLogCreate, WeightLogInDB, WeightForecast } from "../types";
 
 /**
  * Logs a new weight reading for the authenticated user.
@@ -25,6 +25,14 @@ export const getWeightLogs = (
 ): Promise<WeightLogInDB[]> => {
   const params = new URLSearchParams({ startDate, endDate });
   return apiClient<WeightLogInDB[]>(`/api/v1/weightLogs?${params.toString()}`);
+};
+
+/**
+ * Fetches the 14-day weight forecast from today.
+ * @returns A list of 14 weight forecast objects.
+ */
+export const getWeightForecast = (): Promise<WeightForecast[]> => {
+  return apiClient<WeightForecast[]>("/api/v1/weightLogs/forecast");
 };
 
 /**
