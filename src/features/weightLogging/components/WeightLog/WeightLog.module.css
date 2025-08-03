@@ -39,16 +39,10 @@
   transition: border-color 0.2s;
 }
 
-/* Hide spinner arrows on Chrome, Safari, Edge, Opera */
 .weightInput::-webkit-outer-spin-button,
 .weightInput::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
-}
-
-/* Hide spinner arrows on Firefox */
-.weightInput[type="number"] {
-  -moz-appearance: textfield;
 }
 
 .weightInput:focus {

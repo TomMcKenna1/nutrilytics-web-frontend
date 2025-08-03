@@ -6,6 +6,11 @@ export type MealGenerationStatus =
 
 export type MealType = "meal" | "snack" | "beverage";
 
+export type DataSource =
+  | "retrieved_api"
+  | "estimated_with_context"
+  | "estimated_model";
+
 export interface NutrientProfile {
   energy: number;
   fats: number;
@@ -29,15 +34,18 @@ export interface NutrientProfile {
   containsHighCapsaicin: boolean;
   isProcessed: boolean;
   isUltraProcessed: boolean;
+  dataSource: DataSource;
 }
 
 export interface MealComponent {
   id: string;
   name: string;
   brand: string | null;
-  quantity: string;
+  quantity: number;
+  metric: string | null;
   totalWeight: number;
   nutrientProfile: NutrientProfile;
+  sourceUrl?: string | null;
 }
 
 export interface GeneratedMeal {

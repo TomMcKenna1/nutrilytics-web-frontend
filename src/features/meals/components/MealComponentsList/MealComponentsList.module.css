@@ -25,7 +25,7 @@
 }
 
 .item:hover {
-  background-color: var(--color-background-hover);
+  background-color: #f8f9fa;
 }
 
 .leftSection {
@@ -40,6 +40,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  gap: var(--spacing-1);
 }
 
 .name {
@@ -50,10 +51,12 @@
   text-overflow: ellipsis;
 }
 
-.quantity {
+.subtitle {
   color: var(--color-text-medium);
   font-size: 0.875rem;
-  margin-top: var(--spacing-0);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .rightSection {
@@ -70,7 +73,7 @@
 
 .dropdownArrow {
   font-size: 0.8rem;
-  color: var(--color-primary-blue);
+  color: var(--color-text-medium);
   transition: transform 0.3s ease-in-out;
   transform: rotate(0deg);
 }
@@ -87,7 +90,7 @@
     padding 0.4s ease-out,
     opacity 0.4s ease-out;
   opacity: 0;
-  background-color: var(--color-background-details);
+  background-color: var(--color-background-soft);
   padding: 0 var(--spacing-3);
 }
 
@@ -131,7 +134,9 @@
   cursor: pointer;
   color: var(--color-text-light);
   padding: var(--spacing-1);
-  border-radius: var(--border-radius-sm);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -143,6 +148,11 @@
 .deleteButton:hover {
   background-color: #fef2f2;
   color: #ef4444;
+}
+
+.deleteButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .addComponentRow {
@@ -231,7 +241,6 @@
   background-color: #e8eaed;
 }
 
-/* Updated placeholder style to remove its own border */
 .pendingComponentCard {
   padding: var(--spacing-3);
   background-color: var(--color-background-soft);
@@ -268,9 +277,4 @@
   100% {
     transform: translateX(100%);
   }
-}
-
-.deleteButton:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
 }

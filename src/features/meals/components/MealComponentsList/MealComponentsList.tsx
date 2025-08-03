@@ -108,6 +108,23 @@ export const MealComponentsList = ({
     }
   };
 
+  const formatQuantity = (component: MealComponent) => {
+    let quantityText = "";
+    if (component.metric) {
+      if (component.metric === "item" && component.quantity > 1) {
+        quantityText = `${component.quantity} items`;
+      } else {
+        quantityText = `${component.quantity} ${component.metric}`;
+      }
+    } else {
+      quantityText = `${component.quantity}`;
+    }
+
+    return component.brand
+      ? `${quantityText} · ${component.brand}`
+      : quantityText;
+  };
+
   if (components.length === 0 && !onAddComponent) {
     return <p className={styles.emptyState}>This meal has no components.</p>;
   }
@@ -130,7 +147,9 @@ export const MealComponentsList = ({
               </div>
               <div className={styles.info}>
                 <div className={styles.name}>{component.name}</div>
-                <div className={styles.quantity}>{component.quantity}</div>
+                <div className={styles.subtitle}>
+                  {formatQuantity(component)}
+                </div>
               </div>
             </div>
             <div className={styles.rightSection}>
