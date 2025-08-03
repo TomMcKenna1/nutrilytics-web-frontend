@@ -11,24 +11,27 @@ const DashboardNav = () => {
         }
         end
       >
-        Insights
+        Today
+        <span className={styles.indicator}></span>
       </NavLink>
       <NavLink
-        to="/dashboard/daily"
+        to="/dashboard/trends"
         className={({ isActive }) =>
           `${styles.navLink} ${isActive ? styles.active : ""}`
         }
         end
       >
-        Daily
+        Trends
+        <span className={styles.indicator}></span>
       </NavLink>
       <NavLink
-        to="/dashboard/calendar"
+        to="/dashboard/history"
         className={({ isActive }) =>
           `${styles.navLink} ${isActive ? styles.active : ""}`
         }
       >
-        Calendar
+        History
+        <span className={styles.indicator}></span>
       </NavLink>
     </nav>
   );

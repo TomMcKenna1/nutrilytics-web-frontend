@@ -10,7 +10,6 @@ const WeightLog = () => {
   const handleLogWeight = () => {
     const weightNum = Number(weight);
     if (!weight.trim() || isNaN(weightNum) || weightNum <= 0) return;
-
     submitWeightLog({ weight: weightNum, unit: "kg" });
   };
 
@@ -25,7 +24,6 @@ const WeightLog = () => {
       const timer = setTimeout(() => {
         reset();
       }, 3000);
-
       return () => clearTimeout(timer);
     }
   }, [isSuccess, isError, reset]);
@@ -36,46 +34,38 @@ const WeightLog = () => {
     }
   };
 
-  const getWrapperClassName = () => {
-    let classNames = [styles.inputWrapper];
-    if (isSuccess) classNames.push(styles.success);
-    if (isError) classNames.push(styles.error);
-    return classNames.join(" ");
-  };
-
   return (
-    <div className={styles.weightLogContainer}>
-      <h3 className={styles.sectionSubtitle}>Log Your Weight</h3>
-      <div className={getWrapperClassName()}>
-        <input
-          type="number"
-          value={weight}
-          onChange={(e) => setWeight(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Enter today's weight"
-          className={styles.weightInput}
-          disabled={isLogging}
-        />
-        <span className={styles.unitLabel}>kg</span>
+    <div className={styles.metricCard}>
+      <h3 className={styles.cardTitle}>Log Your Weight</h3>
+      <div className={styles.cardContent}>
+        <div className={styles.inputWrapper}>
+          <input
+            type="number"
+            value={weight}
+            onChange={(e) => setWeight(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="0.0"
+            className={styles.weightInput}
+            disabled={isLogging}
+          />
+          <span className={styles.unitLabel}>kg</span>
+        </div>
         <button
           onClick={handleLogWeight}
           disabled={isLogging || !weight.trim()}
           className={styles.logButton}
         >
-          {isLogging ? "Logging..." : "Log"}
+          {isLogging ? "..." : "Log"}
         </button>
       </div>
-
-      {isSuccess && (
-        <p className={`${styles.feedbackMessage} ${styles.successMessage}`}>
-          Weight logged successfully!
-        </p>
-      )}
-      {isError && (
-        <p className={`${styles.feedbackMessage} ${styles.errorMessage}`}>
-          {error?.message || "An error occurred."}
-        </p>
-      )}
+      <div className={styles.cardFooter}>
+        {isSuccess && <p className={styles.feedbackMessage}>Success!</p>}
+        {isError && (
+          <p className={`${styles.feedbackMessage} ${styles.errorMessage}`}>
+            {error?.message || "Error"}
+          </p>
+        )}
+      </div>
     </div>
   );
 };

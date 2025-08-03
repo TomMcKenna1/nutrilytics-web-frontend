@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import DashboardNav from "../../features/dashboard/components/DashboardNav/DashboardNav";
+import DashboardNav from "./DashboardNav";
 import styles from "./DashboardPage.module.css";
 
 const DashboardPage = () => {

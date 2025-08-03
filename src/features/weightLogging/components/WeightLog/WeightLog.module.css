@@ -1,80 +1,80 @@
-.weightLogContainer {
+.metricCard {
   background-color: var(--color-background-light);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-4);
   box-shadow: var(--box-shadow-google);
-  margin-bottom: var(--spacing-4);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.sectionSubtitle {
-  font-size: 1.4rem;
+.cardTitle {
+  font-size: 1rem;
   font-weight: 500;
-  color: var(--color-text-dark);
+  color: var(--color-text-medium);
   margin-bottom: var(--spacing-3);
 }
 
-.inputWrapper {
+.cardContent {
+  flex-grow: 1;
   display: flex;
   align-items: center;
+  gap: var(--spacing-3);
+}
+
+.inputWrapper {
+  flex-grow: 1;
   position: relative;
-  max-width: 350px;
-  background-color: var(--color-background-soft);
-  border: 2px solid transparent;
-  border-radius: var(--border-radius-lg);
-  transition:
-    box-shadow 0.2s,
-    border-color 0.2s;
-  overflow: hidden;
-}
-
-.inputWrapper:focus-within {
-  border-color: var(--color-primary-blue);
-}
-
-.inputWrapper.success {
-  border-color: var(--color-traffic-green);
-}
-
-.inputWrapper.error {
-  border-color: var(--color-error);
 }
 
 .weightInput {
   width: 100%;
-  font-size: 1rem;
-  padding: 0.75rem 9rem 0.75rem 1.25rem;
-  background-color: transparent;
-  border: none;
+  font-size: 2.75rem;
+  font-weight: 500;
   color: var(--color-text-dark);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--color-border-light);
+  padding: var(--spacing-1) 0;
+  transition: border-color 0.2s;
+}
+
+/* Hide spinner arrows on Chrome, Safari, Edge, Opera */
+.weightInput::-webkit-outer-spin-button,
+.weightInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide spinner arrows on Firefox */
+.weightInput[type="number"] {
+  -moz-appearance: textfield;
 }
 
 .weightInput:focus {
   outline: none;
+  border-color: var(--color-primary-blue);
 }
 
 .unitLabel {
   position: absolute;
-  right: 6.5rem;
-  color: var(--color-text-medium);
+  right: 0;
+  bottom: 0.8rem;
+  font-size: 1rem;
   font-weight: 500;
-  pointer-events: none;
+  color: var(--color-text-light);
 }
 
 .logButton {
-  padding: 0.5rem 1.5rem;
+  padding: 0.75rem 1.5rem;
   border: none;
   font-size: 1rem;
   font-weight: 500;
-  border-radius: 0;
+  border-radius: var(--border-radius-lg);
   background-color: var(--color-primary-blue);
   color: var(--color-background-light);
   cursor: pointer;
   transition: all 0.2s;
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 6rem;
 }
 
 .logButton:hover:not(:disabled) {
@@ -83,20 +83,20 @@
 
 .logButton:disabled {
   background-color: var(--color-border-light);
-  color: var(--color-text-light);
   cursor: not-allowed;
 }
 
+.cardFooter {
+  height: 24px;
+  padding-top: var(--spacing-2);
+}
+
 .feedbackMessage {
-  margin-top: var(--spacing-2);
   font-size: 0.9rem;
   font-weight: 500;
+  color: var(--color-traffic-green);
 }
 
 .errorMessage {
   color: var(--color-error);
-}
-
-.successMessage {
-  color: var(--color-traffic-green);
 }

@@ -1,0 +1,43 @@
+.metricCard {
+  background-color: var(--color-background-light);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-4);
+  box-shadow: var(--box-shadow-google);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text-medium);
+  margin-bottom: var(--spacing-3);
+}
+
+.cardContent {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+}
+
+.mainValue {
+  font-size: 2.75rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  line-height: 1;
+}
+
+.unitLabel {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text-light);
+  align-self: flex-end;
+  padding-bottom: 0.5rem;
+}
+
+.cardFooter {
+  height: 24px;
+}

@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import { useMonthlySummary } from "../../hooks/useMonthlySummary";
 import { useNutritionTargets } from "../../hooks/useNutritionTargets";
-import styles from "./CalendarPage.module.css";
+import styles from "./HistoryPage.module.css";
 import {
   formatDate,
   getStartOfMonth,

@@ -8,8 +8,9 @@ import MealPage from "../pages/MealPage/MealPage";
 import AccountPage from "../pages/AccountPage/AccountPage";
 import { LandingPage } from "../pages/LandingPage/LandingPage";
 import OnboardingPage from "../pages/OnboardingPage/OnboardingPage";
-import DashboardSummaryPage from "../pages/DashboardSummaryPage/DashboardSummaryPage";
-import CalendarPage from "../pages/CalendarPage/CalendarPage";
+import DashboardSummaryPage from "../pages/TodayPage/TodayPage";
+import CalendarPage from "../pages/HistoryPage/HistoryPage";
+import { TrendsPage } from "../pages/TrendsPage/TrendsPage";
 
 export const router = createBrowserRouter([
   {
@@ -39,7 +40,11 @@ export const router = createBrowserRouter([
                 element: <DashboardSummaryPage />,
               },
               {
-                path: "calendar",
+                path: "trends",
+                element: <TrendsPage />,
+              },
+              {
+                path: "history",
                 element: <CalendarPage />,
               },
             ],

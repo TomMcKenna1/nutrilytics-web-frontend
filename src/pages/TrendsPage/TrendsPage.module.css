@@ -1,0 +1,36 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.segmentedControl {
+  display: inline-flex;
+  background-color: #e8eaed;
+  border-radius: 999px;
+  padding: var(--spacing-1);
+  margin: 0 auto;
+}
+
+.segment {
+  border: none;
+  background: transparent;
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-medium);
+  cursor: pointer;
+  border-radius: 999px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.segment.active {
+  background-color: var(--color-background-light);
+  color: var(--color-primary-blue);
+  box-shadow: var(--box-shadow-sm);
+}
+
+.content {
+  padding-top: 0;
+}

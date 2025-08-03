@@ -1,0 +1,60 @@
+.chartContainer {
+  background-color: var(--color-background-light);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-3);
+  box-shadow: var(--box-shadow-google);
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chartWrapper {
+  flex-grow: 1;
+  position: relative;
+  min-height: 0;
+}
+
+.chartTitle {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  margin-bottom: var(--spacing-3);
+  flex-shrink: 0;
+}
+
+.loadingContainer,
+.errorContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--color-text-medium);
+}
+
+.errorMessage {
+  color: var(--color-error);
+}
+
+.gridLine {
+  stroke: var(--color-border-light);
+  stroke-dasharray: 3 3;
+}
+
+.axisText {
+  font-size: 12px;
+  fill: var(--color-text-medium);
+}
+
+.tooltip {
+  position: absolute;
+  background-color: rgba(32, 33, 36, 0.9);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-2) var(--spacing-3);
+  box-shadow: var(--box-shadow-lg);
+  color: var(--color-background-light);
+  pointer-events: none;
+  transition: opacity 0.1s ease;
+  white-space: nowrap;
+  top: 0;
+  transform: translateY(-100%);
+}

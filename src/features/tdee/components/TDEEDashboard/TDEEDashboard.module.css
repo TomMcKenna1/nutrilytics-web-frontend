@@ -1,0 +1,15 @@
+.dashboardContainer {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: var(--spacing-4);
+  align-items: start;
+  padding: var(--spacing-3) var(--spacing-2);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .dashboardContainer {
+    grid-template-columns: 1fr;
+  }
+}
