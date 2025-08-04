@@ -1,0 +1,51 @@
+.placeholderContainer {
+  flex: 0 0 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) 0;
+}
+
+.shimmerCircle,
+.shimmerBox {
+  background: #f0f0f0;
+  background-image: linear-gradient(
+    to right,
+    #f0f0f0 0%,
+    #e0e0e0 20%,
+    #f0f0f0 40%,
+    #f0f0f0 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 800px 104px;
+  animation: shimmer 1s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.dayOfWeek {
+  height: 12px;
+  width: 30px;
+  border-radius: var(--border-radius-sm);
+}
+
+.dayNumber {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.dots {
+  height: 6px;
+  width: 20px;
+  border-radius: var(--border-radius-sm);
+}

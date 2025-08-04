@@ -1,0 +1,111 @@
+.carouselContainer {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.carouselContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.carouselTrack {
+  display: flex;
+  padding: 0 var(--spacing-2);
+}
+
+.dayItem {
+  flex: 0 0 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) 0;
+  cursor: pointer;
+  border-radius: var(--border-radius-md);
+  transition: background-color 0.2s ease-in-out;
+  position: relative;
+}
+
+.dayItem:hover {
+  background-color: var(--color-background-soft);
+}
+
+.dayItem.selected {
+  background-color: var(--color-primary-blue-soft);
+}
+
+.dayOfWeek {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-medium);
+  text-transform: uppercase;
+}
+
+.dayNumberContainer {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 4px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.dayNumber {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+}
+
+.dayNumber.selected {
+  color: var(--color-background-light);
+}
+
+.dayItem.selected .dayNumberContainer {
+  background-color: var(--color-primary-blue);
+}
+
+.mealDotsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  height: 6px;
+}
+
+.mealDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-primary-blue);
+}
+
+.todayIndicator {
+  position: absolute;
+  bottom: -2px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-primary-blue);
+}
+
+.ringGreen {
+  border-color: var(--color-traffic-green);
+}
+.ringAmber {
+  border-color: var(--color-traffic-amber);
+}
+.ringRed {
+  border-color: var(--color-traffic-red);
+}
+
+.futureDay {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.futureDay:hover {
+  background-color: transparent;
+}

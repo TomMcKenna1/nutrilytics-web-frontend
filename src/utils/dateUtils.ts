@@ -76,24 +76,37 @@ export const isDateInCurrentWeek = (d: Date | null): boolean => {
 
 /**
  * Formats a date object into a string.
- * Supports 'MMMM yyyy', 'd', and 'yyyy-MM'.
+ * Supports 'MMMM yyyy', 'd', 'yyyy-MM', and 'EEE'.
  */
 export const formatDate = (
   date: Date,
-  format: "MMMM yyyy" | "d" | "yyyy-MM"
+  format: "MMMM yyyy" | "d" | "yyyy-MM" | "EEE" | "MMMM d, yyyy"
 ): string => {
-  if (format === "MMMM yyyy") {
-    return `${date.toLocaleString("default", { month: "long" })} ${date.getFullYear()}`;
+  const options: Intl.DateTimeFormatOptions = {};
+  switch (format) {
+    case "MMMM yyyy":
+      options.month = "long";
+      options.year = "numeric";
+      break;
+    case "d":
+      options.day = "numeric";
+      break;
+    case "yyyy-MM":
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      return `${year}-${month}`;
+    case "EEE":
+      options.weekday = "short";
+      break;
+    case "MMMM d, yyyy":
+      options.month = "long";
+      options.day = "numeric";
+      options.year = "numeric";
+      break;
+    default:
+      return "";
   }
-  if (format === "d") {
-    return date.getDate().toString();
-  }
-  if (format === "yyyy-MM") {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    return `${year}-${month}`;
-  }
-  return "";
+  return date.toLocaleDateString("en-US", options);
 };
 
 /**
