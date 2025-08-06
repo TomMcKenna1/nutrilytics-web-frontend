@@ -15,15 +15,18 @@ import {
 } from "../utils/dateUtils";
 
 const MEALS_PER_PAGE = 5;
-const MEAL_LIST_QUERY_KEY = ["mealsList"];
 
 type DeleteMutationContext = {
   previousMealListData?: InfiniteData<MealListResponse>;
   deletedMeal?: MealDB;
 };
 
-export const useMealList = () => {
+export const useMealList = (date?: Date) => {
   const queryClient = useQueryClient();
+
+  const queryKey = date
+    ? ["mealsList", toLocalDateString(date)]
+    : ["mealsList"];
 
   const {
     data,
@@ -33,9 +36,9 @@ export const useMealList = () => {
     isLoading,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: MEAL_LIST_QUERY_KEY,
+    queryKey: queryKey,
     queryFn: ({ pageParam }) =>
-      getLatestMeals({ limit: MEALS_PER_PAGE, next: pageParam }),
+      getLatestMeals({ limit: MEALS_PER_PAGE, next: pageParam, date }),
     initialPageParam: undefined,
     getNextPageParam: (lastPage: MealListResponse) =>
       lastPage.next ?? undefined,
@@ -44,19 +47,17 @@ export const useMealList = () => {
   const deleteMealMutation = useMutation({
     mutationFn: (mealId: string) => deleteMeal(mealId),
     onMutate: async (mealId: string): Promise<DeleteMutationContext> => {
-      await queryClient.cancelQueries({ queryKey: MEAL_LIST_QUERY_KEY });
+      await queryClient.cancelQueries({ queryKey: queryKey });
 
       const previousMealListData =
-        queryClient.getQueryData<InfiniteData<MealListResponse>>(
-          MEAL_LIST_QUERY_KEY
-        );
+        queryClient.getQueryData<InfiniteData<MealListResponse>>(queryKey);
 
       const deletedMeal = previousMealListData?.pages
         .flatMap((page) => page.meals)
         .find((meal) => meal.id === mealId);
 
       queryClient.setQueryData<InfiniteData<MealListResponse>>(
-        MEAL_LIST_QUERY_KEY,
+        queryKey,
         (oldData) => {
           if (!oldData) return oldData;
           return {
@@ -72,14 +73,11 @@ export const useMealList = () => {
     },
     onError: (_err, _mealId, context) => {
       if (context?.previousMealListData) {
-        queryClient.setQueryData(
-          MEAL_LIST_QUERY_KEY,
-          context.previousMealListData
-        );
+        queryClient.setQueryData(queryKey, context.previousMealListData);
       }
     },
     onSuccess: (_data, mealId, context) => {
-      queryClient.invalidateQueries({ queryKey: MEAL_LIST_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: queryKey });
       queryClient.removeQueries({ queryKey: ["meal", mealId] });
 
       if (!context?.deletedMeal) return;

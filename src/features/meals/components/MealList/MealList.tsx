@@ -107,7 +107,13 @@ const MealItem = ({
   );
 };
 
-export const MealList = ({ visibleRows = 5 }: { visibleRows?: number }) => {
+export const MealList = ({
+  visibleRows = 5,
+  date,
+}: {
+  visibleRows?: number;
+  date?: Date;
+}) => {
   const {
     meals,
     isLoading,
@@ -117,7 +123,7 @@ export const MealList = ({ visibleRows = 5 }: { visibleRows?: number }) => {
     fetchNextPage,
     deleteMeal,
     isDeleting,
-  } = useMealList();
+  } = useMealList(date);
 
   const [isAtBottom, setIsAtBottom] = useState(false);
   const [isScrollable, setIsScrollable] = useState(false);

@@ -1,4 +1,5 @@
 import apiClient from "../../../lib/apiClient";
+import { toLocalDateString } from "../../../utils/dateUtils";
 import {
   type DailySummary,
   type MonthlySummaryResponse,
@@ -6,11 +7,19 @@ import {
 } from "../types";
 
 /**
- * Provides a summary of nutrition for the day
+ * Provides a summary of nutrition for the day.
+ * @param date Optional date to get the summary for. Defaults to today.
  * @returns The daily macro summary.
  */
-export const getDailySummary = (): Promise<DailySummary> => {
-  return apiClient(`/api/v1/metrics/summary`);
+export const getDailySummary = (date?: Date): Promise<DailySummary> => {
+  let url = `/api/v1/metrics/summary`;
+
+  if (date) {
+    const formattedDate = toLocalDateString(date);
+    url += `?date=${formattedDate}`;
+  }
+
+  return apiClient(url);
 };
 
 /**

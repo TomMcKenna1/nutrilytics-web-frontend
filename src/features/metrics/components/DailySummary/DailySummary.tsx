@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import type { NutritionTarget } from "../../../account/types";
 import { type DailySummary as IDailySummary } from "../../types";
-import { useNutritionTargets } from "../../../../hooks/useNutritionTargets";
-import { useDailySummary } from "../../../../hooks/useDailySummary";
 import styles from "./DailySummary.module.css";
 
 // In ms
@@ -25,7 +24,7 @@ const useCountUp = (
   startValue: number,
   endValue: number,
   isAnimating: boolean,
-  duration: number = ANIMATION_DURATION,
+  duration: number = ANIMATION_DURATION
 ): number => {
   const [count, setCount] = useState(startValue);
 
@@ -87,13 +86,13 @@ const useSequentialProgress = (
   isAnimating: boolean,
   startPercentage: number,
   finalPercentage: number,
-  totalDuration: number = ANIMATION_DURATION,
+  totalDuration: number = ANIMATION_DURATION
 ): SequentialProgress => {
   const [mainProgress, setMainProgress] = useState(
-    Math.min(startPercentage, 1),
+    Math.min(startPercentage, 1)
   );
   const [overflowProgress, setOverflowProgress] = useState(
-    startPercentage > 1 ? startPercentage - 1 : 0,
+    startPercentage > 1 ? startPercentage - 1 : 0
   );
 
   useEffect(() => {
@@ -170,7 +169,7 @@ const NutrientCircle: React.FC<NutrientCircleProps> = ({
   const { mainProgress, overflowProgress } = useSequentialProgress(
     isAnimating,
     startPercentage,
-    finalPercentage,
+    finalPercentage
   );
 
   const mainOffset = chart.circumference * (1 - mainProgress);
@@ -219,26 +218,28 @@ const NutrientCircle: React.FC<NutrientCircleProps> = ({
   );
 };
 
-export const DailySummary: React.FC = () => {
-  const {
-    data: summary,
-    isLoading: summaryIsLoading,
-    error: summaryError,
-  } = useDailySummary();
+interface DailySummaryProps {
+  summary?: IDailySummary;
+  targets?: NutritionTarget;
+  isLoading: boolean;
+  summaryError?: Error | null;
+  targetsError?: Error | null;
+}
+
+export const DailySummary: React.FC<DailySummaryProps> = ({
+  summary,
+  targets,
+  isLoading,
+  summaryError,
+  targetsError,
+}) => {
   const previousSummary = usePrevious(summary);
   const startAnimation = useAnimationOnLoad();
 
-  const {
-    targets,
-    isLoading: targetsIsLoading,
-    isError: targetsIsError,
-    error: targetsError,
-  } = useNutritionTargets();
-
-  if (summaryIsLoading || targetsIsLoading) return <p>Loading summary...</p>;
+  if (isLoading) return <p>Loading summary...</p>;
   if (summaryError)
     return <p style={{ color: "red" }}>Error: {summaryError.message}</p>;
-  if (targetsIsError)
+  if (targetsError)
     return (
       <p style={{ color: "red" }}>
         Error fetching targets: {targetsError?.message}

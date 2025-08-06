@@ -4,12 +4,32 @@ import { LatestTDEE } from "../../features/tdee/components/LatestTDEE/LatestTDEE
 import WeightLog from "../../features/weightLogging/components/WeightLog/WeightLog";
 import LatestWeightDisplay from "../../features/weightLogging/components/LatestWeightDisplay/LatestWeightDisplay";
 import styles from "./TodayPage.module.css";
+import { useDailySummary } from "../../hooks/useDailySummary";
+import { useNutritionTargets } from "../../hooks/useNutritionTargets";
 
 const DashboardSummaryPage = () => {
+  const {
+    data: summary,
+    isLoading: summaryIsLoading,
+    error: summaryError,
+  } = useDailySummary();
+
+  const {
+    targets: targets,
+    isLoading: targetsIsLoading,
+    error: targetsError,
+  } = useNutritionTargets();
+
   return (
     <>
       <section className={styles.summarySection}>
-        <DailySummary />
+        <DailySummary
+          summary={summary}
+          targets={targets}
+          isLoading={summaryIsLoading || targetsIsLoading}
+          summaryError={summaryError}
+          targetsError={targetsError}
+        />
       </section>
 
       <div className={styles.keyMetricsRow}>

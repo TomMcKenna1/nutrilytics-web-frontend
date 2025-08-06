@@ -1,4 +1,5 @@
 import apiClient from "../../../lib/apiClient";
+import { toLocalDateString } from "../../../utils/dateUtils";
 import type { MealDB, MealListResponse, MealType } from "../types";
 
 /**
@@ -26,16 +27,20 @@ export const getMeal = (mealId: string): Promise<MealDB> => {
 
 /**
  * Fetches a paginated list of the latest meals for the user.
+ * Can be filtered by a specific day by providing the 'date' parameter.
  * @param limit The number of meals to fetch.
  * @param next The cursor for the next page of results.
+ * @param date An optional date to filter meals by.
  * @returns A list of meals and the next page cursor.
  */
 export const getLatestMeals = ({
   limit,
   next,
+  date,
 }: {
   limit: number;
   next?: string | null;
+  date?: Date | null;
 }): Promise<MealListResponse> => {
   const params = new URLSearchParams({
     limit: String(limit),
@@ -43,6 +48,11 @@ export const getLatestMeals = ({
 
   if (next) {
     params.append("next", next);
+  }
+
+  if (date) {
+    const formattedDate = toLocalDateString(date);
+    params.append("date", formattedDate);
   }
 
   return apiClient(`/api/v1/meals?${params.toString()}`);
@@ -67,7 +77,7 @@ export const deleteMeal = (mealId: string): Promise<void> => {
  */
 export const removeComponentFromMeal = (
   mealId: string,
-  componentId: string,
+  componentId: string
 ): Promise<MealDB> => {
   return apiClient(`/api/v1/meals/${mealId}/components/${componentId}`, {
     method: "DELETE",
@@ -83,7 +93,7 @@ export const removeComponentFromMeal = (
  */
 export const addComponentToMeal = (
   mealId: string,
-  data: { description: string },
+  data: { description: string }
 ): Promise<MealDB> => {
   return apiClient(`/api/v1/meals/${mealId}/components`, {
     method: "POST",
@@ -99,7 +109,7 @@ export const addComponentToMeal = (
  */
 export const updateMealType = (
   mealId: string,
-  type: MealType,
+  type: MealType
 ): Promise<MealDB> => {
   return apiClient(`/api/v1/meals/${mealId}/type`, {
     method: "PATCH",

@@ -1,17 +1,56 @@
 .pageContainer {
-  padding: var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-4);
   max-width: 1400px;
+  margin-inline: auto;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-4);
 }
 
-.detailsPlaceholder {
+.contentGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--spacing-4);
+  align-items: start;
+}
+
+.summaryContainer,
+.listContainer {
+  background-color: var(--color-background-light);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--box-shadow-google);
+  padding: var(--spacing-3);
+  height: 100%;
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.containerHeader {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  padding-inline: var(--spacing-2);
+}
+
+.statusContainer {
   background-color: var(--color-background-light);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-5) var(--spacing-4);
   box-shadow: var(--box-shadow-google);
   text-align: center;
   color: var(--color-text-medium);
-  border: 2px dashed var(--color-border-light);
+  border: 1px solid var(--color-border-light);
+}
+
+.statusContainer h2 {
+  margin-bottom: var(--spacing-2);
+  color: var(--color-text-dark);
+}
+
+.errorText {
+  color: var(--color-error);
 }
