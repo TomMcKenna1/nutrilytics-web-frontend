@@ -1,7 +1,7 @@
 .gaugesContainer {
   display: flex;
   flex-direction: column;
-  justify-content: space-around; 
+  justify-content: space-around;
   height: 100%;
 }
 
@@ -33,7 +33,8 @@
   color: var(--color-text-dark);
 }
 
-.statusInRange, .statusOutOfRange {
+.statusInRange,
+.statusOutOfRange {
   font-size: 0.75rem;
   font-weight: 500;
   padding: 3px 10px;
@@ -50,7 +51,6 @@
   color: var(--color-traffic-amber);
   background-color: #fff8e1;
 }
-
 
 .baseline {
   font-size: 0.8rem;
@@ -109,7 +109,9 @@
   transform: translate(-50%, -50%);
   z-index: 2;
   box-shadow: var(--box-shadow-google);
-  transition: left 0.3s ease-in-out, background-color 0.3s ease-in-out;
+  transition:
+    left 0.3s ease-in-out,
+    background-color 0.3s ease-in-out;
 }
 
 .inRange {

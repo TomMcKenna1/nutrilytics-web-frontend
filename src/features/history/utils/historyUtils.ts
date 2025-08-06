@@ -7,7 +7,7 @@ import styles from "../components/InfiniteHistoryCarousel/InfiniteHistoryCarouse
  */
 export const getOverallDayStatus = (
   dayData: DailyHistoryLog | undefined,
-  targets: NutritionTarget | undefined
+  targets: NutritionTarget | undefined,
 ): string => {
   if (!dayData || !targets?.energy || dayData.mealCount === 0) {
     return "";

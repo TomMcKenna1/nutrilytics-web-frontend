@@ -26,7 +26,6 @@ const NUTRIENT_COLORS: Record<keyof NutrientSummary, string> = {
   salt: "var(--color-text-medium)",
 };
 
-
 const STACK_LEGEND = [
   { name: "Meals", key: "meal" as const },
   { name: "Snacks", key: "snack" as const },
@@ -47,7 +46,7 @@ export const ConsistencyChart = ({
 
   const chartData = useMemo(() => {
     const weekDays = Array.from({ length: 7 }).map((_, i) =>
-      addDays(currentMonday, i)
+      addDays(currentMonday, i),
     );
     const targetValue = targets?.[selectedNutrient] ?? 0;
 
@@ -68,14 +67,14 @@ export const ConsistencyChart = ({
     const maxValue = Math.max(...values.map((v) => v.total), targetValue);
     const yAxisMax = maxValue === 0 ? 100 : Math.ceil(maxValue * 1.2);
     const yAxisLabels = Array.from({ length: 5 }).map((_, i) =>
-      Math.round((yAxisMax / 4) * i)
+      Math.round((yAxisMax / 4) * i),
     );
 
     return { days: weekDays, values, targetValue, yAxisMax, yAxisLabels };
   }, [currentMonday, weeklyData, selectedNutrient, targets]);
 
   const selectedNutrientInfo = NUTRIENT_OPTIONS.find(
-    (n) => n.key === selectedNutrient
+    (n) => n.key === selectedNutrient,
   );
 
   return (

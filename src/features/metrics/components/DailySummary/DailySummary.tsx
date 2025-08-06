@@ -24,7 +24,7 @@ const useCountUp = (
   startValue: number,
   endValue: number,
   isAnimating: boolean,
-  duration: number = ANIMATION_DURATION
+  duration: number = ANIMATION_DURATION,
 ): number => {
   const [count, setCount] = useState(startValue);
 
@@ -86,13 +86,13 @@ const useSequentialProgress = (
   isAnimating: boolean,
   startPercentage: number,
   finalPercentage: number,
-  totalDuration: number = ANIMATION_DURATION
+  totalDuration: number = ANIMATION_DURATION,
 ): SequentialProgress => {
   const [mainProgress, setMainProgress] = useState(
-    Math.min(startPercentage, 1)
+    Math.min(startPercentage, 1),
   );
   const [overflowProgress, setOverflowProgress] = useState(
-    startPercentage > 1 ? startPercentage - 1 : 0
+    startPercentage > 1 ? startPercentage - 1 : 0,
   );
 
   useEffect(() => {
@@ -169,7 +169,7 @@ const NutrientCircle: React.FC<NutrientCircleProps> = ({
   const { mainProgress, overflowProgress } = useSequentialProgress(
     isAnimating,
     startPercentage,
-    finalPercentage
+    finalPercentage,
   );
 
   const mainOffset = chart.circumference * (1 - mainProgress);

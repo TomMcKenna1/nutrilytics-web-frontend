@@ -31,13 +31,13 @@ const AccountPage = () => {
   } = useAccount();
 
   const [profileForm, setProfileForm] = useState<Partial<UserProfileCreate>>(
-    {}
+    {},
   );
   const [nutritionForm, setNutritionForm] = useState<Partial<NutritionTarget>>(
-    {}
+    {},
   );
   const [activeSection, setActiveSection] = useState<"profile" | "targets">(
-    "profile"
+    "profile",
   );
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const AccountPage = () => {
   }, [account, nutritionForm]);
 
   const handleFormChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     const numericValue =

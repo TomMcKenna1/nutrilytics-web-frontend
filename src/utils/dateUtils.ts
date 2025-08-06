@@ -80,7 +80,7 @@ export const isDateInCurrentWeek = (d: Date | null): boolean => {
  */
 export const formatDate = (
   date: Date,
-  format: "MMMM yyyy" | "d" | "yyyy-MM" | "EEE" | "MMMM d, yyyy"
+  format: "MMMM yyyy" | "d" | "yyyy-MM" | "EEE" | "MMMM d, yyyy",
 ): string => {
   const options: Intl.DateTimeFormatOptions = {};
   switch (format) {

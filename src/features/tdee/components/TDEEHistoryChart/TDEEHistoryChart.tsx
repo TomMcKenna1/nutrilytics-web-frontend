@@ -81,7 +81,7 @@ export const TDEEHistoryChart = () => {
       data: p.data,
     }));
     const validData = fullRangeData.filter(
-      (p): p is ChartPoint => p.data !== null
+      (p): p is ChartPoint => p.data !== null,
     );
 
     if (validData.length < 2) {
@@ -114,11 +114,11 @@ export const TDEEHistoryChart = () => {
 
     const chartWidth = Math.max(
       0,
-      dimensions.width - padding.left - padding.right
+      dimensions.width - padding.left - padding.right,
     );
     const chartHeight = Math.max(
       0,
-      dimensions.height - padding.top - padding.bottom
+      dimensions.height - padding.top - padding.bottom,
     );
 
     if (chartWidth <= 0 || chartHeight <= 0) {
@@ -150,26 +150,26 @@ export const TDEEHistoryChart = () => {
       .map((p) =>
         getCoords(
           p.data.estimatedTdeeKcal,
-          fullRangeData.findIndex((frp) => frp.originalDate === p.originalDate)
-        )
+          fullRangeData.findIndex((frp) => frp.originalDate === p.originalDate),
+        ),
       )
       .map(
-        (p, i) => `${i === 0 ? "M" : "L"} ${p.x.toFixed(2)},${p.y.toFixed(2)}`
+        (p, i) => `${i === 0 ? "M" : "L"} ${p.x.toFixed(2)},${p.y.toFixed(2)}`,
       )
       .join(" ");
 
     const upperPoints = validData.map((p) =>
       getCoords(
         p.data.upperBoundKcal,
-        fullRangeData.findIndex((frp) => frp.originalDate === p.originalDate)
-      )
+        fullRangeData.findIndex((frp) => frp.originalDate === p.originalDate),
+      ),
     );
     const lowerPoints = validData
       .map((p) =>
         getCoords(
           p.data.lowerBoundKcal,
-          fullRangeData.findIndex((frp) => frp.originalDate === p.originalDate)
-        )
+          fullRangeData.findIndex((frp) => frp.originalDate === p.originalDate),
+        ),
       )
       .reverse();
     const areaPath =
@@ -210,7 +210,7 @@ export const TDEEHistoryChart = () => {
     const svgRect = e.currentTarget.getBoundingClientRect();
     const mouseX = e.clientX - svgRect.left;
     const index = Math.round(
-      ((mouseX - padding.left) / chartWidth) * (fullRangeData.length - 1)
+      ((mouseX - padding.left) / chartWidth) * (fullRangeData.length - 1),
     );
     const pointIndex = Math.max(0, Math.min(index, fullRangeData.length - 1));
     const point = fullRangeData[pointIndex];

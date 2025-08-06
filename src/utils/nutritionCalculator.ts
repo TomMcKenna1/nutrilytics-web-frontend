@@ -30,7 +30,7 @@ const calculateBMR = (
   sex: Sex,
   weightKg: number,
   heightCm: number,
-  age: number
+  age: number,
 ): number => {
   if (sex === "male") {
     return 10 * weightKg + 6.25 * heightCm - 5 * age + 5;
@@ -45,7 +45,7 @@ const calculateBMR = (
  * @returns An object containing the calculated daily nutrition targets.
  */
 export const calculateInitialTargets = (
-  profile: UserProfileCreate
+  profile: UserProfileCreate,
 ): NutritionTarget => {
   const { sex, age, heightCm, weightKg, goal, activityLevel } = profile;
 

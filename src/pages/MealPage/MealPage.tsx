@@ -102,7 +102,7 @@ export const MealPage = () => {
     const showDailyImpact = isDateToday(createdAtDate);
     const mealWeight = meal.data.components.reduce(
       (sum, comp) => sum + comp.totalWeight,
-      0
+      0,
     );
 
     return (

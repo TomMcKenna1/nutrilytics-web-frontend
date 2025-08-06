@@ -155,7 +155,7 @@ export const MacroGaugeCharts = ({
 
     const todayString = toLocalDateString(new Date());
     const pastDays = Object.entries(weeklyData).filter(
-      ([dateString, dayData]) => dayData !== null && dateString !== todayString
+      ([dateString, dayData]) => dayData !== null && dateString !== todayString,
     ) as [string, WeeklyBreakdown][];
 
     if (pastDays.length === 0) {

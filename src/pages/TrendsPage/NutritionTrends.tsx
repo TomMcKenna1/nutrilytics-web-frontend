@@ -19,7 +19,7 @@ const NUTRIENT_OPTIONS: { key: keyof NutrientSummary; label: string }[] = [
 
 export const NutritionTrends = () => {
   const [currentMonday, setCurrentMonday] = useState<Date>(
-    getMonday(new Date())
+    getMonday(new Date()),
   );
   const [selectedNutrient, setSelectedNutrient] =
     useState<keyof NutrientSummary>("energy");

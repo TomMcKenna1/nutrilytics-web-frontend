@@ -16,7 +16,7 @@ interface AccountProfileFormProps {
   isUpdating: boolean;
   isSuccess: boolean;
   onFormChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => void;
   onSubmit: (e: React.FormEvent) => void;
   onSignOut: () => void;

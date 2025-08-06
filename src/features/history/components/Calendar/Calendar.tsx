@@ -100,7 +100,7 @@ export const Calendar = ({
                     {Array.from({ length: Math.min(dayData.mealCount, 5) }).map(
                       (_, i) => (
                         <div key={i} className={styles.mealDot} />
-                      )
+                      ),
                     )}
                   </div>
                 )}

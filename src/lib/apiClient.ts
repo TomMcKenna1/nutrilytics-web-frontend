@@ -13,7 +13,7 @@ interface ApiClientOptions extends Omit<RequestInit, "body"> {
  */
 const apiClient = async <T>(
   endpoint: string,
-  options: ApiClientOptions = {}
+  options: ApiClientOptions = {},
 ): Promise<T> => {
   const {
     body,

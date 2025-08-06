@@ -36,7 +36,7 @@ const LoginPage: React.FC = () => {
     } else {
       const { user: newUser, error: signUpError } = await signUpWithEmail(
         email,
-        password
+        password,
       );
 
       if (signUpError) {
@@ -100,7 +100,7 @@ const LoginPage: React.FC = () => {
         break;
       case "auth/weak-password":
         setError(
-          "Password is too weak. It should be at least 6 characters long."
+          "Password is too weak. It should be at least 6 characters long.",
         );
         break;
       case "auth/invalid-credential":
@@ -111,7 +111,7 @@ const LoginPage: React.FC = () => {
         break;
       case "auth/too-many-requests":
         setError(
-          "Access to this account has been temporarily disabled. Please reset your password or try again later."
+          "Access to this account has been temporarily disabled. Please reset your password or try again later.",
         );
         break;
       case "auth/network-request-failed":

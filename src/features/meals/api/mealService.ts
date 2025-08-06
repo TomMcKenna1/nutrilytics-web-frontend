@@ -77,7 +77,7 @@ export const deleteMeal = (mealId: string): Promise<void> => {
  */
 export const removeComponentFromMeal = (
   mealId: string,
-  componentId: string
+  componentId: string,
 ): Promise<MealDB> => {
   return apiClient(`/api/v1/meals/${mealId}/components/${componentId}`, {
     method: "DELETE",
@@ -93,7 +93,7 @@ export const removeComponentFromMeal = (
  */
 export const addComponentToMeal = (
   mealId: string,
-  data: { description: string }
+  data: { description: string },
 ): Promise<MealDB> => {
   return apiClient(`/api/v1/meals/${mealId}/components`, {
     method: "POST",
@@ -109,7 +109,7 @@ export const addComponentToMeal = (
  */
 export const updateMealType = (
   mealId: string,
-  type: MealType
+  type: MealType,
 ): Promise<MealDB> => {
   return apiClient(`/api/v1/meals/${mealId}/type`, {
     method: "PATCH",

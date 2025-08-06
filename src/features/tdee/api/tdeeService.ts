@@ -9,7 +9,7 @@ import type { TDEEDataPoint } from "../types";
  */
 export const getTdeeHistory = (
   startDate: string,
-  endDate: string
+  endDate: string,
 ): Promise<TDEEDataPoint[]> => {
   const params = new URLSearchParams({ startDate, endDate });
   return apiClient<TDEEDataPoint[]>(`/api/v1/tdee?${params.toString()}`);

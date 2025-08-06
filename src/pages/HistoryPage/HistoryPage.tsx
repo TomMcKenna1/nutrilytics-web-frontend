@@ -14,7 +14,7 @@ const normalizeDate = (date: Date): Date => {
 
 const HistoryPage = () => {
   const [selectedDate, setSelectedDate] = useState(() =>
-    normalizeDate(new Date())
+    normalizeDate(new Date()),
   );
 
   const {

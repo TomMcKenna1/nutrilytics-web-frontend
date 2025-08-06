@@ -28,7 +28,7 @@ export const getDailySummary = (date?: Date): Promise<DailySummary> => {
  * @returns The weekly macro summary.
  */
 export const getWeeklySummary = (
-  startDate: string
+  startDate: string,
 ): Promise<WeeklySummaryResponse> => {
   return apiClient(`/api/v1/metrics/weeklySummary?startDate=${startDate}`);
 };
@@ -39,7 +39,7 @@ export const getWeeklySummary = (
  * @returns The monthly summary response.
  */
 export const getMonthlySummary = (
-  yearMonth: string
+  yearMonth: string,
 ): Promise<MonthlySummaryResponse> => {
   return apiClient(`/api/v1/metrics/monthlySummary/${yearMonth}`);
 };

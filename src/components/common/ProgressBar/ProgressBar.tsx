@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './ProgressBar.module.css';
+import React from "react";
+import styles from "./ProgressBar.module.css";
 
 interface ProgressBarProps {
   current: number;
@@ -11,7 +11,10 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ current, total }) => {
 
   return (
     <div className={styles.progressBarContainer}>
-      <div className={styles.progressBarFill} style={{ width: `${percentage}%` }} />
+      <div
+        className={styles.progressBarFill}
+        style={{ width: `${percentage}%` }}
+      />
     </div>
   );
 };

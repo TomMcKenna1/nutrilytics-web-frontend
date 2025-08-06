@@ -28,7 +28,7 @@ export const LatestTDEE = () => {
     sevenDaysAgoDate.setDate(sevenDaysAgoDate.getDate() - 7);
     const sevenDaysAgoString = sevenDaysAgoDate.toISOString().split("T")[0];
     const sevenDayOldEntry = validEntries.find(
-      (p) => p.date === sevenDaysAgoString
+      (p) => p.date === sevenDaysAgoString,
     );
     let change = null;
     if (sevenDayOldEntry?.data) {

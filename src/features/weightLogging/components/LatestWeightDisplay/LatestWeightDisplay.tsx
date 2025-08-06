@@ -13,7 +13,7 @@ const LatestWeightDisplay = () => {
 
   const { data: weightLogs, isLoading } = useWeightLogs(
     toYyyyMmDd(sevenDaysAgo),
-    toYyyyMmDd(today)
+    toYyyyMmDd(today),
   );
 
   const { latestWeight, sevenDayChange } = useMemo(() => {
@@ -22,7 +22,7 @@ const LatestWeightDisplay = () => {
       return { latestWeight: latest, sevenDayChange: null };
     }
     const sortedLogs = [...weightLogs].sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
     );
     const latestLog = sortedLogs[sortedLogs.length - 1];
     const oldestLog = sortedLogs[0];

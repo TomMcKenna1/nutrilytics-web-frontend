@@ -73,8 +73,12 @@ export const MetricDisplayCard = ({
       <div className={styles.cardFooter}>
         {trend && (
           <p className={`${styles.trendValue} ${getTrendClassName()}`}>
-            {trendDirection === "positive" && trend.value > 0 && <FaArrowTrendUp />}
-            {trendDirection === "negative" && trend.value < 0 && <FaArrowTrendDown />}
+            {trendDirection === "positive" && trend.value > 0 && (
+              <FaArrowTrendUp />
+            )}
+            {trendDirection === "negative" && trend.value < 0 && (
+              <FaArrowTrendDown />
+            )}
             <span>
               {trend.value > 0 ? "+" : ""}
               {trend.value.toFixed(1)} {unit} ({trend.label})

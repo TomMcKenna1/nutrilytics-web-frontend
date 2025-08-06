@@ -21,7 +21,7 @@ export const logWeight = (payload: WeightLogCreate): Promise<WeightLogInDB> => {
  */
 export const getWeightLogs = (
   startDate: string,
-  endDate: string
+  endDate: string,
 ): Promise<WeightLogInDB[]> => {
   const params = new URLSearchParams({ startDate, endDate });
   return apiClient<WeightLogInDB[]>(`/api/v1/weightLogs?${params.toString()}`);

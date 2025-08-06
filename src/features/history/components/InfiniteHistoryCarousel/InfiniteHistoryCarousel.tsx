@@ -37,7 +37,7 @@ export const InfiniteHistoryCarousel = ({
   const scrollPositionRef = useRef({ scrollLeft: 0, scrollWidth: 0 });
 
   const [visibleMonths, setVisibleMonths] = useState<string[]>(
-    getInitialMonthStrings
+    getInitialMonthStrings,
   );
 
   const today = useMemo(() => {
@@ -97,7 +97,7 @@ export const InfiniteHistoryCarousel = ({
   useEffect(() => {
     if (carouselRef.current) {
       const selectedIndex = days.findIndex(
-        (day) => toLocalDateString(day) === toLocalDateString(selectedDate)
+        (day) => toLocalDateString(day) === toLocalDateString(selectedDate),
       );
       console.log(selectedIndex);
       if (selectedIndex !== -1) {
@@ -118,7 +118,7 @@ export const InfiniteHistoryCarousel = ({
     const { scrollLeft, offsetWidth } = carouselRef.current;
 
     const selectedIndex = days.findIndex(
-      (day) => toLocalDateString(day) === toLocalDateString(today)
+      (day) => toLocalDateString(day) === toLocalDateString(today),
     );
     const maxScrollLeft =
       selectedIndex * DAY_WIDTH - (offsetWidth - DAY_WIDTH) / 2;
@@ -143,7 +143,7 @@ export const InfiniteHistoryCarousel = ({
 
       const nextMonthToAdd = formatDate(
         subMonths(oldestMonthDate, 1),
-        "yyyy-MM"
+        "yyyy-MM",
       );
       setVisibleMonths((prev) => [...prev, nextMonthToAdd]);
     }
@@ -190,7 +190,7 @@ export const InfiniteHistoryCarousel = ({
               <div className={styles.mealDotsContainer}>
                 {dayData?.mealCount > 0 &&
                   Array.from({ length: Math.min(dayData.mealCount, 5) }).map(
-                    (_, i) => <div key={i} className={styles.mealDot} />
+                    (_, i) => <div key={i} className={styles.mealDot} />,
                   )}
               </div>
               {isDateToday(day) && (

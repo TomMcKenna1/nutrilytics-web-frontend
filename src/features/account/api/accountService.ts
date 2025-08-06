@@ -35,7 +35,7 @@ export const createUserRecord = (): Promise<UserInDB> => {
  * @returns A promise that resolves with the updated user data.
  */
 export const onboardAccount = (
-  payload: OnboardingPayload
+  payload: OnboardingPayload,
 ): Promise<UserInDB> => {
   return apiClient("/api/v1/account/onboard", {
     method: "POST",
@@ -49,7 +49,7 @@ export const onboardAccount = (
  * @returns A promise that resolves with the updated user profile.
  */
 export const updateAccountProfile = (
-  profileData: Partial<UserProfileCreate>
+  profileData: Partial<UserProfileCreate>,
 ): Promise<UserInDB> => {
   return apiClient("/api/v1/account/", {
     method: "PUT",
@@ -64,7 +64,7 @@ export const updateAccountProfile = (
  * @returns A promise that resolves when the targets are successfully updated.
  */
 export const updateNutritionTargets = (
-  targets: UpdateNutritionTarget
+  targets: UpdateNutritionTarget,
 ): Promise<NutritionTarget> => {
   return apiClient("/api/v1/account/targets", {
     method: "PUT",

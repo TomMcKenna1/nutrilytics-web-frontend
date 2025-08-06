@@ -83,20 +83,19 @@
 
 .chartsContainer {
   display: flex;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
   gap: var(--spacing-4);
 }
 
 .barChartWrapper {
-  flex: 2; 
+  flex: 2;
   min-width: 400px;
 }
 
 .gaugeChartWrapper {
-  flex: 1; 
+  flex: 1;
   min-width: 300px;
 }
-
 
 .listHeader {
   font-size: 1.25rem;

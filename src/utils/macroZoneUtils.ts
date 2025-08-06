@@ -16,7 +16,7 @@ export type ZoneBoundaries = {
  */
 export const getNutrientZones = (
   nutrientKey: keyof NutrientSummary,
-  target: number
+  target: number,
 ): ZoneBoundaries => {
   switch (nutrientKey) {
     case "sugars":
