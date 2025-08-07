@@ -29,38 +29,42 @@ class SSEService {
     authToken = token;
     this.ctrl = new AbortController();
 
-    console.log("SSE: Connecting to meal stream...");
-
     fetchEventSource("/api/v1/meals/stream", {
       signal: this.ctrl.signal,
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
+      openWhenHidden: true,
+
       onopen: async (response) => {
+        if (!this.queryClient) return;
+
         if (response.ok) {
-          console.log("SSE: Connection opened.");
+          this.queryClient.invalidateQueries({ queryKey: ["mealsList"] });
           return;
+        } else if (
+          response.status >= 400 &&
+          response.status < 500 &&
+          response.status !== 429
+        ) {
+          this.disconnect();
+          throw new Error(`SSE failed with status ${response.status}`);
         }
-        throw new Error(`SSE failed to open with status ${response.status}`);
       },
       onmessage: (event) => {
         if (event.event === "meal_update") {
           this.handleMealUpdate(event);
         }
       },
-      onclose: () => {
-        console.log("SSE: Connection closed by server.");
-      },
-      onerror: (err) => {
-        console.error("SSE: Connection error:", err);
-        throw err;
+      onclose: () => {},
+      onerror: () => {
+        return 3000;
       },
     });
   }
 
   public disconnect(): void {
     if (this.ctrl) {
-      console.log("SSE: Disconnecting from meal stream...");
       this.ctrl.abort();
       this.ctrl = null;
       authToken = null;
@@ -76,7 +80,6 @@ class SSEService {
 
     try {
       const updatedMeal: MealDB = JSON.parse(event.data);
-      console.log("SSE: Received meal_update", updatedMeal);
       this.queryClient.setQueryData(["meal", updatedMeal.id], updatedMeal);
       this.queryClient.invalidateQueries({ queryKey: ["mealsList"] });
 
@@ -92,7 +95,7 @@ class SSEService {
         });
       }
     } catch (error) {
-      console.error("SSE: Error parsing meal_update data", error);
+      throw error;
     }
   };
 }

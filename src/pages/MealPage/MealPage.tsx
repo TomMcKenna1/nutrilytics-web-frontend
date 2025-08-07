@@ -48,7 +48,7 @@ export const MealPage = () => {
   const handleDeleteMeal = async () => {
     if (!mealId) return;
     await deleteMeal(mealId);
-    navigate("/");
+    navigate(-1);
   };
 
   const handleAddComponent = (description: string) => addComponent(description);
@@ -74,10 +74,10 @@ export const MealPage = () => {
         </p>
         <div className={styles.pageActions}>
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate(-1)}
             className={`${styles.button} ${styles.secondary}`}
           >
-            Back to Meals
+            Go Back
           </button>
           <button
             onClick={handleDeleteMeal}
@@ -102,17 +102,17 @@ export const MealPage = () => {
     const showDailyImpact = isDateToday(createdAtDate);
     const mealWeight = meal.data.components.reduce(
       (sum, comp) => sum + comp.totalWeight,
-      0,
+      0
     );
 
     return (
       <div className={styles.pageContainer}>
         <div className={styles.pageActions}>
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate(-1)}
             className={`${styles.button} ${styles.secondary}`}
           >
-            Back to Meals
+            Go Back
           </button>
           <button
             onClick={handleDeleteMeal}
@@ -170,5 +170,3 @@ export const MealPage = () => {
 
   return <p className={styles.centered}>Could not display meal.</p>;
 };
-
-export default MealPage;

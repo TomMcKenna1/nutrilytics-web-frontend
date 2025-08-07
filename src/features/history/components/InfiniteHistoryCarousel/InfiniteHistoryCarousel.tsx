@@ -99,7 +99,6 @@ export const InfiniteHistoryCarousel = ({
       const selectedIndex = days.findIndex(
         (day) => toLocalDateString(day) === toLocalDateString(selectedDate),
       );
-      console.log(selectedIndex);
       if (selectedIndex !== -1) {
         const scrollPosition =
           selectedIndex * DAY_WIDTH -
@@ -122,8 +121,6 @@ export const InfiniteHistoryCarousel = ({
     );
     const maxScrollLeft =
       selectedIndex * DAY_WIDTH - (offsetWidth - DAY_WIDTH) / 2;
-    console.log(scrollLeft);
-    console.log(maxScrollLeft);
     if (scrollLeft > maxScrollLeft) {
       carouselRef.current.scrollLeft = maxScrollLeft;
     }
