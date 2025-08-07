@@ -5,12 +5,18 @@ import type { MealDB, MealListResponse, MealType } from "../types";
 /**
  * Creates a new meal. The meal is created with a 'pending' status
  * and is updated by the backend once generation is complete.
- * @param mealDescription The text input from the user.
+ * @param mealData An object containing the meal description and creation date.
  * @returns The newly created placeholder MealDB object.
  */
-export const createMeal = (mealDescription: string): Promise<MealDB> => {
+export const createMeal = (mealData: {
+  description: string;
+  date: Date;
+}): Promise<MealDB> => {
   return apiClient("/api/v1/meals", {
-    body: { description: mealDescription },
+    body: {
+      description: mealData.description,
+      createdAt: Math.floor(mealData.date.getTime() / 1000),
+    },
     method: "POST",
   });
 };
@@ -77,7 +83,7 @@ export const deleteMeal = (mealId: string): Promise<void> => {
  */
 export const removeComponentFromMeal = (
   mealId: string,
-  componentId: string,
+  componentId: string
 ): Promise<MealDB> => {
   return apiClient(`/api/v1/meals/${mealId}/components/${componentId}`, {
     method: "DELETE",
@@ -93,7 +99,7 @@ export const removeComponentFromMeal = (
  */
 export const addComponentToMeal = (
   mealId: string,
-  data: { description: string },
+  data: { description: string }
 ): Promise<MealDB> => {
   return apiClient(`/api/v1/meals/${mealId}/components`, {
     method: "POST",
@@ -109,7 +115,7 @@ export const addComponentToMeal = (
  */
 export const updateMealType = (
   mealId: string,
-  type: MealType,
+  type: MealType
 ): Promise<MealDB> => {
   return apiClient(`/api/v1/meals/${mealId}/type`, {
     method: "PATCH",

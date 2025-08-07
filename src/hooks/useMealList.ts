@@ -67,7 +67,7 @@ export const useMealList = (date?: Date) => {
               meals: page.meals.filter((meal) => meal.id !== mealId),
             })),
           };
-        },
+        }
       );
       return { previousMealListData, deletedMeal };
     },
