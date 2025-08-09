@@ -26,7 +26,7 @@ const DashboardSummaryPage = () => {
 
   return (
     <>
-      {isMobile && <h1>Today</h1>}
+      {isMobile && <h1 className={styles.pageHeading}>Today</h1>}
       <section className={styles.summarySection}>
         <DailySummary
           summary={summary}

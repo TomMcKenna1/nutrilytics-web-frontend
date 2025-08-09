@@ -12,6 +12,7 @@
   touch-action: pan-y;
   flex-grow: 1;
   min-height: 0;
+  margin-bottom: var(--spacing-2);
 }
 
 .carouselItem {
