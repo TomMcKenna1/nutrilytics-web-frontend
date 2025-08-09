@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../providers/AuthProvider";
 import { useAccount } from "../../../hooks/useAccount";
+import { useMediaQuery } from "../../../hooks/useMediaQuery";
+import { breakpoints } from "../../../styles/breakpoints";
 import styles from "./TopBar.module.css";
 import { FaCarrot } from "react-icons/fa";
 import { TbFlame, TbFlameFilled } from "react-icons/tb";
@@ -10,6 +12,7 @@ const TopBar = () => {
   const { user } = useAuth();
   const { account } = useAccount();
   const navigate = useNavigate();
+  const isMobile = useMediaQuery(breakpoints.mobile);
 
   const getInitials = (email: string | null | undefined) => {
     if (!email) return "G";
@@ -25,17 +28,21 @@ const TopBar = () => {
         Nutrilytics
       </Link>
 
-      <MealTextInput />
+      {!isMobile && (
+        <div className={styles.mealInputContainer}>
+          <MealTextInput />
+        </div>
+      )}
 
       <div className={styles.accountSection}>
         {user && account && (
           <div className={styles.streakDisplay}>
+            <span className={styles.streakCount}>{streak}</span>
             {streak > 0 ? (
               <TbFlameFilled className={styles.streakIconFilled} />
             ) : (
               <TbFlame className={styles.streakIconOutline} />
             )}
-            <span className={styles.streakCount}>{streak}</span>
           </div>
         )}
 

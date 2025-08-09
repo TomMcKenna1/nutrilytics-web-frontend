@@ -3,11 +3,12 @@
   padding: var(--spacing-3) var(--spacing-4);
   border-bottom: 1px solid var(--color-border-light);
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: var(--spacing-4);
   box-shadow: var(--box-shadow-sm);
   z-index: 1000;
+  position: sticky;
+  top: 0;
 }
 
 .logo {
@@ -18,53 +19,38 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
+  flex-shrink: 0;
 }
 
 .logoIcon {
   font-size: 1.1em;
+  margin-bottom: 5px;
   color: var(--color-primary-blue);
 }
 
-.mealForm {
+.mealInputContainer {
   display: flex;
+  justify-content: center;
   flex-grow: 1;
-  max-width: 600px;
 }
 
-.mealInput {
-  width: 100%;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--border-radius-sm) 0 0 var(--border-radius-sm);
-  background-color: var(--color-background-soft);
+.accountSection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  flex-shrink: 0;
+  justify-content: flex-end;
 }
 
-.mealInput:focus {
-  outline: none;
-  border-color: var(--color-primary-blue);
-  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
-}
+@media (max-width: 768px) {
+  .topBar {
+    justify-content: space-between;
+    padding: var(--spacing-3) var(--spacing-3);
+  }
 
-.mealButton {
-  padding: 0.5rem 1.5rem;
-  cursor: pointer;
-  background-color: var(--color-primary-blue);
-  color: var(--color-background-light);
-  border: none;
-  border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
-  font-size: 1rem;
-  transition: background-color 0.2s;
-}
-
-.mealButton:hover:not(:disabled) {
-  background-color: var(--color-primary-blue-dark);
-}
-
-.mealButton:disabled {
-  background-color: var(--color-border-light);
-  color: var(--color-text-light);
-  cursor: not-allowed;
+  .accountSection {
+    gap: var(--spacing-2);
+  }
 }
 
 .accountCircle {
@@ -88,27 +74,6 @@
   background-color: var(--color-primary-blue-dark);
 }
 
-.guestCircle {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: var(--color-border-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  color: var(--color-text-medium);
-  cursor: pointer;
-  text-decoration: none;
-  flex-shrink: 0;
-  box-shadow: var(--box-shadow-sm);
-  transition: background-color 0.2s;
-}
-
-.guestCircle:hover {
-  background-color: var(--color-border-light);
-}
-
 .signInButton {
   padding: 8px 16px;
   background-color: var(--color-primary-blue);
@@ -118,16 +83,11 @@
   text-decoration: none;
   cursor: pointer;
   transition: background-color 0.2s;
+  white-space: nowrap;
 }
 
 .signInButton:hover {
   background-color: var(--color-primary-blue-dark);
-}
-
-.accountSection {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-4);
 }
 
 .streakDisplay {

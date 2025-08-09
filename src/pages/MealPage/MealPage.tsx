@@ -25,7 +25,7 @@ const Loader = () => (
   </div>
 );
 
-export const MealPage = () => {
+const MealPage = () => {
   const { mealId } = useParams<{ mealId: string }>();
   const navigate = useNavigate();
 
@@ -170,3 +170,5 @@ export const MealPage = () => {
 
   return <p className={styles.centered}>Could not display meal.</p>;
 };
+
+export default MealPage;

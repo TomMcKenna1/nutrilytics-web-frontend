@@ -5,8 +5,14 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { onAuthStateChanged, type User } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  getRedirectResult,
+  getAdditionalUserInfo,
+  type User,
+} from "firebase/auth";
 import { auth } from "../lib/firebase";
+import { createUserRecord } from "../features/account/api/accountService";
 
 interface AuthContextType {
   user: User | null;
@@ -24,10 +30,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log(
+        "AuthProvider: onAuthStateChanged fired. User:",
+        user ? user.uid : null
+      );
+      setUser(user);
       setIsLoading(false);
     });
+
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) {
+          console.log("AuthProvider: Detected redirect result.");
+          const isNewUser = getAdditionalUserInfo(result)?.isNewUser;
+          if (isNewUser) {
+            console.log(
+              "AuthProvider: New user from redirect, creating DB record..."
+            );
+            createUserRecord().catch((err) =>
+              console.error("AuthProvider: Failed to create user record", err)
+            );
+          }
+        }
+      })
+      .catch((error) => {
+        console.error("AuthProvider: Error from getRedirectResult", error);
+      });
     return () => unsubscribe();
   }, []);
 
@@ -35,6 +64,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user,
     isLoading,
   };
+
   return (
     <AuthContext.Provider value={value}>
       {!isLoading && children}

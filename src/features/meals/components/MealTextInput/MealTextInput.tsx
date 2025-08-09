@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import styles from "./MealTextInput.module.css";
 import DateTimePicker from "../DateTimePicker/DateTimePicker";
 import { useCreateMeal } from "../../../../hooks/useCreateMeal";
-import { IoSend } from "react-icons/io5";
+import { IoSend, IoTimeOutline } from "react-icons/io5";
 import { FaRegCalendarAlt } from "react-icons/fa";
 
 /**
@@ -102,12 +102,20 @@ const placeholderMeals = [
   "A hearty beef stew with carrots and potatoes",
 ];
 
-const MealTextInput = () => {
+interface MealTextInputProps {
+  variant?: "desktop" | "mobile";
+  onClose?: () => void;
+}
+
+const MealTextInput = ({
+  variant = "desktop",
+  onClose,
+}: MealTextInputProps) => {
   const [mealInput, setMealInput] = useState("");
   const [mealDate, setMealDate] = useState(new Date());
-  const [isFocused, setIsFocused] = useState(false);
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const dynamicPlaceholder = useTypingEffect(placeholderMeals);
   const {
@@ -116,12 +124,17 @@ const MealTextInput = () => {
     error,
   } = useCreateMeal();
 
-  useOnClickOutside(formRef, () => setDatePickerVisible(false));
+  useEffect(() => {
+    return () => {
+      inputRef.current?.blur();
+    };
+  }, []);
 
-  const handleDateChange = (newDate: Date) => {
-    setMealDate(newDate);
-    setDatePickerVisible(false);
-  };
+  useOnClickOutside(formRef, () => {
+    if (isDatePickerVisible) {
+      setDatePickerVisible(false);
+    }
+  });
 
   const handleMealSubmit = () => {
     if (!mealInput.trim() || isSubmitting) return;
@@ -131,6 +144,7 @@ const MealTextInput = () => {
         onSuccess: () => {
           setMealInput("");
           setMealDate(new Date());
+          onClose?.();
         },
       }
     );
@@ -147,44 +161,77 @@ const MealTextInput = () => {
 
   return (
     <div className={styles.mealFormContainer} ref={formRef}>
-      <div className={styles.inputWrapper}>
+      <div
+        className={`${styles.inputWrapper} ${
+          variant === "mobile" ? styles.inputWrapperMobile : ""
+        }`}
+      >
         <input
+          ref={inputRef}
           type="text"
           value={mealInput}
           onChange={(e) => setMealInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          placeholder={isFocused ? "" : `${dynamicPlaceholder}_`}
+          placeholder={
+            variant === "desktop"
+              ? dynamicPlaceholder
+              : "Enter a meal, e.g., 'A bowl of oatmeal...'"
+          }
           className={styles.mealInput}
           disabled={isSubmitting}
+          autoFocus={variant === "mobile"}
         />
         <div className={styles.controlsWrapper}>
-          <button
-            type="button"
-            className={styles.dateButton}
-            onClick={() => setDatePickerVisible((v) => !v)}
-          >
-            <FaRegCalendarAlt />
-            <span>{formatMealDate(mealDate)}</span>
-          </button>
-          <button
-            type="button"
-            onClick={handleMealSubmit}
-            disabled={isSubmitting || !mealInput.trim()}
-            className={styles.logButton}
-            aria-label="Log Meal"
-          >
-            <IoSend />
-          </button>
+          {variant === "desktop" ? (
+            <>
+              <button
+                type="button"
+                className={styles.dateButton}
+                onClick={() => setDatePickerVisible((v) => !v)}
+              >
+                <FaRegCalendarAlt />
+                <span>{formatMealDate(mealDate)}</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleMealSubmit}
+                disabled={isSubmitting || !mealInput.trim()}
+                className={styles.logButton}
+                aria-label="Log Meal"
+              >
+                <IoSend />
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                className={styles.iconButton}
+                onClick={() => setDatePickerVisible((v) => !v)}
+                aria-label="Set meal time"
+              >
+                <IoTimeOutline />
+              </button>
+              <button
+                type="button"
+                onClick={handleMealSubmit}
+                disabled={isSubmitting || !mealInput.trim()}
+                className={styles.logButton}
+                aria-label="Log Meal"
+              >
+                <IoSend />
+              </button>
+            </>
+          )}
         </div>
       </div>
 
       {isDatePickerVisible && (
         <div className={styles.datePickerPopover}>
           <DateTimePicker
-            onChange={handleDateChange}
             initialDateTime={mealDate}
+            onChange={setMealDate}
+            onClose={() => setDatePickerVisible(false)}
           />
         </div>
       )}

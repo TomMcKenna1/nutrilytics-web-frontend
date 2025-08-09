@@ -30,3 +30,9 @@
   padding-bottom: var(--spacing-2);
   border-bottom: 1px solid var(--color-border-light);
 }
+
+@media (max-width: 768px) {
+  .keyMetricsRow {
+    grid-template-columns: 1fr;
+  }
+}

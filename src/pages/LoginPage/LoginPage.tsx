@@ -36,7 +36,7 @@ const LoginPage: React.FC = () => {
     } else {
       const { user: newUser, error: signUpError } = await signUpWithEmail(
         email,
-        password,
+        password
       );
 
       if (signUpError) {
@@ -58,33 +58,25 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
     setError(null);
 
-    const {
-      user: googleUser,
-      error: authError,
-      isNewUser,
-    } = await signInWithGoogle();
-
-    if (authError) {
+    try {
+      const result = await signInWithGoogle();
+      // 'result' will only exist in the development (popup) flow
+      if (result) {
+        if (result.isNewUser) {
+          try {
+            await createUserRecord();
+          } catch (apiError) {
+            setError("Could not initialize your account. Please try again.");
+            console.error("API Error creating user record:", apiError);
+            setIsLoading(false);
+            return;
+          }
+        }
+      }
+    } catch (authError) {
       handleAuthError(authError as AuthError);
       setIsLoading(false);
-      return;
     }
-
-    if (googleUser) {
-      if (isNewUser) {
-        try {
-          await createUserRecord();
-          navigate("/dashboard");
-        } catch (apiError) {
-          setError("Could not initialize your account. Please try again.");
-          console.error("API Error creating user record:", apiError);
-        }
-      } else {
-        navigate("/dashboard");
-      }
-    }
-
-    setIsLoading(false);
   };
 
   const handleAuthError = (authError: AuthError | null) => {
@@ -93,14 +85,14 @@ const LoginPage: React.FC = () => {
     console.error("Firebase Auth Error:", authError.code);
     switch (authError.code) {
       case "auth/popup-closed-by-user":
-        setError("The sign-in window was closed. Please try again.");
+        setError(null);
         break;
       case "auth/email-already-in-use":
         setError("An account already exists with this email. Please log in.");
         break;
       case "auth/weak-password":
         setError(
-          "Password is too weak. It should be at least 6 characters long.",
+          "Password is too weak. It should be at least 6 characters long."
         );
         break;
       case "auth/invalid-credential":
@@ -111,7 +103,7 @@ const LoginPage: React.FC = () => {
         break;
       case "auth/too-many-requests":
         setError(
-          "Access to this account has been temporarily disabled. Please reset your password or try again later.",
+          "Access to this account has been temporarily disabled. Please reset your password or try again later."
         );
         break;
       case "auth/network-request-failed":
@@ -124,7 +116,7 @@ const LoginPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (user && !isLoading) {
+    if (user) {
       navigate("/dashboard");
     }
   }, [user, navigate]);
