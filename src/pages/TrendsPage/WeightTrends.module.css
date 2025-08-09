@@ -2,6 +2,14 @@
   padding: var(--spacing-4);
   max-width: 1800px;
   margin: 0 auto;
+  height: 100%;
+}
+
+.pageContainerMobile {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--spacing-2);
 }
 
 .pageTitle {
@@ -18,8 +26,9 @@
   gap: var(--spacing-4);
 }
 
-@media (max-width: 1200px) {
-  .trendsGrid {
-    grid-template-columns: 1fr;
-  }
+.pageContainerMobile {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: var(--spacing-2);
 }

@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import type { NutritionTarget } from "../../../account/types";
 import { type DailySummary as IDailySummary } from "../../types";
 import styles from "./DailySummary.module.css";
+import { useMediaQuery } from "../../../../hooks/useMediaQuery";
+import { breakpoints } from "../../../../styles/breakpoints";
 
 // In ms
 const ANIMATION_DURATION = 1200;
@@ -24,7 +26,7 @@ const useCountUp = (
   startValue: number,
   endValue: number,
   isAnimating: boolean,
-  duration: number = ANIMATION_DURATION,
+  duration: number = ANIMATION_DURATION
 ): number => {
   const [count, setCount] = useState(startValue);
 
@@ -86,13 +88,13 @@ const useSequentialProgress = (
   isAnimating: boolean,
   startPercentage: number,
   finalPercentage: number,
-  totalDuration: number = ANIMATION_DURATION,
+  totalDuration: number = ANIMATION_DURATION
 ): SequentialProgress => {
   const [mainProgress, setMainProgress] = useState(
-    Math.min(startPercentage, 1),
+    Math.min(startPercentage, 1)
   );
   const [overflowProgress, setOverflowProgress] = useState(
-    startPercentage > 1 ? startPercentage - 1 : 0,
+    startPercentage > 1 ? startPercentage - 1 : 0
   );
 
   useEffect(() => {
@@ -135,6 +137,62 @@ const useSequentialProgress = (
   return { mainProgress, overflowProgress };
 };
 
+interface NutrientBarProps {
+  label: string;
+  previousValue: number;
+  value: number;
+  target: number;
+  unit: string;
+  color: string;
+  isAnimating: boolean;
+}
+
+const NutrientBar: React.FC<NutrientBarProps> = ({
+  label,
+  previousValue,
+  value,
+  target,
+  unit,
+  color,
+  isAnimating,
+}) => {
+  const animatedValue = useCountUp(previousValue, value, isAnimating);
+  const startPercentage = target > 0 ? previousValue / target : 0;
+  const finalPercentage = target > 0 ? value / target : 0;
+  const { mainProgress } = useSequentialProgress(
+    isAnimating,
+    startPercentage,
+    finalPercentage
+  );
+
+  const displayPercentage = Math.min(mainProgress, 1) * 100;
+
+  return (
+    <div className={styles.nutrientBarContainer}>
+      <div className={styles.nutrientBarHeader}>
+        <span className={styles.nutrientBarLabel}>{label}</span>
+        <span className={styles.nutrientBarValue}>
+          {animatedValue.toFixed(0)} / {target}
+          {unit}
+        </span>
+      </div>
+      <div className={styles.progressBarBackground}>
+        <div
+          className={styles.progressBarForeground}
+          style={{
+            width: `${displayPercentage}%`,
+            backgroundColor: `var(${color})`,
+          }}
+          role="progressbar"
+          aria-valuenow={animatedValue}
+          aria-valuemin={0}
+          aria-valuemax={target}
+        />
+      </div>
+    </div>
+  );
+};
+
 interface NutrientCircleProps {
   label: string;
   previousValue: number;
@@ -169,7 +227,7 @@ const NutrientCircle: React.FC<NutrientCircleProps> = ({
   const { mainProgress, overflowProgress } = useSequentialProgress(
     isAnimating,
     startPercentage,
-    finalPercentage,
+    finalPercentage
   );
 
   const mainOffset = chart.circumference * (1 - mainProgress);
@@ -233,6 +291,7 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
   summaryError,
   targetsError,
 }) => {
+  const isMobile = useMediaQuery(breakpoints.mobile);
   const previousSummary = usePrevious(summary);
   const startAnimation = useAnimationOnLoad();
 
@@ -251,84 +310,115 @@ export const DailySummary: React.FC<DailySummaryProps> = ({
     return (previousSummary?.[key] as number) ?? 0;
   };
 
+  const nutrientData = [
+    {
+      key: "energy",
+      label: "Energy",
+      unit: "kcal",
+      color: "--color-energy",
+    },
+    {
+      key: "protein",
+      label: "Protein",
+      unit: "g",
+      color: "--color-protein",
+    },
+    {
+      key: "carbohydrates",
+      label: "Carbs",
+      unit: "g",
+      color: "--color-carbs",
+    },
+    { key: "sugars", label: "Sugars", unit: "g", color: "--color-sugars" },
+    { key: "fats", label: "Fat", unit: "g", color: "--color-fats" },
+    { key: "fibre", label: "Fibre", unit: "g", color: "--color-fibre" },
+  ];
+
   return (
     <div className={styles.summaryContainer}>
-      <div className={styles.mealsLoggedContainer}>
-        <div className={styles.primaryCountContainer}>
-          <span className={styles.mealsCount}>{summary.mealCount}</span>
-          <span className={styles.mealsLabel}>Meals</span>
-        </div>
-        <div className={styles.secondaryCountsGrid}>
-          <div className={styles.secondaryCount}>
-            <span className={styles.secondaryCountValue}>
-              {summary.snackCount}
-            </span>
-            <span className={styles.secondaryCountLabel}>Snacks</span>
+      {isMobile ? (
+        <div className={styles.mobileSummaryLayout}>
+          <div className={styles.mobileMealsCountWrapper}>
+            <div className={styles.mobileCountItem}>
+              <span className={styles.mobileCountValuePrimary}>
+                {summary.mealCount}
+              </span>
+              <span className={styles.mobileCountLabel}>Meals</span>
+            </div>
+            <div className={styles.mobileCountItem}>
+              <span className={styles.mobileCountValue}>
+                {summary.snackCount}
+              </span>
+              <span className={styles.mobileCountLabel}>Snacks</span>
+            </div>
+            <div className={styles.mobileCountItem}>
+              <span className={styles.mobileCountValue}>
+                {summary.beverageCount}
+              </span>
+              <span className={styles.mobileCountLabel}>Beverages</span>
+            </div>
           </div>
-          <div className={styles.secondaryCount}>
-            <span className={styles.secondaryCountValue}>
-              {summary.beverageCount}
-            </span>
-            <span className={styles.secondaryCountLabel}>Beverages</span>
+          <div className={styles.nutrientList}>
+            {nutrientData.map((nutrient) => (
+              <NutrientBar
+                key={nutrient.key}
+                label={nutrient.label}
+                previousValue={getPreviousValue(
+                  nutrient.key as keyof IDailySummary
+                )}
+                value={summary[nutrient.key as keyof IDailySummary] as number}
+                target={
+                  targets[nutrient.key as keyof NutritionTarget] as number
+                }
+                unit={nutrient.unit}
+                color={nutrient.color}
+                isAnimating={startAnimation}
+              />
+            ))}
           </div>
         </div>
-      </div>
-      <div className={styles.nutrientsGrid}>
-        <NutrientCircle
-          label="Energy"
-          previousValue={getPreviousValue("energy")}
-          value={summary.energy}
-          target={targets.energy}
-          unit="kcal"
-          color="--color-energy"
-          isAnimating={startAnimation}
-        />
-        <NutrientCircle
-          label="Protein"
-          previousValue={getPreviousValue("protein")}
-          value={summary.protein}
-          target={targets.protein}
-          unit="g"
-          color="--color-protein"
-          isAnimating={startAnimation}
-        />
-        <NutrientCircle
-          label="Carbs"
-          previousValue={getPreviousValue("carbohydrates")}
-          value={summary.carbohydrates}
-          target={targets.carbohydrates}
-          unit="g"
-          color="--color-carbs"
-          isAnimating={startAnimation}
-        />
-        <NutrientCircle
-          label="Sugars"
-          previousValue={getPreviousValue("sugars")}
-          value={summary.sugars}
-          target={targets.sugars}
-          unit="g"
-          color="--color-sugars"
-          isAnimating={startAnimation}
-        />
-        <NutrientCircle
-          label="Fat"
-          previousValue={getPreviousValue("fats")}
-          value={summary.fats}
-          target={targets.fats}
-          unit="g"
-          color="--color-fats"
-          isAnimating={startAnimation}
-        />
-        <NutrientCircle
-          label="Fibre"
-          previousValue={getPreviousValue("fibre")}
-          value={summary.fibre}
-          target={targets.fibre}
-          unit="g"
-          color="--color-fibre"
-          isAnimating={startAnimation}
-        />
-      </div>
+      ) : (
+        <>
+          <div className={styles.mealsLoggedContainer}>
+            <div className={styles.primaryCountContainer}>
+              <span className={styles.mealsCount}>{summary.mealCount}</span>
+              <span className={styles.mealsLabel}>Meals</span>
+            </div>
+            <div className={styles.secondaryCountsGrid}>
+              <div className={styles.secondaryCount}>
+                <span className={styles.secondaryCountValue}>
+                  {summary.snackCount}
+                </span>
+                <span className={styles.secondaryCountLabel}>Snacks</span>
+              </div>
+              <div className={styles.secondaryCount}>
+                <span className={styles.secondaryCountValue}>
+                  {summary.beverageCount}
+                </span>
+                <span className={styles.secondaryCountLabel}>Beverages</span>
+              </div>
+            </div>
+          </div>
+          <div className={styles.nutrientsGrid}>
+            {nutrientData.map((nutrient) => (
+              <NutrientCircle
+                key={nutrient.key}
+                label={nutrient.label}
+                previousValue={getPreviousValue(
+                  nutrient.key as keyof IDailySummary
+                )}
+                value={summary[nutrient.key as keyof IDailySummary] as number}
+                target={
+                  targets[nutrient.key as keyof NutritionTarget] as number
+                }
+                unit={nutrient.unit}
+                color={nutrient.color}
+                isAnimating={startAnimation}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };

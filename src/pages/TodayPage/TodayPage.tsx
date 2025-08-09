@@ -6,8 +6,12 @@ import LatestWeightDisplay from "../../features/weightLogging/components/LatestW
 import styles from "./TodayPage.module.css";
 import { useDailySummary } from "../../hooks/useDailySummary";
 import { useNutritionTargets } from "../../hooks/useNutritionTargets";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { breakpoints } from "../../styles/breakpoints";
+import MetricsCarousel from "../../components/common/MetricsCarousel/MetricsCarousel";
 
 const DashboardSummaryPage = () => {
+  const isMobile = useMediaQuery(breakpoints.mobile);
   const {
     data: summary,
     isLoading: summaryIsLoading,
@@ -22,6 +26,7 @@ const DashboardSummaryPage = () => {
 
   return (
     <>
+      {isMobile && <h1>Today</h1>}
       <section className={styles.summarySection}>
         <DailySummary
           summary={summary}
@@ -32,11 +37,18 @@ const DashboardSummaryPage = () => {
         />
       </section>
 
-      <div className={styles.keyMetricsRow}>
-        <WeightLog />
-        <LatestWeightDisplay />
-        <LatestTDEE />
-      </div>
+      {isMobile ? (
+        <MetricsCarousel>
+          <LatestWeightDisplay />
+          <LatestTDEE />
+        </MetricsCarousel>
+      ) : (
+        <div className={styles.keyMetricsRow}>
+          <WeightLog />
+          <LatestWeightDisplay />
+          <LatestTDEE />
+        </div>
+      )}
 
       <h2 className={styles.listHeader}>Recent Logs</h2>
       <MealList />

@@ -72,3 +72,19 @@
 .gaugeChartWrapper {
   width: 100%;
 }
+
+@media (max-width: 1024px) {
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-3);
+  }
+
+  .dateControls {
+    justify-content: space-between;
+  }
+}

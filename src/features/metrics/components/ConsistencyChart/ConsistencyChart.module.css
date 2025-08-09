@@ -167,3 +167,27 @@
   height: 12px;
   border-radius: var(--border-radius-sm);
 }
+
+@media (max-width: 768px) {
+  .chartWrapper {
+    height: 220px;
+  }
+
+  .chartArea {
+    gap: var(--spacing-2);
+  }
+
+  .xAxis {
+    gap: var(--spacing-2);
+    font-size: 0.75rem;
+  }
+
+  .yAxis {
+    width: 35px;
+  }
+
+  .targetLabel {
+    font-size: 0.7rem;
+    top: -8px;
+  }
+}

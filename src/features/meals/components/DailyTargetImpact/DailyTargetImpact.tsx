@@ -3,6 +3,8 @@ import type { DailySummary as IDailySummary } from "../../../metrics/types";
 import type { NutrientProfile } from "../../../meals/types";
 import { useNutritionTargets } from "../../../../hooks/useNutritionTargets";
 import styles from "./DailyTargetImpact.module.css";
+import { useMediaQuery } from "../../../../hooks/useMediaQuery";
+import { breakpoints } from "../../../../styles/breakpoints";
 
 // In ms
 const ANIMATION_DURATION = 1200;
@@ -17,7 +19,7 @@ const usePrevious = <T,>(value: T): T | undefined => {
 
 const useAnimatedValue = (
   target: number,
-  duration: number = ANIMATION_DURATION,
+  duration: number = ANIMATION_DURATION
 ): number => {
   const [currentValue, setCurrentValue] = useState(0);
   const prevTarget = usePrevious(target);
@@ -49,6 +51,83 @@ const useAnimatedValue = (
   return currentValue;
 };
 
+interface NutrientBarProps {
+  label: string;
+  value: number;
+  newValue: number;
+  target: number;
+  unit: string;
+  color: string;
+}
+
+const NutrientImpactBar: React.FC<NutrientBarProps> = ({
+  label,
+  value,
+  newValue,
+  target,
+  unit,
+  color,
+}) => {
+  const animatedChange = useAnimatedValue(newValue);
+  const finalTotalValue = value + newValue;
+
+  const { currentProgress, totalProgress } = useAnimatedProgress(
+    value,
+    newValue,
+    target
+  );
+
+  const isOverflowing = finalTotalValue > target;
+  const impactColorVar = isOverflowing
+    ? "--color-error"
+    : "--color-nutrient-impact";
+  const overflowAmount = finalTotalValue - target;
+
+  return (
+    <div className={styles.nutrientBarContainer}>
+      <div className={styles.nutrientBarHeader}>
+        <span className={styles.nutrientBarLabel}>{label}</span>
+        <span className={styles.nutrientBarValue}>
+          {(value + animatedChange).toFixed(0)} / {target}
+          {unit}
+        </span>
+      </div>
+      <div className={styles.progressBarTrack}>
+        <div
+          className={styles.progressBarFill}
+          style={{
+            width: `${totalProgress * 100}%`,
+            backgroundColor: `var(${impactColorVar})`,
+          }}
+        />
+        <div
+          className={styles.progressBarFill}
+          style={{
+            width: `${currentProgress * 100}%`,
+            backgroundColor: `var(${color})`,
+          }}
+        />
+      </div>
+      <div className={styles.changeContainer}>
+        <span
+          className={styles.nutrientChange}
+          style={{ color: `var(${impactColorVar})` }}
+        >
+          {animatedChange >= 0 ? "+" : ""}
+          {animatedChange.toFixed(0)}
+          {unit}
+        </span>
+        {isOverflowing && (
+          <span className={styles.overflowText}>
+            ({overflowAmount.toFixed(0)}
+            {unit} over)
+          </span>
+        )}
+      </div>
+    </div>
+  );
+};
+
 interface ProgressResult {
   currentProgress: number;
   totalProgress: number;
@@ -59,7 +138,7 @@ const useAnimatedProgress = (
   currentValue: number,
   newValue: number,
   target: number,
-  duration: number = ANIMATION_DURATION,
+  duration: number = ANIMATION_DURATION
 ): ProgressResult => {
   const animatedNewValue = useAnimatedValue(newValue, duration);
   const animatedTotalValue = currentValue + animatedNewValue;
@@ -190,11 +269,13 @@ interface DailyTargetImpactProps {
   summary: IDailySummary;
   nutrientProfile: NutrientProfile;
 }
+type NutrientKey = keyof NutrientProfile;
 
 export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
   summary,
   nutrientProfile,
 }) => {
+  const isMobile = useMediaQuery(breakpoints.mobile);
   const {
     targets,
     isLoading: targetsIsLoading,
@@ -211,58 +292,66 @@ export const DailyTargetImpact: React.FC<DailyTargetImpactProps> = ({
     );
   if (!targets) return <p>No target data available.</p>;
 
+  const nutrientData = [
+    { key: "energy", label: "Energy", unit: "kcal", color: "--color-energy" },
+    { key: "protein", label: "Protein", unit: "g", color: "--color-protein" },
+    {
+      key: "carbohydrates",
+      label: "Carbs",
+      unit: "g",
+      color: "--color-carbs",
+    },
+    { key: "sugars", label: "Sugars", unit: "g", color: "--color-sugars" },
+    { key: "fats", label: "Fat", unit: "g", color: "--color-fats" },
+    { key: "fibre", label: "Fibre", unit: "g", color: "--color-fibre" },
+  ];
+
+  const getValue = (key: NutrientKey): number => {
+    const summaryProp = summary[key as keyof IDailySummary];
+    const profileProp = nutrientProfile[key];
+
+    const summaryValue = typeof summaryProp === "number" ? summaryProp : 0;
+    const profileValue = typeof profileProp === "number" ? profileProp : 0;
+
+    return summaryValue - profileValue;
+  };
+
+  const getNewValue = (key: NutrientKey): number => {
+    const profileProp = nutrientProfile[key];
+    return typeof profileProp === "number" ? profileProp : 0;
+  };
+
   return (
     <div className={styles.summaryContainer}>
-      <div className={styles.nutrientsGrid}>
-        <NutrientCircle
-          label="Energy"
-          value={summary.energy - nutrientProfile.energy}
-          newValue={nutrientProfile.energy}
-          target={targets.energy}
-          unit="kcal"
-          color="--color-energy"
-        />
-        <NutrientCircle
-          label="Protein"
-          value={summary.protein - nutrientProfile.protein}
-          newValue={nutrientProfile.protein}
-          target={targets.protein}
-          unit="g"
-          color="--color-protein"
-        />
-        <NutrientCircle
-          label="Carbs"
-          value={summary.carbohydrates - nutrientProfile.carbohydrates}
-          newValue={nutrientProfile.carbohydrates}
-          target={targets.carbohydrates}
-          unit="g"
-          color="--color-carbs"
-        />
-        <NutrientCircle
-          label="Sugars"
-          value={summary.sugars - nutrientProfile.sugars}
-          newValue={nutrientProfile.sugars}
-          target={targets.sugars}
-          unit="g"
-          color="--color-sugars"
-        />
-        <NutrientCircle
-          label="Fat"
-          value={summary.fats - nutrientProfile.fats}
-          newValue={nutrientProfile.fats}
-          target={targets.fats}
-          unit="g"
-          color="--color-fats"
-        />
-        <NutrientCircle
-          label="Fibre"
-          value={summary.fibre - nutrientProfile.fibre}
-          newValue={nutrientProfile.fibre}
-          target={targets.fibre}
-          unit="g"
-          color="--color-fibre"
-        />
-      </div>
+      {isMobile ? (
+        <div className={styles.nutrientBarList}>
+          {nutrientData.map((n) => (
+            <NutrientImpactBar
+              key={n.key}
+              label={n.label}
+              value={getValue(n.key as NutrientKey)}
+              newValue={getNewValue(n.key as NutrientKey)}
+              target={targets[n.key as keyof typeof targets]}
+              unit={n.unit}
+              color={n.color}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className={styles.nutrientsGrid}>
+          {nutrientData.map((n) => (
+            <NutrientCircle
+              key={n.key}
+              label={n.label}
+              value={getValue(n.key as NutrientKey)}
+              newValue={getNewValue(n.key as NutrientKey)}
+              target={targets[n.key as keyof typeof targets]}
+              unit={n.unit}
+              color={n.color}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

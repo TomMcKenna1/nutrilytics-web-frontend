@@ -4,7 +4,6 @@
   margin: 0 auto;
 }
 
-/* NEW: Replaces the old .header to create a clean action bar */
 .pageActions {
   display: flex;
   justify-content: space-between;
@@ -12,7 +11,6 @@
   margin-bottom: var(--spacing-3);
 }
 
-/* NEW: A container for the meal title and description */
 .titleHeader {
   margin-bottom: var(--spacing-4);
   display: flex;
@@ -45,6 +43,7 @@
 
 .impactSection {
   margin-bottom: var(--spacing-4);
+  gap: var(--spacing-2);
 }
 
 .impactCard {
@@ -71,10 +70,9 @@
 .sidebarColumn {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4);
+  gap: var(--spacing-2);
 }
 
-/* ... (Loader and Error styles are unchanged) ... */
 .centered {
   text-align: center;
   margin-top: var(--spacing-5);

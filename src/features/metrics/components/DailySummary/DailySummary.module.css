@@ -106,19 +106,147 @@
   z-index: 1;
 }
 
+.nutrientList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  width: 100%;
+  padding-top: var(--spacing-2);
+}
+
+.nutrientBarContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.nutrientBarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.nutrientBarLabel {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+}
+
+.nutrientBarValue {
+  font-size: 0.875rem;
+  color: var(--color-text-medium);
+  font-family: var(--font-mono);
+}
+
+.progressBarBackground {
+  height: 8px;
+  width: 100%;
+  background-color: var(--color-background-soft);
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressBarForeground {
+  height: 100%;
+  border-radius: 4px;
+}
+
 @media (max-width: 768px) {
   .summaryContainer {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
+    background-color: var(--color-background-light);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-3);
+    box-shadow: var(--box-shadow-google);
   }
 
-  .mealsLoggedContainer {
+  .mobileSummaryLayout {
     width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--color-border-light);
-    padding-right: 0;
-    padding-bottom: var(--spacing-4);
-    margin-bottom: var(--spacing-4);
+    display: flex;
+    gap: var(--spacing-3);
+    align-items: center;
+  }
+
+  .mobileMealsCountWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3);
+    flex-basis: 90px;
+    flex-shrink: 0;
+    padding-right: var(--spacing-3);
+    border-right: 1px solid var(--color-border-light);
+  }
+
+  .mobileCountItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+  }
+
+  .mobileCountValuePrimary {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary-blue);
+  }
+
+  .mobileCountValue {
+    font-size: 1.75rem;
+    font-weight: 500;
+    color: var(--color-text-dark);
+  }
+
+  .mobileCountLabel {
+    font-size: 0.8rem;
+    color: var(--color-text-medium);
+    margin-top: var(--spacing-1);
+  }
+
+  .nutrientList {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    width: 100%;
+    padding-top: 0;
+  }
+
+  .nutrientBarContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+  }
+
+  .nutrientBarHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .nutrientBarLabel {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-dark);
+  }
+
+  .nutrientBarValue {
+    font-size: 0.8rem;
+    color: var(--color-text-medium);
+    font-family: var(--font-mono);
+  }
+
+  .progressBarBackground {
+    height: 6px;
+    width: 100%;
+    background-color: var(--color-background-soft);
+    border: 1px solid var(--color-border-light);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progressBarForeground {
+    height: 100%;
+    border-radius: 3px;
   }
 }

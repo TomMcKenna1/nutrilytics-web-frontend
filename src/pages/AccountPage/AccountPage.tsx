@@ -11,11 +11,14 @@ import { ProfileForm } from "../../features/account/components/ProfileForm/Profi
 import { TargetsForm } from "../../features/account/components//TargetsForm/TargetsForm";
 import styles from "./AccountPage.module.css";
 import { useQueryClient } from "@tanstack/react-query";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { breakpoints } from "../../styles/breakpoints";
 
 const AccountPage = () => {
   const { user, isLoading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const isMobile = useMediaQuery(breakpoints.mobile);
 
   const {
     account,
@@ -31,13 +34,13 @@ const AccountPage = () => {
   } = useAccount();
 
   const [profileForm, setProfileForm] = useState<Partial<UserProfileCreate>>(
-    {},
+    {}
   );
   const [nutritionForm, setNutritionForm] = useState<Partial<NutritionTarget>>(
-    {},
+    {}
   );
   const [activeSection, setActiveSection] = useState<"profile" | "targets">(
-    "profile",
+    "profile"
   );
 
   useEffect(() => {
@@ -62,7 +65,7 @@ const AccountPage = () => {
   }, [account, nutritionForm]);
 
   const handleFormChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     const numericValue =
@@ -114,21 +117,41 @@ const AccountPage = () => {
       <header className={styles.header}>
         <h1 className={styles.pageTitle}>Account Settings</h1>
       </header>
-      <div className={styles.pageContainer}>
-        <aside className={styles.sidebar}>
+
+      {isMobile && (
+        <div className={styles.segmentedControl}>
           <button
-            className={`${styles.sidebarItem} ${activeSection === "profile" ? styles.active : ""}`}
+            className={`${styles.segment} ${activeSection === "profile" ? styles.active : ""}`}
             onClick={() => setActiveSection("profile")}
           >
             Profile
           </button>
           <button
-            className={`${styles.sidebarItem} ${activeSection === "targets" ? styles.active : ""}`}
+            className={`${styles.segment} ${activeSection === "targets" ? styles.active : ""}`}
             onClick={() => setActiveSection("targets")}
           >
             Targets
           </button>
-        </aside>
+        </div>
+      )}
+
+      <div className={styles.pageContainer}>
+        {!isMobile && (
+          <aside className={styles.sidebar}>
+            <button
+              className={`${styles.sidebarItem} ${activeSection === "profile" ? styles.active : ""}`}
+              onClick={() => setActiveSection("profile")}
+            >
+              Profile
+            </button>
+            <button
+              className={`${styles.sidebarItem} ${activeSection === "targets" ? styles.active : ""}`}
+              onClick={() => setActiveSection("targets")}
+            >
+              Targets
+            </button>
+          </aside>
+        )}
 
         <main className={styles.contentArea}>
           {activeSection === "profile" && account?.profile && (

@@ -14,15 +14,6 @@
   align-items: start;
 }
 
-.summaryContainer,
-.listContainer {
-  background-color: var(--color-background-light);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--box-shadow-google);
-  padding: var(--spacing-3);
-  height: 100%;
-}
-
 .listContainer {
   display: flex;
   flex-direction: column;
@@ -53,4 +44,13 @@
 
 .errorText {
   color: var(--color-error);
+}
+
+@media (max-width: 768px) {
+  .pageContainer {
+    padding-inline: var(--spacing-2);
+  }
+  .contentGrid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
 }

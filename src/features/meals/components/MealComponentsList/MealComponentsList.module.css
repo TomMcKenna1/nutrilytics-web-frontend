@@ -278,3 +278,31 @@
     transform: translateX(100%);
   }
 }
+
+@media (max-width: 600px) {
+  .item {
+    padding: var(--spacing-2);
+  }
+  .leftSection,
+  .rightSection {
+    gap: var(--spacing-2);
+  }
+
+  .name {
+    font-size: 0.9rem;
+  }
+
+  .subtitle {
+    font-size: 0.8rem;
+  }
+
+  .weight {
+    font-size: 0.9rem;
+  }
+
+  .deleteButton {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+  }
+}

@@ -1,12 +1,3 @@
-.dashboardContainer {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--spacing-4);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-3);
-}
-
 .summarySection {
   background-color: var(--color-background-light);
   border-radius: var(--border-radius-lg);
@@ -34,5 +25,12 @@
 @media (max-width: 768px) {
   .keyMetricsRow {
     grid-template-columns: 1fr;
+  }
+
+  .summarySection {
+    background-color: transparent;
+    padding: 0;
+    box-shadow: none;
+    margin-bottom: var(--spacing-3);
   }
 }

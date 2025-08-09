@@ -47,9 +47,11 @@ const TopBar = () => {
         )}
 
         {user ? (
-          <Link to="/account" className={styles.accountCircle}>
-            {getInitials(user.email)}
-          </Link>
+          !isMobile && (
+            <Link to="/account" className={styles.accountCircle}>
+              {getInitials(user.email)}
+            </Link>
+          )
         ) : (
           <button
             onClick={() => navigate("/login")}

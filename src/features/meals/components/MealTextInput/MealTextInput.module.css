@@ -143,3 +143,9 @@
   font-size: 0.875rem;
   margin-top: var(--spacing-1);
 }
+
+.inputWrapperMobile + .datePickerPopover {
+  bottom: calc(100% + 8px);
+  top: auto;
+  right: 0;
+}

@@ -68,23 +68,49 @@ export const NutritionTrafficlightView: React.FC<
     { label: "Protein", nutrientKey: "protein", unit: "g" },
     { label: "Salt", nutrientKey: "salt", unit: "g" },
   ];
+  const topRowConfigs = nutrientConfigs.slice(0, 2);
+  const middleRowConfigs = nutrientConfigs.slice(2, 5);
+  const bottomRowConfigs = nutrientConfigs.slice(5, 8);
+
   return (
     <>
-      <div className={styles.trafficLightContainer}>
-        {nutrientConfigs.map((config) => (
-          <TrafficLightNutrientBox
-            key={config.nutrientKey}
-            label={config.label}
-            nutrientKey={config.nutrientKey}
-            valuePer100g={nutrientsPer100g[config.nutrientKey]}
-            totalValue={nutrientProfile[config.nutrientKey]}
-            unit={config.unit}
-            targets={targets}
-            targetsLoading={targetsLoading}
-            isEnergy={config.isEnergy}
-            isCarbohydrates={config.isCarbohydrates}
-          />
-        ))}
+      <div className={styles.standardLayoutContainer}>
+        <div className={styles.nutrientRow}>
+          {topRowConfigs.map((config) => (
+            <TrafficLightNutrientBox
+              key={config.nutrientKey}
+              {...config}
+              valuePer100g={nutrientsPer100g[config.nutrientKey]}
+              totalValue={nutrientProfile[config.nutrientKey]}
+              targets={targets}
+              targetsLoading={targetsLoading}
+            />
+          ))}
+        </div>
+        <div className={styles.nutrientRow}>
+          {middleRowConfigs.map((config) => (
+            <TrafficLightNutrientBox
+              key={config.nutrientKey}
+              {...config}
+              valuePer100g={nutrientsPer100g[config.nutrientKey]}
+              totalValue={nutrientProfile[config.nutrientKey]}
+              targets={targets}
+              targetsLoading={targetsLoading}
+            />
+          ))}
+        </div>
+        <div className={styles.nutrientRow}>
+          {bottomRowConfigs.map((config) => (
+            <TrafficLightNutrientBox
+              key={config.nutrientKey}
+              {...config}
+              valuePer100g={nutrientsPer100g[config.nutrientKey]}
+              totalValue={nutrientProfile[config.nutrientKey]}
+              targets={targets}
+              targetsLoading={targetsLoading}
+            />
+          ))}
+        </div>
       </div>
       <div className={styles.disclaimer}>
         Traffic light values are per 100g of the component.
