@@ -11,14 +11,12 @@ const MetricsCarousel = ({ children }: { children: React.ReactNode }) => {
   const minSwipeDistance = 50;
 
   const goToPrev = () => {
-    setActiveIndex((prevIndex) =>
-      prevIndex > 0 ? prevIndex - 1 : childrenArray.length - 1
-    );
+    setActiveIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : prevIndex));
   };
 
   const goToNext = () => {
     setActiveIndex((prevIndex) =>
-      prevIndex < childrenArray.length - 1 ? prevIndex + 1 : 0
+      prevIndex < childrenArray.length - 1 ? prevIndex + 1 : prevIndex
     );
   };
 
