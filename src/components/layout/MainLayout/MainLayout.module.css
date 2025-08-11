@@ -9,9 +9,8 @@
 
 .appMainContent {
   flex-grow: 1;
-  overflow-y: auto;
+  overflow: scroll;
   padding: var(--spacing-4);
-  padding-bottom: 90px;
 }
 
 .overlay {

@@ -1,9 +1,10 @@
 .navBar {
-  position: absolute;
+  position: relative;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 65px;
+  height: 70px;
+  padding: var(--spacing-2);
   background-color: var(--color-background-light);
   border-top: 1px solid var(--color-border-light);
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
