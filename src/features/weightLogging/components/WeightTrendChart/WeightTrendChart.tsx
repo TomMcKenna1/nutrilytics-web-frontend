@@ -115,10 +115,7 @@ export const WeightTrendChart = () => {
 
     const fullDateRange: FormattedPoint[] = [];
     if (combinedData.length > 0) {
-      // Create a map that prioritizes historical data over forecast data.
       const dataMap = new Map<string, ChartPoint>();
-
-      // 1. First, add all the forecast points to the map.
       forecastPoints.forEach((p) => {
         if (!p.date || p.weightKg === null) return;
         const parsedDate = dateUtils.parseDateString(p.date);
@@ -127,8 +124,6 @@ export const WeightTrendChart = () => {
           dataMap.set(key, p);
         }
       });
-
-      // 2. Then, add all historical points. This will overwrite any forecasts on the same day.
       historicalPoints.forEach((p) => {
         const parsedDate = dateUtils.parseDateString(p.date);
         if (parsedDate) {
@@ -136,8 +131,6 @@ export const WeightTrendChart = () => {
           dataMap.set(key, p);
         }
       });
-
-      // Use the sorted combinedData to get the start and end dates for the loop.
       let currentDate = dateUtils.parseDateString(combinedData[0].date);
       const lastDate = dateUtils.parseDateString(
         combinedData[combinedData.length - 1].date
@@ -146,7 +139,7 @@ export const WeightTrendChart = () => {
       if (currentDate && lastDate) {
         while (currentDate <= lastDate) {
           const key = dateUtils.toLocalDateString(currentDate);
-          const matchingData = dataMap.get(key); // Read from the prioritized map
+          const matchingData = dataMap.get(key);
           fullDateRange.push({
             displayDate: currentDate.toLocaleString("default", {
               month: "short",
