@@ -6,7 +6,7 @@ import styles from "./WeightTrendChart.module.css";
 
 // A unified type for any point on the chart
 type ChartPoint = {
-  date: string; // ISO string
+  date: string; // ISO string or YYYY-MM-DD
   weightKg: number;
   lowerBoundKg?: number;
   upperBoundKg?: number;
@@ -58,7 +58,7 @@ export const WeightTrendChart = () => {
 
   const { data: historyData, isLoading: isLoadingHistory } = useWeightLogs(
     startDate,
-    endDate,
+    endDate
   );
   const { data: forecastData, isLoading: isLoadingForecast } =
     useWeightForecast();
@@ -100,41 +100,68 @@ export const WeightTrendChart = () => {
         weightKg: forecast.predictedWeightKg,
         lowerBoundKg: forecast.lowerBoundKg,
         upperBoundKg: forecast.upperBoundKg,
-      }),
+      })
     );
 
+    // Sort all available points to determine the chart's full date range.
     const combinedData = [...historicalPoints, ...forecastPoints].sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+      (a, b) => {
+        const dateA = dateUtils.parseDateString(a.date);
+        const dateB = dateUtils.parseDateString(b.date);
+        if (!dateA || !dateB) return 0;
+        return dateA.getTime() - dateB.getTime();
+      }
     );
 
     const fullDateRange: FormattedPoint[] = [];
     if (combinedData.length > 0) {
+      // Create a map that prioritizes historical data over forecast data.
       const dataMap = new Map<string, ChartPoint>();
-      combinedData.forEach((p) => {
-        const key = dateUtils.toLocalDateString(new Date(p.date));
-        dataMap.set(key, p);
+
+      // 1. First, add all the forecast points to the map.
+      forecastPoints.forEach((p) => {
+        if (!p.date || p.weightKg === null) return;
+        const parsedDate = dateUtils.parseDateString(p.date);
+        if (parsedDate) {
+          const key = dateUtils.toLocalDateString(parsedDate);
+          dataMap.set(key, p);
+        }
       });
 
-      let currentDate = new Date(combinedData[0].date);
-      const lastDate = new Date(combinedData[combinedData.length - 1].date);
+      // 2. Then, add all historical points. This will overwrite any forecasts on the same day.
+      historicalPoints.forEach((p) => {
+        const parsedDate = dateUtils.parseDateString(p.date);
+        if (parsedDate) {
+          const key = dateUtils.toLocalDateString(parsedDate);
+          dataMap.set(key, p);
+        }
+      });
 
-      while (currentDate <= lastDate) {
-        const key = dateUtils.toLocalDateString(currentDate);
-        const matchingData = dataMap.get(key);
-        fullDateRange.push({
-          displayDate: currentDate.toLocaleString("default", {
-            month: "short",
-            day: "numeric",
-          }),
-          originalDate: currentDate.toISOString(),
-          data: matchingData || null,
-        });
-        currentDate = dateUtils.addDays(currentDate, 1);
+      // Use the sorted combinedData to get the start and end dates for the loop.
+      let currentDate = dateUtils.parseDateString(combinedData[0].date);
+      const lastDate = dateUtils.parseDateString(
+        combinedData[combinedData.length - 1].date
+      );
+
+      if (currentDate && lastDate) {
+        while (currentDate <= lastDate) {
+          const key = dateUtils.toLocalDateString(currentDate);
+          const matchingData = dataMap.get(key); // Read from the prioritized map
+          fullDateRange.push({
+            displayDate: currentDate.toLocaleString("default", {
+              month: "short",
+              day: "numeric",
+            }),
+            originalDate: currentDate.toISOString(),
+            data: matchingData || null,
+          });
+          currentDate = dateUtils.addDays(currentDate, 1);
+        }
       }
     }
 
     const validData = fullDateRange.filter(
-      (p): p is FormattedPoint & { data: ChartPoint } => p.data !== null,
+      (p): p is FormattedPoint & { data: ChartPoint } => p.data !== null
     );
     const padding = { top: 10, bottom: 40, left: 50, right: 30 };
 
@@ -160,7 +187,7 @@ export const WeightTrendChart = () => {
         p.data.lowerBoundKg,
         p.data.upperBoundKg,
       ])
-      .filter((v) => v !== undefined) as number[];
+      .filter((v) => v !== undefined && v !== null) as number[];
     let yMin = Math.min(...allValues);
     let yMax = Math.max(...allValues);
     const yRange = yMax - yMin;
@@ -180,17 +207,17 @@ export const WeightTrendChart = () => {
     });
 
     const historyLine = validData.filter(
-      (p) => p.data.lowerBoundKg === undefined,
+      (p) => p.data.lowerBoundKg === undefined
     );
     const forecastLine = validData.filter(
-      (p) => p.data.lowerBoundKg !== undefined,
+      (p) => p.data.lowerBoundKg !== undefined
     );
     const lastHistoryPoint = historyLine[historyLine.length - 1];
 
     const historyPath = historyLine
       .map((p, i) => {
         const index = fullDateRange.findIndex(
-          (frp) => frp.originalDate === p.originalDate,
+          (frp) => frp.originalDate === p.originalDate
         );
         if (index === -1) return "";
         const { x, y } = getCoords(p.data.weightKg, index);
@@ -204,7 +231,7 @@ export const WeightTrendChart = () => {
     const forecastPath = forecastPathData
       .map((p, i) => {
         const index = fullDateRange.findIndex(
-          (frp) => frp.originalDate === p.originalDate,
+          (frp) => frp.originalDate === p.originalDate
         );
         if (index === -1) return "";
         const { x, y } = getCoords(p.data.weightKg, index);
@@ -212,21 +239,19 @@ export const WeightTrendChart = () => {
       })
       .join(" ");
 
-    // --- MODIFIED AREA PATH LOGIC ---
     let areaPath = "";
     if (lastHistoryPoint && forecastLine.length > 0) {
       const lastHistoryIndex = fullDateRange.findIndex(
-        (frp) => frp.originalDate === lastHistoryPoint.originalDate,
+        (frp) => frp.originalDate === lastHistoryPoint.originalDate
       );
-      // This is the single point where the history ends and the forecast begins.
       const jointPointCoords = getCoords(
         lastHistoryPoint.data.weightKg,
-        lastHistoryIndex,
+        lastHistoryIndex
       );
 
       const upperPoints = forecastLine.map((p) => {
         const index = fullDateRange.findIndex(
-          (frp) => frp.originalDate === p.originalDate,
+          (frp) => frp.originalDate === p.originalDate
         );
         return getCoords(p.data.upperBoundKg!, index);
       });
@@ -234,13 +259,12 @@ export const WeightTrendChart = () => {
       const lowerPoints = forecastLine
         .map((p) => {
           const index = fullDateRange.findIndex(
-            (frp) => frp.originalDate === p.originalDate,
+            (frp) => frp.originalDate === p.originalDate
           );
           return getCoords(p.data.lowerBoundKg!, index);
         })
         .reverse();
 
-      // Start the path at the joint point, fan out to the bounds, and close it.
       const allAreaPoints = [jointPointCoords, ...upperPoints, ...lowerPoints];
       areaPath =
         "M " +
@@ -249,7 +273,6 @@ export const WeightTrendChart = () => {
           .join(" L ") +
         " Z";
     }
-    // --- END OF MODIFICATION ---
 
     return {
       fullDateRange,
@@ -291,7 +314,7 @@ export const WeightTrendChart = () => {
     const svgRect = e.currentTarget.getBoundingClientRect();
     const mouseX = e.clientX - svgRect.left;
     const index = Math.round(
-      ((mouseX - padding.left) / chartWidth) * (fullDateRange.length - 1),
+      ((mouseX - padding.left) / chartWidth) * (fullDateRange.length - 1)
     );
     const pointIndex = Math.max(0, Math.min(index, fullDateRange.length - 1));
     const point = fullDateRange[pointIndex];

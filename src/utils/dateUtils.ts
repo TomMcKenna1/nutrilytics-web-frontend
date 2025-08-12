@@ -33,6 +33,20 @@ export const toLocalDateString = (date: Date): string => {
 };
 
 /**
+ * Parses a date string safely, avoiding timezone shifts for date-only strings.
+ * Treats 'YYYY-MM-DD' as local midnight, not UTC midnight.
+ */
+export const parseDateString = (
+  dateStr: string | null | undefined
+): Date | null => {
+  if (!dateStr) return null;
+  if (dateStr.length === 10) {
+    return new Date(`${dateStr}T00:00:00`);
+  }
+  return new Date(dateStr);
+};
+
+/**
  * Parses the flexible 'createdAt' field into a standard Date object.
  */
 export const parseCreatedAt = (createdAt: MealDB["createdAt"]): Date | null => {
@@ -80,7 +94,7 @@ export const isDateInCurrentWeek = (d: Date | null): boolean => {
  */
 export const formatDate = (
   date: Date,
-  format: "MMMM yyyy" | "d" | "yyyy-MM" | "EEE" | "MMMM d, yyyy",
+  format: "MMMM yyyy" | "d" | "yyyy-MM" | "EEE" | "MMMM d, yyyy"
 ): string => {
   const options: Intl.DateTimeFormatOptions = {};
   switch (format) {
