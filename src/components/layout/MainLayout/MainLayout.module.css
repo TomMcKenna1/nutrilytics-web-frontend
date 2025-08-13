@@ -10,7 +10,7 @@
 .appMainContent {
   flex-grow: 1;
   overflow: scroll;
-  padding: var(--spacing-4);
+  padding: var(--spacing-3);
 }
 
 .overlay {

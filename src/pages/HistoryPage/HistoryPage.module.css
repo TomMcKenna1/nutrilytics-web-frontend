@@ -1,5 +1,4 @@
 .pageContainer {
-  padding: var(--spacing-3) var(--spacing-4);
   max-width: 1400px;
   margin-inline: auto;
   display: flex;
@@ -47,9 +46,6 @@
 }
 
 @media (max-width: 768px) {
-  .pageContainer {
-    padding-inline: var(--spacing-2);
-  }
   .contentGrid {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   }
